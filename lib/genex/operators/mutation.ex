@@ -24,10 +24,6 @@ defmodule Genex.Operators.Mutation do
     {:ok, pop}
   end
 
-  def uniform_integer(population, rate, min, max), do: {:ok, population}
-  def gaussian(population, rate), do: {:ok, population}
-  def scramble(population, rate), do: {:ok, population}
-
   def shuffle_index(population, rate) do
     chromosomes = population.chromosomes
     new_chromosomes =
@@ -63,4 +59,8 @@ defmodule Genex.Operators.Mutation do
     pop = %Population{population | chromosomes: new_chromosomes}
     {:ok, pop}
   end
+
+  def uniform_integer(population, rate, min, max), do: {:ok, population}
+  def gaussian(population, rate), do: {:ok, population}
+  def scramble(population, rate), do: {:ok, population}
 end

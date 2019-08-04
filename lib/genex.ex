@@ -7,7 +7,7 @@ defmodule Genex do
   alias Genex.Visualizers.Text
 
   @moduledoc """
-  Genex Makes writing genetic algorithms EASY.
+  Genetic Algorithms in Elixir.
   """
 
   @doc """
@@ -16,48 +16,48 @@ defmodule Genex do
   @callback individual :: Enum.t()
 
   @doc """
-  Generates a population.
+  Seeds a population.
   """
   @callback seed :: {:ok, Population.t()}
 
   @doc """
   Evaluates a population's fitness.
   """
-  @callback evaluate(Population.t()) :: number()
+  @callback evaluate(population :: Population.t()) :: number()
 
   @doc """
   Calculates a Chromosome's fitness.
   """
-  @callback fitness_function(Chromosome.t()) :: number()
+  @callback fitness_function(chromosome :: Chromosome.t()) :: number()
 
   @doc """
   Selects a number of individuals for crossover.
   The number of individuals selected depends on the crossover rate. This phase populates the `parent` field of the population struct with a `List` of tuples. Each tuple is a pair of parents to crossover.
   """
-  @callback select_parents(Population.t()) :: {:ok, Population.t()} | {:error, any()}
+  @callback select_parents(population :: Population.t()) :: {:ok, Population.t()} | {:error, any()}
 
   @doc """
   Crossover a number of individuals to create a new population.
   The number of individuals depends on the crossover rate. This phase populates the `children` field of the populaton struct with a `List` of `Chromosomes`.
   """
-  @callback crossover(Population.t()) :: {:ok, Population.t()} | {:error, any()}
+  @callback crossover(population :: Population.t()) :: {:ok, Population.t()} | {:error, any()}
 
   @doc """
   Mutate a number of individuals to add novelty to the population.
   The number of individuals depends on the mutation rate. This phase populates the `mutant` field of the population struct with a `List` of `Chromosomes`.
   """
-  @callback mutate(Population.t()) :: {:ok, Population.t()} | {:error, any()}
+  @callback mutate(population :: Population.t()) :: {:ok, Population.t()} | {:error, any()}
 
   @doc """
   Select a number of individuals to survive to the next generation.
   The number of individuals depends on the survival rate. This phase populates the `survivors` field of the population struct with a `List` of `Chromosomes`.
   """
-  @callback select_survivors(Population.t()) :: {:ok, Population.t()} | {:error, any()}
+  @callback select_survivors(population :: Population.t()) :: {:ok, Population.t()} | {:error, any()}
 
   @doc """
   Tests the population for some termination criteria.
   """
-  @callback terminate?(Population.t) :: boolean()
+  @callback terminate?(population :: Population.t) :: boolean()
 
   defmacro __using__(opts \\ []) do
     # Population
@@ -151,12 +151,12 @@ defmodule Genex do
       """
       def select_parents(population) do
         case @parent_selection_type do
-          :natural    -> Selection.natural(population, :parents, @crossover_rate)
-          :worst      -> Selection.worst(population, :parents, @crossover_rate)
-          :random     -> Selection.random(population, :parents, @crossover_rate)
-          :roulette   -> Selection.roulette(population, :parents, @crossover_rate)
-          :tournament -> Selection.tournament(population, :parents, @crossover_rate)
-          :stochastic -> Selection.stochastic(population, :parents, @crossover_rate)
+          :natural    -> Selection.natural(population, @crossover_rate)
+          :worst      -> Selection.worst(population, @crossover_rate)
+          :random     -> Selection.random(population, @crossover_rate)
+          :roulette   -> Selection.roulette(population, @crossover_rate)
+          :tournament -> Selection.tournament(population, @crossover_rate)
+          :stochastic -> Selection.stochastic(population, @crossover_rate)
           _           -> {:error, "Invalid Selection Type"}
         end
       end
@@ -196,12 +196,12 @@ defmodule Genex do
       """
       def select_survivors(population) do
         case @survivor_selection_type do
-          :natural    -> Selection.natural(population, :survivors, @survival_rate)
-          :worst      -> Selection.worst(population, :survivors, @survival_rate)
-          :random     -> Selection.random(population, :survivors, @survival_rate)
-          :roulette   -> Selection.roulette(population, :survivors, @survival_rate)
-          :tournament -> Selection.tournament(population, :survivors, @survival_rate)
-          :stochastic -> Selection.stochastic(population, :survivors, @survival_rate)
+          :natural    -> Selection.natural(population)
+          :worst      -> Selection.worst(population)
+          :random     -> Selection.random(population)
+          :roulette   -> Selection.roulette(population)
+          :tournament -> Selection.tournament(population)
+          :stochastic -> Selection.stochastic(population)
           _           -> {:error, "Invalid Selection Type"}
         end
       end

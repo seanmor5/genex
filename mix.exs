@@ -22,6 +22,7 @@ defmodule Genex.MixProject do
   defp deps do
     [
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:table_rex, "~> 2.0.0"}
     ]
   end

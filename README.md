@@ -41,6 +41,9 @@ OneMax.run()
 ```
 
 ## Task List
+- [ ] Admin
+    - [ ] Write Tests
+    - [ ] Write Documentation
 - [ ] Crossover
     - [x] Single Point
     - [ ] Multi Point
@@ -57,8 +60,7 @@ OneMax.run()
     - [x] Bit Flip
     - [ ] Uniform Integer
     - [ ] Gaussian
-    - [ ] Scramble
-    - [x] Shuffle Indexes
+    - [x] Shuffle
     - [x] Invert
     - [ ] Polynomial Bounded
     - [ ] ES Log Normal
