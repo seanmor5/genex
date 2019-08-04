@@ -22,21 +22,21 @@ Genex works by making transformations on a `Population`. A `Population` is a str
 
 The simplest way to use Genex is by including it in one of your modules with default parameters.
 
-It requires you implement 3 functions: `chromosome`, `fitness_function`, `goal_test`. 
+It requires you to implement 3 functions: `chromosome`, `fitness_function`, `goal_test`. 
 
 ```elixir
-defmodule MyGeneticAlgorithm do
-    use Genex
+defmodule OneMax do
+  use Genex
 
-    def init(_opts) do
-    end
+  def chromosome do
+    genes = for _ <- 1..20, do: Enum.random(0..1)
+    %Chromosome{genes: genes}
+  end
 
-    def fitness_function(chromosome) do
-        Enum.sum(chromosome)
-    end
+  def fitness_function(genes), do: Enum.sum(genes)
 
-    def goal_test(population) do
-        population.max_fitness == 32
-    end
+  def goal_test(population), do: population.max_fitness == 20
 end
+
+OneMax.run()
 ```
