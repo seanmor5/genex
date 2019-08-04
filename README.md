@@ -6,7 +6,7 @@ This library is inspired by Python's [DEAP](https://github.com/deap/deap).
 
 ## Installation
 
-If the package can be installed by adding `genex` to your list of dependencies in `mix.exs`:
+The package can be installed by adding `genex` to your list of dependencies in `mix.exs`.
 
 ```elixir
 def deps do
@@ -28,13 +28,13 @@ It requires you to implement 3 functions: `chromosome`, `fitness_function`, `goa
 defmodule OneMax do
   use Genex
 
-  def chromosome do
-    for _ <- 1..20, do: Enum.random(0..1)
+  def individual do
+    for _ <- 1..10, do: Enum.random(0..1)
   end
 
-  def fitness_function(genes), do: Enum.sum(genes)
+  def fitness_function(chromosome), do: Enum.sum(chromosome.genes)
 
-  def goal_test(population), do: population.max_fitness == 20
+  def terminate?(population), do: population.max_fitness == 10
 end
 
 OneMax.run()
@@ -47,6 +47,12 @@ OneMax.run()
     - [x] Uniform
     - [ ] Davis Order
     - [ ] Whole Arithmetic
+    - [ ] Partially Matched
+    - [ ] Blend
+    - [ ] Simulated Binary
+    - [ ] Uniform Partially Matched
+    - [ ] Messy One Point
+    - [ ] ES Blend
 - [ ] Mutation
     - [x] Bit Flip
     - [ ] Uniform Integer
@@ -54,6 +60,8 @@ OneMax.run()
     - [ ] Scramble
     - [x] Shuffle Indexes
     - [x] Invert
+    - [ ] Polynomial Bounded
+    - [ ] ES Log Normal
 - [ ] Selection
     - [x] Natural Selection
     - [x] Random Selection
@@ -61,6 +69,10 @@ OneMax.run()
     - [ ] Roulette Selection
     - [ ] Tournament Selection
     - [ ] Stochastic Universal Sampling
+    - [ ] Double Tournament Selection
+    - [ ] Lexicase
+    - [ ] Epsilon Lexicase
+    - [ ] Automatic Epsilon Lexicase
 - [ ] Support
     - [ ] Hall of Fame
     - [ ] Logbook

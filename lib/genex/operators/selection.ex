@@ -1,6 +1,10 @@
-defmodule Genex.Tools.Selection do
+defmodule Genex.Operators.Selection do
   alias Genex.Population
-  
+
+  @moduledoc """
+  Selection functions.
+  """
+
   @doc """
   Natural selection of some number of chromosomes.
 
@@ -16,18 +20,17 @@ defmodule Genex.Tools.Selection do
   def natural(population, :parents, rate) do
     chromosomes = population.chromosomes
     n = floor(rate * length(chromosomes))
-    parents = 
+    parents =
       chromosomes
       |> Enum.take(n)
       |> Enum.chunk_every(2, 1, :discard)
-      |> Enum.map(fn x -> List.to_tuple(x) end)
     pop = %Population{population | parents: parents}
     {:ok, pop}
   end
   def natural(population, :survivors, _rate) do
     chromosomes = population.chromosomes
     n = length(population.chromosomes) - length(population.children)
-    survivors = 
+    survivors =
       chromosomes
       |> Enum.take(n)
     pop = %Population{population | survivors: survivors}
@@ -39,7 +42,7 @@ defmodule Genex.Tools.Selection do
   Worst selection of some number of chromosomes.
 
   This will select the `n` worst (least fit) chromosomes.
-  
+
   Returns `Population`.
 
   # Parameters
@@ -50,7 +53,7 @@ defmodule Genex.Tools.Selection do
   def worst(population, :parents, rate) do
     chromosomes = population.chromosomes
     n = floor(rate * length(chromosomes))
-    parents = 
+    parents =
       chromosomes
       |> Enum.reverse
       |> Enum.take(n)
@@ -61,7 +64,7 @@ defmodule Genex.Tools.Selection do
   def worst(population, :survivors, _rate) do
     chromosomes = population.chromosomes
     n = length(population.chromosomes) - length(population.children)
-    survivors = 
+    survivors =
       chromosomes
       |> Enum.reverse
       |> Enum.take(n)
@@ -74,7 +77,7 @@ defmodule Genex.Tools.Selection do
   Random selection of some number of chromosomes.
 
   This will select `n` random chromosomes.
-  
+
   Returns `Population`.
 
   # Parameters
@@ -85,7 +88,7 @@ defmodule Genex.Tools.Selection do
   def random(population, :parents, rate) do
     chromosomes = population.chromosomes
     n = floor(rate * length(chromosomes))
-    parents = 
+    parents =
       chromosomes
       |> Enum.take_random(n)
       |> Enum.chunk_every(2, 1, :discard)
@@ -95,14 +98,14 @@ defmodule Genex.Tools.Selection do
   def random(population, :survivors, _rate) do
     chromosomes = population.chromosomes
     n = length(population.chromosomes) - length(population.children)
-    survivors = 
+    survivors =
       chromosomes
       |> Enum.take_random(n)
     pop = %Population{population | survivors: survivors}
     {:ok, pop}
   end
   def random(_, _, _), do: {:error, "Invalid Selection Type"}
-  
+
   def roulette(population, stage, rate), do: {:ok, population}
   def tournament(population, stage, rate), do: {:ok, population}
   def stochastic(population, stage, rate), do: {:ok, population}

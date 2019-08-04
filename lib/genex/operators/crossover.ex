@@ -1,4 +1,4 @@
-defmodule Genex.Tools.Crossover do
+defmodule Genex.Operators.Crossover do
   alias Genex.Chromosome
   alias Genex.Population
   @moduledoc """
@@ -8,7 +8,7 @@ defmodule Genex.Tools.Crossover do
   def single_point(population) do
     parents = population.parents
     chromosome_length = length(hd(population.chromosomes).genes)
-    children = 
+    children =
       parents
       |> Enum.map(fn f -> List.to_tuple(f) end)
       |> Enum.map(
@@ -33,7 +33,8 @@ defmodule Genex.Tools.Crossover do
       |> Enum.map(
           fn {p1, p2} ->
             new_genes =
-              Enum.zip(p1.genes, p2.genes)
+              p1.genes
+              |> Enum.zip(p2.genes)
               |> Enum.map(fn {x, y} -> if :rand.uniform < rate do x else y end end)
             %Chromosome{genes: new_genes}
           end
@@ -41,7 +42,7 @@ defmodule Genex.Tools.Crossover do
     pop = %Population{population | children: children}
     {:ok, pop}
   end
-  
+
   def davis_order(population, rate), do: {:ok, population}
   def whole_arithmetic(population, rate), do: {:ok, population}
 end

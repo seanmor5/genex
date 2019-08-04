@@ -1,13 +1,13 @@
 defmodule OneMax do
   use Genex
 
-  def chromosome do
-    for _ <- 1..20, do: Enum.random(0..1)
+  def individual do
+    for _ <- 1..10, do: Enum.random(0..1)
   end
 
-  def fitness_function(genes), do: Enum.sum(genes)
+  def fitness_function(chromosome), do: Enum.sum(chromosome.genes)
 
-  def goal_test(population), do: population.max_fitness == 20
+  def terminate?(population), do: population.max_fitness == 10
 end
 
 OneMax.run()
