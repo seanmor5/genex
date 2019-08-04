@@ -1,6 +1,18 @@
 defmodule Genex.Tools.Selection do
   alias Genex.Population
+  
+  @doc """
+  Natural selection of some number of chromosomes.
 
+  This will select the `n` best (fittest) chromosomes.
+
+  Returns `Population`.
+
+  # Parameters
+    - `population`: `Population` struct.
+    - `type`: `:parents` or `:survivors`.
+    - `rate`: `Float` representing survival rate or crossover rate.
+  """
   def natural(population, :parents, rate) do
     chromosomes = population.chromosomes
     n = floor(rate * length(chromosomes))
@@ -8,6 +20,7 @@ defmodule Genex.Tools.Selection do
       chromosomes
       |> Enum.take(n)
       |> Enum.chunk_every(2, 1, :discard)
+      |> Enum.map(fn x -> List.to_tuple(x) end)
     pop = %Population{population | parents: parents}
     {:ok, pop}
   end
@@ -22,6 +35,18 @@ defmodule Genex.Tools.Selection do
   end
   def natural(_, _, _), do: {:error, "Invalid Selection Type"}
 
+  @doc """
+  Worst selection of some number of chromosomes.
+
+  This will select the `n` worst (least fit) chromosomes.
+  
+  Returns `Population`.
+
+  # Parameters
+    - `population`: `Population` struct.
+    - `type`: `:parents` or `:survivors`.
+    - `rate`: `Float` representing survival rate or crossover rate.
+  """
   def worst(population, :parents, rate) do
     chromosomes = population.chromosomes
     n = floor(rate * length(chromosomes))
@@ -45,6 +70,18 @@ defmodule Genex.Tools.Selection do
   end
   def worst(_, _, _), do: {:error, "Invalid Selection Type"}
 
+  @doc """
+  Random selection of some number of chromosomes.
+
+  This will select `n` random chromosomes.
+  
+  Returns `Population`.
+
+  # Parameters
+    - `population`: `Population` struct.
+    - `type`: `:parents` or `:survivors`.
+    - `rate`: `Float` representing survival rate or crossover rate.
+  """
   def random(population, :parents, rate) do
     chromosomes = population.chromosomes
     n = floor(rate * length(chromosomes))

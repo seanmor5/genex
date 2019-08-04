@@ -4,9 +4,9 @@ defmodule Genex do
   use Genex.Tools
 
   @doc """
-  Generates one random `Chromosome`. 
+  Generates a random gene set. 
   """
-  @callback chromosome :: Chromosome.t()
+  @callback chromosome :: Enum.t()
 
   @doc """
   Calculates the fitness of a `Chromosome`.
@@ -150,7 +150,7 @@ defmodule Genex do
       defp init do
         chromosomes = 
           for n <- 1..@population_size do
-            chromosome()
+            %Chromosome{genes: chromosome()}
           end
         pop = %Population{chromosomes: chromosomes}
         {:ok, pop}

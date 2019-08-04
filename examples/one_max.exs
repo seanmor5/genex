@@ -1,13 +1,8 @@
 defmodule OneMax do
-  use Genex, 
-      crossover_rate: 0.90, 
-      crossover_type: :uniform, 
-      uniform_crossover_rate: 0.5, 
-      mutation_type: :shuffle_index
+  use Genex
 
   def chromosome do
-    genes = for _ <- 1..20, do: Enum.random(0..1)
-    %Chromosome{genes: genes}
+    for _ <- 1..20, do: Enum.random(0..1)
   end
 
   def fitness_function(genes), do: Enum.sum(genes)
