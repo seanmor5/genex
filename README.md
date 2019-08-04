@@ -39,3 +39,29 @@ end
 
 OneMax.run()
 ```
+
+## Task List
+- [ ] Crossover
+    - [x] Single Point
+    - [ ] Multi Point
+    - [x] Uniform
+    - [ ] Davis Order
+    - [ ] Whole Arithmetic
+- [ ] Mutation
+    - [x] Bit Flip
+    - [ ] Uniform Integer
+    - [ ] Gaussian
+    - [ ] Scramble
+    - [x] Shuffle Indexes
+    - [x] Invert
+- [ ] Selection
+    - [x] Natural Selection
+    - [x] Random Selection
+    - [x] Worst Selection
+    - [ ] Roulette Selection
+    - [ ] Tournament Selection
+    - [ ] Stochastic Universal Sampling
+- [ ] Support
+    - [ ] Hall of Fame
+    - [ ] Logbook
+    - [ ] History (Geneology Tree)
