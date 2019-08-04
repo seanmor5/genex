@@ -44,5 +44,21 @@ defmodule Genex.Operators.Crossover do
   end
 
   def davis_order(population, rate), do: {:ok, population}
-  def whole_arithmetic(population, rate), do: {:ok, population}
+  def whole_arithmetic(population, rate, alpha) do
+    parents = population.parents
+    chromosome_length = length(hd(population.chromosomes).genes)
+    children =
+      parents
+      |> Enum.map(fn f -> List.to_tuple(f) end)
+      |> Enum.map(
+          fn {p1, p2} ->
+            new_genes =
+              p1.genes
+              |> Enum.zip(p2.genes)
+              |> Enum.map(fn {x, y} -> alpha*x + (1-alpha)*y end)
+            %Chromosome{genes: new_genes}
+        )
+      pop = %Population{population | children: children}
+      {:ok, pop}
+  end
 end

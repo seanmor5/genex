@@ -22,7 +22,7 @@ Genex works by making transformations on a `Population`. A `Population` is a str
 
 The simplest way to use Genex is by including it in one of your modules with default parameters.
 
-It requires you to implement 3 functions: `chromosome`, `fitness_function`, `goal_test`. 
+It requires you to implement 3 functions: `individual/0`, `fitness_function/1`, `terminate?/1`. 
 
 ```elixir
 defmodule OneMax do
@@ -46,7 +46,7 @@ OneMax.run()
     - [ ] Multi Point
     - [x] Uniform
     - [ ] Davis Order
-    - [ ] Whole Arithmetic
+    - [x] Whole Arithmetic
     - [ ] Partially Matched
     - [ ] Blend
     - [ ] Simulated Binary
