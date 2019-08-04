@@ -1,8 +1,12 @@
 defmodule OneMax do
-  use Genex, crossover_rate: 0.90
+  use Genex, 
+      crossover_rate: 0.90, 
+      crossover_type: :uniform, 
+      uniform_crossover_rate: 0.5, 
+      mutation_type: :shuffle_index
 
   def chromosome do
-    genes = for n <- 1..20, do: Enum.random(0..1)
+    genes = for _ <- 1..20, do: Enum.random(0..1)
     %Chromosome{genes: genes}
   end
 

@@ -22,8 +22,26 @@ defmodule Genex.Tools.Crossover do
     {:ok, pop}
   end
 
-  def multi_point(population, rate), do: {:ok, population}
-  def uniform(population, rate), do: {:ok, population}
+  def multi_point(population, n), do: {:ok, population}
+
+  def uniform(population, rate) do
+    parents = population.parents
+    chromosome_length = length(hd(population.chromosomes).genes)
+    children =
+      parents
+      |> Enum.map(fn f -> List.to_tuple(f) end)
+      |> Enum.map(
+          fn {p1, p2} ->
+            new_genes =
+              Enum.zip(p1.genes, p2.genes)
+              |> Enum.map(fn {x, y} -> if :rand.uniform < rate do x else y end end)
+            %Chromosome{genes: new_genes}
+          end
+          )
+    pop = %Population{population | children: children}
+    {:ok, pop}
+  end
+  
   def davis_order(population, rate), do: {:ok, population}
   def whole_arithmetic(population, rate), do: {:ok, population}
 end

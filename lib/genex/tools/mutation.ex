@@ -24,6 +24,40 @@ defmodule Genex.Tools.Mutation do
   def uniform_integer(population, rate), do: {:ok, population}
   def gaussian(population, rate), do: {:ok, population}
   def scramble(population, rate), do: {:ok, population}
-  def shuffle_index(population, rate), do: {:ok, population}
-  def invert(population, rate), do: {:ok, population}
+  
+  def shuffle_index(population, rate) do
+    chromosomes = population.chromosomes
+    new_chromosomes = 
+      chromosomes
+      |> Enum.map(
+        fn c ->
+          if(:rand.uniform() < rate) do
+            new_genes = Enum.shuffle(c.genes)
+            %Chromosome{genes: new_genes}
+          else
+            c
+          end
+        end
+      )
+    pop = %Population{population | chromosomes: new_chromosomes}
+    {:ok, pop}
+  end
+
+  def invert(population, rate) do
+    chromosomes = population.chromosomes
+    new_chromosomes = 
+      chromosomes
+      |> Enum.map(
+        fn c ->
+          if(:rand.uniform() < rate) do
+            new_genes = Enum.reverse(c.genes)
+            %Chromosome{genes: new_genes}
+          else
+            c
+          end
+        end
+      )
+    pop = %Population{population | chromosomes: new_chromosomes}
+    {:ok, pop}
+  end
 end

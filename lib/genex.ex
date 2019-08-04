@@ -9,9 +9,9 @@ defmodule Genex do
   @callback chromosome :: Chromosome.t()
 
   @doc """
-  Calculates the fitness of `Chromosome`.
+  Calculates the fitness of a `Chromosome`.
   """
-  @callback fitness_function(Chromosome.t()) :: number()
+  @callback fitness_function(Enum.t()) :: number()
 
   @doc """
   Selects a number of individuals for crossover.
@@ -58,6 +58,9 @@ defmodule Genex do
     mutation_rate = Keyword.get(opts, :mutation_rate, 0.05)
 
     # Unique to some algorithms
+    uniform_crossover_rate = Keyword.get(opts, :uniform_crossover_rate, nil)
+    multi_num_points = Keyword.get(opts, :multi_num_points, nil)
+
     quote do
       alias Genex.Chromosome
       alias Genex.Population
@@ -71,7 +74,12 @@ defmodule Genex do
       @survivor_selection_type unquote(survivor_selection_type)
       @parent_selection_type unquote(parent_selection_type)
       @population_size unquote(population_size)
+      @uniform_crossover_rate unquote(uniform_crossover_rate)
+      @multi_num_points unquote(multi_num_points)
 
+      @doc """
+      Selects a number of parents from `population` to crossover.
+      """
       def parent_selection(population) do
         case @parent_selection_type do
           :natural    -> Selection.natural(population, :parents, @crossover_rate)
@@ -84,17 +92,23 @@ defmodule Genex do
         end
       end
 
+      @doc """
+      Creates new individuals from parents.
+      """
       def crossover(population) do
         case @crossover_type do
           :single_point     -> Crossover.single_point(population)
-          :multi_point      -> Crossover.multi_point(population)
-          :uniform          -> Crossover.uniform(population)
+          :multi_point      -> Crossover.multi_point(population, @multi_num_points)
+          :uniform          -> Crossover.uniform(population, @uniform_crossover_rate)
           :davis_order      -> Crossover.davis_order(population)
           :whole_arithmetic -> Crossover.whole_arithmetic
           _                 -> {:error, "Invalid Crossover Type"}
         end
       end
 
+      @doc """
+      Mutates a number of chromosomes.
+      """
       def mutate(population) do
         case @mutation_type do
           :bit_flip        -> Mutation.bit_flip(population, @mutation_rate)
@@ -102,11 +116,14 @@ defmodule Genex do
           :gaussian        -> Mutation.gaussian(population, @mutation_rate)
           :scramble        -> Mutation.scramble(population, @mutation_rate)
           :shuffle_index   -> Mutation.shuffle_index(population, @mutation_rate)
-          :invert          -> Mutaton.invert(population, @mutation_rate)
+          :invert          -> Mutation.invert(population, @mutation_rate)
           _                -> {:error, "Invalid Mutation Type"}
         end
       end
 
+      @doc """
+      Selects a number of individuals to survive to the next generation.
+      """
       def survivor_selection(population) do
         case @survivor_selection_type do
           :natural    -> Selection.natural(population, :survivors, @survival_rate)
@@ -119,6 +136,9 @@ defmodule Genex do
         end
       end
 
+      @doc """
+      Run the genetic algorithm.
+      """
       def run do
         with {:ok, population} <- init(),
              {:ok, population} <- calculate_fitness(population),
@@ -174,7 +194,12 @@ defmodule Genex do
 
       defp print_solution(population) do
         soln = hd(Population.sort(population).chromosomes).genes
-        IO.write("\r#{soln}\n#{population.max_fitness}\n#{population.generation}\n")
+        IO.write("\r###############################################\n")
+        IO.puts("Solution: ")
+        IO.inspect(soln)
+        IO.puts("\nMax Fitness: #{population.max_fitness}\n")
+        IO.puts("Generation: #{population.generation}")
+        IO.write("###############################################\n")
       end
 
       defoverridable [
