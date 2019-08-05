@@ -62,7 +62,7 @@ def MyGA do
 end
 ```
 
-Please see the [documentation]() for a full list of configuration options.
+Please see the [documentation](https://hexdocs.pm/genex/Genex.html) for a full list of configuration options.
 
 ## Task List
 - [ ] Crossover
