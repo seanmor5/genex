@@ -2,7 +2,11 @@ defmodule Genex.Operators.Selection do
   alias Genex.Population
 
   @moduledoc """
-  Selection functions.
+  Implementation of several popular selection methods.
+
+  Selection occurs in two stages in Genex: parent selection and survivor selection. Parent Selection dictates which chromosomes are to be reserved for crossover according to some crossover rate. In this stage, a number of chromosomes are selected and paired off in 2-tuples in the order they are selected. Future versions of Genex will provide more advanced methods of parent selection.
+
+  Survivor Selection occurs last in the GA cycle. As of this version of Genex, the survivor rate is always equal to `1 - CR` where CR is the crossover rate. Future versions will support more advanced survivor selection, including the ability to fluctuate the population according to some operators.
   """
 
   @doc """
@@ -105,33 +109,4 @@ defmodule Genex.Operators.Selection do
     pop = %Population{population | survivors: survivors}
     {:ok, pop}
   end
-
-  @doc """
-  Roulette selection of some number of chromosomes.
-
-  This will select `n` chromosomes using `k`spins of a roulette wheel.
-
-  Returns `Population`.
-
-  # Parameters
-    - `population`: `Population` struct.
-    - `type`: `:parents` or `:survivors`.
-    - `rate`: `Float` representing survival rate or crossover rate.
-  """
-  def roulette(population, rate), do: {:ok, population}
-
-  @doc """
-  Tournament selection of some number of chromosomes.
-
-  This will select `n` chromosomes from a pool of size `k` who perform the best in randomly chosen tournament.
-
-  Returns `Population`.
-
-  # Parameters
-    - `population`: `Population` struct.
-    - `type`: `:parents` or `:survivors`.
-    - `rate`: `Float` representing survival rate or crossover rate.
-  """
-  def tournament(population, rate), do: {:ok, population}
-  def stochastic(population, rate), do: {:ok, population}
 end

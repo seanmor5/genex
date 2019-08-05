@@ -1,7 +1,9 @@
 defmodule Genex.Chromosome do
   alias __MODULE__, as: Chromosome
   @moduledoc """
-  Chromosome.
+  A collection of genes.
+
+  A Chromosome represents one solution to the problem you are trying to solve. Solutions are encoded into an enumerable of genes. The Chromosome is then evaluated based on some criteria you define.
   """
 
   @type t :: %Chromosome{

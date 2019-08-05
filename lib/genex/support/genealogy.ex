@@ -3,8 +3,6 @@ defmodule Genex.Support.Genealogy do
   Implementation of a genealogy tree.
 
   We use the Genealogy tree to model the history of the population from it's initialization to the end of the algorithm. The tree itself is an erlang digraph. An edge emanates from parent and is incident on child.
-
-  You can use a number of 3rd Party Tools to Visualize the Graph.
   """
 
   @doc """

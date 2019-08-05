@@ -1,33 +1,28 @@
 defmodule Genex.Visualizers.Text do
   @moduledoc """
-  Contains functions for IO visualization of algorithm.
+  Text visualizations of the Algorithm.
   """
 
+  @doc """
+  Display Initial Algorithm Text.
+  """
   def init do
-    title = "Algorithm Running"
-    header = ["Generation", "Size", "Max Fitness"]
-    rows = [[0, 0, 0]]
+    title = "Genetic Algorithm"
+    header = ["Generation", "Size", "Max Fitness", "Strongest"]
+    rows = [[0, 0, 0, ""]]
     IO.write(TableRex.quick_render!(rows, header, title))
   end
 
   @doc """
-  Shows a summary of the population.
+  Display a summary of the population.
   """
-  def summary(population) do
-    title = "Algorithm Running"
-    header = ["Generation", "Size", "Max Fitness"]
-    rows = [[population.generation, population.size, population.max_fitness]]
+  def display_summary(population) do
+    title = "Genetic Algorithm"
+    header = ["Generation", "Size", "Max Fitness", "Strongest"]
+    rows = [[population.generation, population.size, population.max_fitness, population.strongest]]
 
     IO.ANSI.cursor_up(7)
     |> Kernel.<>(TableRex.quick_render!(rows, header, title))
     |> IO.write()
-  end
-
-  def solution(population) do
-    title = "Solution Found!"
-    header = ["Generation", "Individual"]
-    rows = [[population.generation, population.strongest]]
-
-    IO.puts(TableRex.quick_render!(rows, header, title))
   end
 end
