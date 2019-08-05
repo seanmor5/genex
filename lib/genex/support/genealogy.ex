@@ -22,7 +22,7 @@ defmodule Genex.Support.Genealogy do
     - `chromosome` - Chromosome to add to Genealogy.
   """
   def update(genealogy, chromosome) do
-    v = :digraph.add_vertex(genealogy, chromosome)
+    :digraph.add_vertex(genealogy, chromosome)
     genealogy
   end
 
@@ -38,9 +38,9 @@ defmodule Genex.Support.Genealogy do
     - `parent_b` - Parent Chromosome.
   """
   def update(genealogy, chromosome, parent_a, parent_b) do
-    v = :digraph.add_vertex(genealogy, chromosome)
-    e1 = :digraph.add_edge(genealogy, parent_a, chromosome)
-    e2 = :digraph.add_edge(genealogy, parent_b, chromosome)
+    :digraph.add_vertex(genealogy, chromosome)
+    :digraph.add_edge(genealogy, parent_a, chromosome)
+    :digraph.add_edge(genealogy, parent_b, chromosome)
     genealogy
   end
 end
