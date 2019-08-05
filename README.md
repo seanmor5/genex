@@ -43,7 +43,7 @@ Your algorithm can then be run by calling the `run/0` method Genex provides.
 ## Visualization
 
 Genex currently offers text visualization of populations. To view a summary of the solution your algorithm produced simply do:
-```
+```elixir
 soln = OneMax.run()
 Genex.Visualizers.Text.display_summary(soln)
 ```
@@ -55,7 +55,7 @@ Genex comes with an implementation of a Genealogy tree using an Erlang digraph. 
 ## Configuration
 
 Genex can be configured like so:
-```
+```elixir
 def MyGA do
     use Genex, crossover_type: :two_point, crossover_rate: 0.5
     ...
