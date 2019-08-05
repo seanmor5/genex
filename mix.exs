@@ -9,6 +9,8 @@ defmodule Genex.MixProject do
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [coveralls: :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test],
       deps: deps(),
       name: "Genex",
       source_url: "http://www.github.com/seanmor5/genex"
@@ -25,6 +27,8 @@ defmodule Genex.MixProject do
     [
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.10", only: :test},
+      {:inch_ex, ">= 0.0.0", only: :docs},
       {:table_rex, "~> 2.0.0"}
     ]
   end
