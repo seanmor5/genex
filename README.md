@@ -18,7 +18,7 @@ end
 
 ## Usage
 
-Genex works by making transformations on a `Population`. A `Population` is a struct with some parameters the algorithm uses.
+Genex works by making transformations on a `Population`.
 
 The simplest way to use Genex is by including it in one of your modules with default parameters.
 
