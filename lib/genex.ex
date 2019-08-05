@@ -185,12 +185,9 @@ defmodule Genex do
       """
       def mutate(population) do
         case @mutation_type do
-          :bit_flip        -> Mutation.bit_flip(population, @mutation_rate)
-          :uniform_integer -> Mutation.uniform_integer(population, @mutation_rate)
-          :gaussian        -> Mutation.gaussian(population, @mutation_rate)
-          :scramble        -> Mutation.scramble(population, @mutation_rate)
-          :shuffle_index   -> Mutation.shuffle_index(population, @mutation_rate)
-          :invert          -> Mutation.invert(population, @mutation_rate)
+          :bit_flip        -> do_mutation(population, &Mutation.bit_flip/1)
+          :scramble        -> do_mutation(population, &Mutation.scramble/1)
+          :invert          -> do_mutation(population, &Mutation.invert/1)
           :none            -> {:ok, population}
           _                -> {:error, "Invalid Mutation Type"}
         end
@@ -263,6 +260,22 @@ defmodule Genex do
           )
         pop = %Population{population | children: children}
         {:ok, pop}
+      end
+
+      defp do_mutation(population, f) do
+        chromosomes =
+          population.chromosomes
+          |> Enum.map(
+            fn c ->
+              if :rand.uniform() < @mutation_rate do
+                f.(c)
+              else
+                c
+              end
+            end
+          )
+       pop = %Population{population | chromosomes: chromosomes}
+       {:ok, pop}
       end
 
       defoverridable [

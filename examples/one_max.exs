@@ -1,5 +1,5 @@
 defmodule OneMax do
-  use Genex, crossover_type: :blend, alpha: 0.5
+  use Genex, mutation_type: :invert
 
   def individual do
     for _ <- 1..20, do: Enum.random(0..1)
@@ -10,4 +10,4 @@ defmodule OneMax do
   def terminate?(population), do: population.max_fitness == 20
 end
 
-soln = OneMax.run()
+OneMax.run()
