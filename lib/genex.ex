@@ -177,6 +177,9 @@ defmodule Genex do
     # Unique to some algorithms
     uniform_crossover_rate = Keyword.get(opts, :uniform_crossover_rate, nil)
     alpha = Keyword.get(opts, :alpha, nil)
+    eta = Keyword.get(opts, :eta, nil)
+    lower_bound = Keyword.get(opts, :lower_bound, nil)
+    upper_bound = Keyword.get(opts, :upper_bound, nil)
 
     quote do
       @behaviour Genex
@@ -200,6 +203,9 @@ defmodule Genex do
       # Unique Algorithm Parameters
       @uniform_crossover_rate unquote(uniform_crossover_rate)
       @alpha unquote(alpha)
+      @eta unquote(eta)
+      @min unquote(lower_bound)
+      @max unquote(upper_bound)
 
       @doc """
       Seed the population with some chromosomes.
@@ -267,11 +273,13 @@ defmodule Genex do
       """
       def crossover(population) do
         case @crossover_type do
-          :single_point     -> do_crossover(population, &Crossover.single_point/2)
-          :two_point        -> do_crossover(population, &Crossover.two_point/2)
-          :uniform          -> do_crossover(population, &Crossover.uniform/3, [@uniform_crossover_rate])
-          :blend            -> do_crossover(population, &Crossover.blend/3, [@alpha])
-          _                 -> {:error, "Invalid Crossover Type"}
+          :single_point       -> do_crossover(population, &Crossover.single_point/2, [])
+          :two_point          -> do_crossover(population, &Crossover.two_point/2, [])
+          :uniform            -> do_crossover(population, &Crossover.uniform/3, [@uniform_crossover_rate])
+          :blend              -> do_crossover(population, &Crossover.blend/3, [@alpha])
+          :simulated_binary   -> do_crossover(population, &Crossover.simulated_binary/3, [@eta])
+          :messy_single_point -> do_crossover(population, &Crossover.messy_single_point/2, [])
+          _                   -> {:error, "Invalid Crossover Type"}
         end
       end
 
@@ -280,11 +288,14 @@ defmodule Genex do
       """
       def mutate(population) do
         case @mutation_type do
-          :bit_flip        -> do_mutation(population, &Mutation.bit_flip/1)
-          :scramble        -> do_mutation(population, &Mutation.scramble/1)
-          :invert          -> do_mutation(population, &Mutation.invert/1)
-          :none            -> {:ok, population}
-          _                -> {:error, "Invalid Mutation Type"}
+          :bit_flip           -> do_mutation(population, &Mutation.bit_flip/1, [])
+          :scramble           -> do_mutation(population, &Mutation.scramble/1, [])
+          :invert             -> do_mutation(population, &Mutation.invert/1, [])
+          :uniform_integer    -> do_mutation(population, &Mutation.uniform_integer/3, [@min, @max])
+          :gaussian           -> do_mutation(population, &Mutation.gaussian/1, [])
+          :polynomial_bounded -> do_mutation(population, &Mutation.polynomial_bounded/4, [@eta, @min, @max])
+          :none               -> {:ok, population}
+          _                   -> {:error, "Invalid Mutation Type"}
         end
       end
 
@@ -324,20 +335,6 @@ defmodule Genex do
         end
       end
 
-      defp do_crossover(population, f) do
-        parents = population.parents
-        children =
-          parents
-          |> Enum.map(
-              fn {p1, p2} ->
-                c = f.(p1, p2)
-                Genealogy.update(population.history, c, p1, p2)
-                c
-              end
-            )
-        pop = %Population{population | children: children}
-        {:ok, pop}
-      end
       defp do_crossover(population, f, args) do
         parents = population.parents
         children =
@@ -353,13 +350,13 @@ defmodule Genex do
         {:ok, pop}
       end
 
-      defp do_mutation(population, f) do
+      defp do_mutation(population, f, args) do
         chromosomes =
           population.chromosomes
           |> Enum.map(
             fn c ->
               if :rand.uniform() < @mutation_rate do
-                f.(c)
+                apply(f, [c] ++ args)
               else
                 c
               end

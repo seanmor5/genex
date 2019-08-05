@@ -75,18 +75,17 @@ Please see the [documentation](https://hexdocs.pm/genex/Genex.html) for a full l
     - [ ] Davis Order
     - [ ] Partially Matched
     - [x] Blend
-    - [ ] Simulated Binary
+    - [x] Simulated Binary
     - [ ] Uniform Partially Matched
-    - [ ] Messy One Point
+    - [x] Messy One Point
     - [ ] ES Blend
 - [ ] Mutation
     - [x] Bit Flip
-    - [ ] Uniform Integer
-    - [ ] Gaussian
+    - [x] Uniform Integer
+    - [x] Gaussian
     - [x] Shuffle
     - [x] Invert
-    - [ ] Polynomial Bounded
-    - [ ] ES Log Normal
+    - [x] Polynomial Bounded
 - [ ] Selection
     - [x] Natural Selection
     - [x] Random Selection

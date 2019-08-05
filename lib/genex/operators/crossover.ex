@@ -97,4 +97,51 @@ defmodule Genex.Operators.Crossover do
       |> Enum.map(fn {x, y} -> alpha*x + (1-alpha)*y end)
     %Chromosome{genes: genes}
   end
+
+  @doc """
+  Performs a simulated binary crossover.
+
+  Returns `Chromosome`.
+
+  # Parameters
+    - `p1`: Parent one.
+    - `p2`: Parent two.
+    - `eta`: `Float`
+  """
+  @spec simulated_binary(Chromosome.t(), Chromosome.t(), number()) :: Chromosome.t()
+  def simulated_binary(p1, p2, eta) do
+    genes =
+      p1.genes
+      |> Enum.zip(p2.genes)
+      |> Enum.map(
+          fn {x, y} ->
+            rand = :rand.uniform()
+            beta = if rand <= 0.5 do 2 * rand else 1/(2*(1-rand)) end
+            beta = :math.pow(beta, (1/eta+1))
+            0.5 * (((1 + beta) * x) + ((1-beta) * y))
+          end
+        )
+    %Chromosome{genes: genes}
+  end
+
+  @doc """
+  Performs a messy single point crossover.
+
+  This crossover disregards the length of the chromosome and will often arbitrarily increase or decrease it's size.
+
+  Returns `Chromosome`.
+
+  # Parameters
+    - `p1`: Parent one.
+    - `p2`: Parent two.
+  """
+  @spec messy_single_point(Chromosome.t(), Chromosome.t()) :: Chromosome.t()
+  def messy_single_point(p1, p2) do
+    chromosome_length = length(p1.genes)
+    point = :rand.uniform(chromosome_length)
+    slice1 = Enum.slice(p1.genes, point..chromosome_length)
+    slice2 = Enum.slice(p2.genes, point..chromosome_length)
+    genes = slice1 ++ slice2
+    %Chromosome{genes: genes}
+  end
 end

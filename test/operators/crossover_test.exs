@@ -31,5 +31,16 @@ defmodule CrossoverTest do
       c3 = Crossover.blend(context.p1, context.p2, 0.5)
       assert length(c3.genes) == 10
     end
+
+    test "simulated_binary/2", context do
+      c3 = Crossover.simulated_binary(context.p1, context.p2, 0.5)
+      assert length(c3.genes) == 10
+    end
+
+    test "messy_single_point/2", context do
+      c3 = Crossover.messy_single_point(context.p1, context.p2)
+      refute c3.genes == context.p1.genes
+      refute c3.genes == context.p2.genes
+    end
   end
 end
