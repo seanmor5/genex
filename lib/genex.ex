@@ -172,11 +172,10 @@ defmodule Genex do
       """
       def crossover(population) do
         case @crossover_type do
-          :single_point     -> Crossover.single_point(population)
-          :two_point        -> Crossover.two_point(population)
-          :uniform          -> Crossover.uniform(population, @uniform_crossover_rate)
-          :davis_order      -> Crossover.davis_order(population)
-          :whole_arithmetic -> Crossover.whole_arithmetic(population, @alpha)
+          :single_point     -> do_crossover(population, &Crossover.single_point/2)
+          :two_point        -> do_crossover(population, &Crossover.two_point/2)
+          :uniform          -> do_crossover(population, &Crossover.uniform/3, [@uniform_crossover_rate])
+          :blend            -> do_crossover(population, &Crossover.blend/3, [@alpha])
           _                 -> {:error, "Invalid Crossover Type"}
         end
       end
@@ -235,6 +234,35 @@ defmodule Genex do
         else
           {:error, reason} -> raise reason
         end
+      end
+
+      defp do_crossover(population, f) do
+        parents = population.parents
+        children =
+          parents
+          |> Enum.map(
+              fn {p1, p2} ->
+                c = f.(p1, p2)
+                Genealogy.update(population.history, c, p1, p2)
+                c
+              end
+            )
+        pop = %Population{population | children: children}
+        {:ok, pop}
+      end
+      defp do_crossover(population, f, args) do
+        parents = population.parents
+        children =
+          parents
+          |> Enum.map(
+            fn {p1, p2} ->
+              c = apply(f, [p1, p2] ++ args)
+              Genealogy.update(population.history, c, p1, p2)
+              c
+            end
+          )
+        pop = %Population{population | children: children}
+        {:ok, pop}
       end
 
       defoverridable [

@@ -1,5 +1,5 @@
 defmodule OneMax do
-  use Genex
+  use Genex, crossover_type: :blend, alpha: 0.5
 
   def individual do
     for _ <- 1..20, do: Enum.random(0..1)

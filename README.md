@@ -49,9 +49,8 @@ OneMax.run()
     - [x] Two Point
     - [x] Uniform
     - [ ] Davis Order
-    - [x] Whole Arithmetic
     - [ ] Partially Matched
-    - [ ] Blend
+    - [x] Blend
     - [ ] Simulated Binary
     - [ ] Uniform Partially Matched
     - [ ] Messy One Point
