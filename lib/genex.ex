@@ -4,6 +4,7 @@ defmodule Genex do
   alias Genex.Operators.Mutation
   alias Genex.Operators.Selection
   alias Genex.Population
+  alias Genex.Support.Genealogy
   alias Genex.Visualizers.Text
 
   @moduledoc """
@@ -76,6 +77,7 @@ defmodule Genex do
 
     # Unique to some algorithms
     uniform_crossover_rate = Keyword.get(opts, :uniform_crossover_rate, nil)
+    alpha = Keyword.get(opts, :alpha, nil)
 
     quote do
       @behaviour Genex
@@ -99,17 +101,21 @@ defmodule Genex do
 
       # Unique Algorithm Parameters
       @uniform_crossover_rate unquote(uniform_crossover_rate)
+      @alpha unquote(alpha)
 
       @doc """
       Seed the population with some chromosomes.
       """
       def seed do
-        Text.initialize()
+        Text.init()
+        history = Genealogy.init()
         chromosomes =
           for n <- 1..@population_size do
-            %Chromosome{genes: individual()}
+            c = %Chromosome{genes: individual()}
+            Genealogy.update(history, c)
+            c
           end
-        pop = %Population{chromosomes: chromosomes, size: @population_size}
+        pop = %Population{chromosomes: chromosomes, size: @population_size, history: history}
         {:ok, pop}
       end
 
@@ -167,10 +173,10 @@ defmodule Genex do
       def crossover(population) do
         case @crossover_type do
           :single_point     -> Crossover.single_point(population)
-          :multi_point      -> Crossover.multi_point(population)
+          :two_point        -> Crossover.two_point(population)
           :uniform          -> Crossover.uniform(population, @uniform_crossover_rate)
           :davis_order      -> Crossover.davis_order(population)
-          :whole_arithmetic -> Crossover.whole_arithmetic
+          :whole_arithmetic -> Crossover.whole_arithmetic(population, @alpha)
           _                 -> {:error, "Invalid Crossover Type"}
         end
       end
@@ -223,7 +229,9 @@ defmodule Genex do
         with {:ok, population} <- seed(),
              {:ok, population} <- evaluate(population),
              {:ok, population} <- cycle(population) do
-               Text.solution(Population.sort(population))
+               soln = Population.sort(population)
+               Text.solution(soln)
+               soln
         else
           {:error, reason} -> raise reason
         end

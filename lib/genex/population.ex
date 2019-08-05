@@ -13,7 +13,8 @@ defmodule Genex.Population do
     parents: Enum.t() | nil,
     survivors: Enum.t() | nil,
     children: Enum.t() | nil,
-    size: integer()
+    size: integer(),
+    history: :digraph.graph()
   }
 
   @enforce_keys [:chromosomes]
@@ -25,7 +26,8 @@ defmodule Genex.Population do
     survivors: nil,
     children: nil,
     size: 0,
-    strongest: nil
+    strongest: nil,
+    history: nil
   ]
 
   @doc """

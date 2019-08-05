@@ -1,6 +1,7 @@
 defmodule Genex.Operators.Crossover do
   alias Genex.Chromosome
   alias Genex.Population
+  alias Genex.Support.Genealogy
   @moduledoc """
   Implementation of several popular crossover methods.
 
@@ -32,8 +33,10 @@ defmodule Genex.Operators.Crossover do
       |> Enum.map(
           fn {p1, p2} ->
             point = :rand.uniform(chromosome_length)
-            new_genes = Enum.slice(p1.genes, 0, point) ++ Enum.slice(p2.genes, point, chromosome_length)
-            %Chromosome{genes: new_genes}
+            new_genes = Enum.slice(p1.genes, 0..point) ++ Enum.slice(p2.genes, point+1..chromosome_length-1)
+            c = %Chromosome{genes: new_genes}
+            Genealogy.update(population.history, c, p1, p2)
+            c
           end
         )
     pop = %Population{population | children: children}
@@ -41,7 +44,7 @@ defmodule Genex.Operators.Crossover do
   end
 
   @doc """
-  Performs multi-point crossover.
+  Performs two-point crossover.
 
   This will swap multiple slices of genes from each chromosome, producing 2 new chromosomes.
 
@@ -51,8 +54,29 @@ defmodule Genex.Operators.Crossover do
     - `population`: `Population` struct.
     - `n`: `Integer` representing number of crossover points.
   """
-  @spec multi_point(Population.t(), integer()) :: {:ok, Population.t()}
-  def multi_point(population, n), do: {:ok, population}
+  @spec two_point(Population.t()) :: {:ok, Population.t()}
+  def two_point(population) do
+    parents = population.parents
+    chromosome_length = length(hd(population.chromosomes).genes)
+    a = :rand.uniform(chromosome_length-1)
+    b = :rand.uniform(chromosome_length-2)
+    point1 = if b >= a do a else b end
+    point2 = if b >= a do b+1 else a end
+    children =
+      parents
+      |> Enum.map(
+          fn {p1, p2} ->
+            slice1 = Enum.slice(p1.genes, 0..point1)
+            slice2 = Enum.slice(p2.genes, point1+1..point2)
+            slice3 = Enum.slice(p1.genes, point2+1..chromosome_length-1)
+            c = %Chromosome{genes: slice1 ++ slice2 ++ slice3}
+            Genealogy.update(population.history, c, p1, p2)
+            c
+          end
+        )
+    pop = %Population{population | children: children}
+    {:ok, pop}
+  end
 
   @doc """
   Performs uniform crossover.
@@ -77,7 +101,9 @@ defmodule Genex.Operators.Crossover do
               p1.genes
               |> Enum.zip(p2.genes)
               |> Enum.map(fn {x, y} -> if :rand.uniform < rate do x else y end end)
-            %Chromosome{genes: new_genes}
+            c = %Chromosome{genes: new_genes}
+            Genealogy.update(population.history, c, p1, p2)
+            c
           end
         )
     pop = %Population{population | children: children}
@@ -85,9 +111,20 @@ defmodule Genex.Operators.Crossover do
   end
 
   def davis_order(population, rate), do: {:ok, population}
-  def whole_arithmetic(population, rate, alpha) do
+
+  @doc """
+  Performs whole arithemtic crossover.
+
+  This will blend genes according to some alpha between 0 and 1. If alpha=.5, the resulting chromosomes will be identical to one another.
+
+  Returns `{:ok, Population}`.
+
+  # Parameters
+    - `population`: `Population` struct.
+    - `alpha`: `Float` between 0 and 1 representing percentage of each parent to blend into children.
+  """
+  def whole_arithmetic(population, alpha) do
     parents = population.parents
-    chromosome_length = length(hd(population.chromosomes).genes)
     children =
       parents
       |> Enum.map(
@@ -96,7 +133,9 @@ defmodule Genex.Operators.Crossover do
               p1.genes
               |> Enum.zip(p2.genes)
               |> Enum.map(fn {x, y} -> alpha*x + (1-alpha)*y end)
-            %Chromosome{genes: new_genes}
+            c = %Chromosome{genes: new_genes}
+            Genealogy.update(population.history, c, p1, p2)
+            c
           end
         )
       pop = %Population{population | children: children}

@@ -46,7 +46,7 @@ OneMax.run()
     - [ ] Write Documentation
 - [ ] Crossover
     - [x] Single Point
-    - [ ] Multi Point
+    - [x] Two Point
     - [x] Uniform
     - [ ] Davis Order
     - [x] Whole Arithmetic
