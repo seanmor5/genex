@@ -7,23 +7,37 @@ defmodule Genex.MixProject do
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      description: description(),
+      package: package(),
+      deps: deps(),
+      name: "Genex",
+      source_url: "http://www.github.com/seanmor5/genex"
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :table_rex]
+      extra_applications: [:table_rex]
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:table_rex, "~> 2.0.0"}
+    ]
+  end
+
+  defp description do
+    "Genex makes it easy to write Genetic Algorithms in Elixir."
+  end
+
+  defp package do
+    [
+      name: "genex",
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => "http://www.github.com/seanmor5/genex"}
     ]
   end
 end
