@@ -78,7 +78,6 @@ Please see the [documentation](https://hexdocs.pm/genex/Genex.html) for a full l
     - [x] Simulated Binary
     - [ ] Uniform Partially Matched
     - [x] Messy One Point
-    - [ ] ES Blend
 - [ ] Mutation
     - [x] Bit Flip
     - [x] Uniform Integer
