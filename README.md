@@ -65,4 +65,4 @@ def MyGA do
 end
 ```
 
-Please see the [documentation](https://hexdocs.pm/genex/Genex.html) for a full list of configuration options.
+Please see the [documentation](https://hexdocs.pm/genex/tutorials-getting-started.html#content) for a full list of configuration options.

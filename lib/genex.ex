@@ -484,7 +484,8 @@ defmodule Genex do
         seed: 0,
         evaluate: 1,
         advance: 1,
-        cycle: 1
+        cycle: 1,
+        init: 0
       ]
     end
   end
