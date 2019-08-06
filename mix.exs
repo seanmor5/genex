@@ -1,25 +1,97 @@
 defmodule Genex.MixProject do
   use Mix.Project
 
+  @version "0.1.1"
+  @url "https://www.github.com/seanmor5/genex"
+  @maintainers ["Sean Moriarity"]
+
   def project do
     [
-      app: :genex,
-      version: "0.1.0",
-      elixir: "~> 1.9",
-      start_permanent: Mix.env() == :prod,
-      description: description(),
-      package: package(),
-      test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [coveralls: :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test],
-      deps: deps(),
       name: "Genex",
-      source_url: "http://www.github.com/seanmor5/genex"
+      app: :genex,
+      version: @version,
+      elixir: "~> 1.9",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      package: package(),
+      source_url: @url,
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      maintainers: @maintainers,
+      homepage_url: @url,
+      description: description(),
+      docs: docs(),
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   def application do
     [
       extra_applications: [:table_rex]
+    ]
+  end
+
+  def docs do
+    [
+      source_ref: "v#{@version}",
+      main: "introduction-overview",
+      extra_section: "guides",
+      formatters: ["html", "epub"],
+      groups_for_modules: groups_for_modules(),
+      extras: extras(),
+      groups_for_extras: groups_for_extras()
+    ]
+  end
+
+  defp extras do
+    [
+      "guides/introduction/overview.md": [
+        filename: "introduction-overview"
+      ],
+      "guides/introduction/installation.md": [
+        filename: "introduction-installation"
+      ],
+      "guides/introduction/configuration.md": [
+        filename: "introduction-configuration"
+      ],
+      "guides/tutorials/getting-started.md": [
+        filename: "tutorials-getting-started"
+      ]
+    ]
+  end
+
+  defp groups_for_extras do
+    [
+      Introduction: Path.wildcard("guides/introduction/*.md"),
+      Tutorials: Path.wildcard("guides/tutorials/*.md")
+    ]
+  end
+
+  defp groups_for_modules do
+    [
+      Operators: [
+        Genex.Operators.Crossover,
+        Genex.Operators.Mutation,
+        Genex.Operators.Selection
+      ],
+
+      Support: [
+        Genex.Support.Genealogy
+      ],
+
+      Structures: [
+        Genex.Population,
+        Genex.Chromosome
+      ]
     ]
   end
 
@@ -40,6 +112,7 @@ defmodule Genex.MixProject do
 
   defp package do
     [
+      maintainers: @maintainers,
       name: "genex",
       licenses: ["Apache-2.0"],
       links: %{"GitHub" => "http://www.github.com/seanmor5/genex"}

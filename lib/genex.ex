@@ -306,6 +306,7 @@ defmodule Genex do
           :random     -> do_parent_selection(population, @crossover_rate, &Selection.random/2, [])
           :roulette   -> do_parent_selection(population, @crossover_rate, &Selection.roulette/2, [])
           :tournament -> do_parent_selection(population, @crossover_rate, &Selection.tournament/3, [@tournsize])
+          :stochastic -> do_parent_selection(population, @crossover_rate, &Selection.stochastic_universal_sampling/2, [])
           _           -> {:error, "Invalid Selection Type"}
         end
       end
@@ -376,6 +377,7 @@ defmodule Genex do
           :random     -> do_survivor_selection(population, &Selection.random/2, [])
           :roulette   -> do_survivor_selection(population, &Selection.roulette/2, [])
           :tournament -> do_survivor_selection(population, &Selection.tournament/3, [@tournsize])
+          :stochastic -> do_survivor_selection(population, &Selection.stochastic_universal_sampling/2, [])
           _           -> {:error, "Invalid Selection Type"}
         end
       end

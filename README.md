@@ -66,33 +66,3 @@ end
 ```
 
 Please see the [documentation](https://hexdocs.pm/genex/Genex.html) for a full list of configuration options.
-
-## Task List
-- [ ] Crossover
-    - [x] Single Point
-    - [x] Two Point
-    - [x] Uniform
-    - [x] Davis Order
-    - [ ] Partially Matched
-    - [x] Blend
-    - [x] Simulated Binary
-    - [ ] Uniform Partially Matched
-    - [x] Messy One Point
-- [ ] Mutation
-    - [x] Bit Flip
-    - [x] Uniform Integer
-    - [x] Gaussian
-    - [x] Shuffle
-    - [x] Invert
-    - [x] Polynomial Bounded
-- [ ] Selection
-    - [x] Natural Selection
-    - [x] Random Selection
-    - [x] Worst Selection
-    - [x] Roulette Selection
-    - [x] Tournament Selection
-    - [x] Stochastic Universal Sampling
-    - [ ] Double Tournament Selection
-    - [ ] Lexicase
-    - [ ] Epsilon Lexicase
-    - [ ] Automatic Epsilon Lexicase
