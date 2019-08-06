@@ -269,6 +269,7 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
+      @spec cycle(Population.t()) :: {:ok, Population.t()}
       def cycle(population) do
         if terminate?(population) do
           {:ok, population}
@@ -297,6 +298,7 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
+      @spec select_parents(Population.t()) :: {:ok, Population.t()}
       def select_parents(population) do
         case @parent_selection_type do
           :natural    -> do_parent_selection(population, @crossover_rate, &Selection.natural/2, [])
@@ -318,6 +320,7 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
+      @spec crossover(Population.t()) :: {:ok, Population.t()} | {:error, "Invalid Crossover Type."}
       def crossover(population) do
         case @crossover_type do
           :single_point       -> do_crossover(population, &Crossover.single_point/2, [])
@@ -326,7 +329,7 @@ defmodule Genex do
           :blend              -> do_crossover(population, &Crossover.blend/3, [@alpha])
           :simulated_binary   -> do_crossover(population, &Crossover.simulated_binary/3, [@eta])
           :messy_single_point -> do_crossover(population, &Crossover.messy_single_point/2, [])
-          _                   -> {:error, "Invalid Crossover Type"}
+          _                   -> {:error, "Invalid Crossover Type."}
         end
       end
 
@@ -340,6 +343,7 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
+      @spec mutate(Population.t()) :: {:ok, Population.t()} | {:error, "Invalid Mutation Type."}
       def mutate(population) do
         case @mutation_type do
           :bit_flip           -> do_mutation(population, &Mutation.bit_flip/1, [])
@@ -349,7 +353,7 @@ defmodule Genex do
           :gaussian           -> do_mutation(population, &Mutation.gaussian/1, [])
           :polynomial_bounded -> do_mutation(population, &Mutation.polynomial_bounded/4, [@eta, @min, @max])
           :none               -> {:ok, population}
-          _                   -> {:error, "Invalid Mutation Type"}
+          _                   -> {:error, "Invalid Mutation Type."}
         end
       end
 
@@ -363,6 +367,7 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
+      @spec select_survivors(Population.t()) :: {:ok, Population.t()} | {:error, "Invalid Selection Type."}
       def select_survivors(population) do
         case @survivor_selection_type do
           :natural    -> do_survivor_selection(population, &Selection.natural/2, [])
@@ -384,9 +389,13 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
+      @spec advance(Population.t()) :: {:ok, Population.t()}
       def advance(population) do
         generation = population.generation+1
-        chromosomes = population.survivors ++ population.children
+        survivors =
+          population.survivors
+          |> Enum.map(fn c -> %Chromosome{c | age: c.age+1} end)
+        chromosomes = survivors ++ population.children
         size = length(chromosomes)
         pop = %Population{population | size: size, chromosomes: chromosomes, generation: generation, children: nil, parents: nil, survivors: nil}
         {:ok, pop}
@@ -399,6 +408,7 @@ defmodule Genex do
 
       Returns `%Population{...}`.
       """
+      @spec run :: Population.t()
       def run do
         with {:ok, population} <- seed(),
              {:ok, population} <- evaluate(population),

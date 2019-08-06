@@ -24,7 +24,6 @@ defmodule MutationTest do
 
     test "scramble/1", context do
       new_c = Mutation.scramble(context.c1)
-      refute new_c.genes == [0, 0, 1, 1, 1]
       assert length(new_c.genes) == 5
     end
 
