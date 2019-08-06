@@ -1,5 +1,5 @@
 defmodule OneMax do
-  use Genex, parent_selection: :tournament, tournsize: 25, survivor_selection: :roulette
+  use Genex
 
   def encoding do
     for _ <- 1..25, do: Enum.random(0..1)

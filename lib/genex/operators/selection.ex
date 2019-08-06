@@ -104,12 +104,48 @@ defmodule Genex.Operators.Selection do
         fn _ ->
           u = :rand.uniform() * sum_fitness
           chromosomes
-          |> Enum.reduce_while({0, []},
-              fn x, {sum, ls} ->
+          |> Enum.reduce_while(0,
+              fn x, sum ->
                 if x.fitness+sum > u do
                   {:halt, x}
                 else
-                  {:cont, {x.fitness+sum, ls}}
+                  {:cont, x.fitness+sum}
+                end
+              end
+            )
+        end
+      )
+  end
+
+  @doc """
+  Stochastic Universal Sampling of chromosomes.
+
+  This will sample all of the chromosomes without bias, choosing them at evenly spaced intervals.
+
+  Returns `Enum.t()`.
+
+  # Parameters
+    - `chromosomes`: `Enum` of `Chromosomes`.
+    - `n`: Number of chromomsomes to select.
+  """
+  @spec stochastic_universal_sampling(Enum.t(), integer()) :: Enum.t()
+  def stochastic_universal_sampling(chromosomes, n) do
+    sum_fitness =
+      chromosomes
+      |> Enum.reduce(0, fn x, acc -> acc+x.fitness end)
+    p = sum_fitness / n
+    start = p * :rand.uniform()
+    pointers = for i <- 0..n-1, do: start + i*p
+    pointers
+    |> Enum.map(
+        fn x ->
+          chromosomes
+          |> Enum.reduce_while(0,
+              fn y, sum ->
+                if y.fitness+sum >= x do
+                  {:halt, y}
+                else
+                  {:cont, y.fitness+sum}
                 end
               end
             )

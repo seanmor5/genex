@@ -360,11 +360,12 @@ defmodule Genex do
         parents = population.parents
         children =
           parents
-          |> Enum.map(
+          |> Enum.flat_map(
             fn {p1, p2} ->
-              c = apply(f, [p1, p2] ++ args)
-              Genealogy.update(population.history, c, p1, p2)
-              c
+              {c1, c2} = apply(f, [p1, p2] ++ args)
+              Genealogy.update(population.history, c1, p1, p2)
+              Genealogy.update(population.history, c2, p1, p2)
+              [c1, c2]
             end
           )
         pop = %Population{population | children: children}

@@ -45,5 +45,11 @@ defmodule SelectionTest do
       assert length(selected) == 2
       assert %Chromosome{} = hd(selected)
     end
+
+    test "stochastic_universal_sampling/3", context do
+      selected = Selection.stochastic_universal_sampling(context.pop, 2)
+      assert length(selected) == 2
+      assert %Chromosome{} = hd(selected)
+    end
   end
 end
