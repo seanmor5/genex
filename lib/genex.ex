@@ -254,6 +254,20 @@ defmodule Genex do
 
       @doc """
       Life cycle of the genetic algorithm.
+
+      This function represents the life cycle loop of the genetic algorithm. By default the steps are:
+        - Parent Selection
+        - Crossover
+        - Mutation
+        - Survivor Selection
+        - Generation Advancement
+        - Population Evaluation
+      The function executes until terminate? tells it to stop.
+
+      Returns `{:ok, Population}`.
+
+      # Parameters
+        - `population`: `Population` struct.
       """
       def cycle(population) do
         if terminate?(population) do
@@ -275,6 +289,13 @@ defmodule Genex do
 
       @doc """
       Selects a number of parents from `population` to crossover.
+
+      This function by default matches the "parent_selection" setting to the corresponding Selection function. It returns an error if no match is found. If you want to customize this function, you can do so by overriding it. You must ensure the function you write populates the `parents` field of the Population struct in order for the rest of the algorithm to run properly.
+
+      Returns `{:ok, Population}` or `{:error, "Invalid Selection Type."}`.
+
+      # Parameters
+        - `population`: `Population` struct.
       """
       def select_parents(population) do
         case @parent_selection_type do
@@ -289,6 +310,13 @@ defmodule Genex do
 
       @doc """
       Creates new individuals from parents.
+
+      This function by default matches the "crossover_type" setting to the corresponding Crossover function. It returns an error if no match is found. If you want to customize this function, you can do so by overriding it. You must ensure the function you write populates the `children` field of the Population struct in order for the rest of the algorithm to run properly.
+
+      Returns `{:ok, Population}` or `{:error, "Invalid Crossover Type."}`.
+
+      # Parameters
+        - `population`: `Population` struct.
       """
       def crossover(population) do
         case @crossover_type do
@@ -304,6 +332,13 @@ defmodule Genex do
 
       @doc """
       Mutates a number of chromosomes.
+
+      This function by default matches the "mutation_type" setting to the corresponding Mutation function. It returns an error if no match is found. If you want to customize this function, you can do so by overriding it. The default function works by mutating the `chromosomes` field of the Population struct.
+
+      Returns `{:ok, Population}` or `{:error, "Invalid Mutation Type".}`.
+
+      # Parameters
+        - `population`: `Population` struct.
       """
       def mutate(population) do
         case @mutation_type do
@@ -320,6 +355,13 @@ defmodule Genex do
 
       @doc """
       Selects a number of individuals to survive to the next generation.
+
+      This function by default matches the "survivor_selection" setting to the corresponding Selection function. It returns an error if no match is found. If you want to customize this function, you can do so by overriding it. You must ensure the function you write populates the `survivors` field of the Population struct in order for the rest of the algorithm to run properly.
+
+      Returns `{:ok, Population}` or `{:error, "Invalid Selection Type."}`.
+
+      # Parameters
+        - `population`: `Population` struct.
       """
       def select_survivors(population) do
         case @survivor_selection_type do
@@ -334,16 +376,28 @@ defmodule Genex do
 
       @doc """
       Advance to the next generation.
+
+      This function's purpose is to increment the generation, kill off chromosomes, and create the new population while persisting the relevant information to the next generation. This is mainly a bookkeeping step.
+
+      Returns `{:ok, Population}`.
+
+      # Parameters
+        - `population`: `Population` struct.
       """
       def advance(population) do
         generation = population.generation+1
         chromosomes = population.survivors ++ population.children
-        pop = %Population{population | chromosomes: chromosomes, generation: generation}
+        size = length(chromosomes)
+        pop = %Population{population | size: size, chromosomes: chromosomes, generation: generation, children: nil, parents: nil, survivors: nil}
         {:ok, pop}
       end
 
       @doc """
       Run the genetic algorithm.
+
+      This function combines all previous steps and executes the Genetic Algorithm until completion. It will return the solution population which contains relevant information for analysis of your algorithms performance.
+
+      Returns `%Population{...}`.
       """
       def run do
         with {:ok, population} <- seed(),
@@ -360,7 +414,7 @@ defmodule Genex do
         parents = population.parents
         children =
           parents
-          |> Enum.flat_map(
+          |> Enum.map(
             fn {p1, p2} ->
               {c1, c2} = apply(f, [p1, p2] ++ args)
               Genealogy.update(population.history, c1, p1, p2)
@@ -368,6 +422,7 @@ defmodule Genex do
               [c1, c2]
             end
           )
+          |> List.flatten
         pop = %Population{population | children: children}
         {:ok, pop}
       end
@@ -394,7 +449,7 @@ defmodule Genex do
         parents =
           f
           |> apply([chromosomes, n] ++ args)
-          |> Enum.chunk_every(2, 1, :discard)
+          |> Enum.chunk_every(2, 2, :discard)
           |> Enum.map(fn f -> List.to_tuple(f) end)
         pop = %Population{population | parents: parents}
         {:ok, pop}

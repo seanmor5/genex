@@ -11,4 +11,3 @@ defmodule OneMax do
 end
 
 soln = OneMax.run()
-Genex.Visualizers.Text.display_summary(soln)
