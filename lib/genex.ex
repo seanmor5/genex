@@ -173,6 +173,7 @@ defmodule Genex do
     # Rates
     crossover_rate = Keyword.get(opts, :crossover_rate, 0.75)
     mutation_rate = Keyword.get(opts, :mutation_rate, 0.05)
+    mutation_aggressiveness = Keyword.get(opts, :mutation_aggressiveness, 0.5)
 
     # Unique to some algorithms
     uniform_crossover_rate = Keyword.get(opts, :uniform_crossover_rate, nil)
@@ -199,6 +200,7 @@ defmodule Genex do
       # Rates
       @crossover_rate unquote(crossover_rate)
       @mutation_rate unquote(mutation_rate)
+      @mutation_aggressiveness unquote(mutation_aggressiveness)
 
       # Unique Algorithm Parameters
       @uniform_crossover_rate unquote(uniform_crossover_rate)
