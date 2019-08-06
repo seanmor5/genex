@@ -6,8 +6,8 @@ defmodule CrossoverTest do
 
   setup do
     [
-      p1: %Chromosome{genes: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]},
-      p2: %Chromosome{genes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+      p1: %Chromosome{genes: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20], size: 10},
+      p2: %Chromosome{genes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], size: 10}
     ]
   end
 

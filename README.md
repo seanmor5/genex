@@ -90,7 +90,7 @@ Please see the [documentation](https://hexdocs.pm/genex/Genex.html) for a full l
     - [x] Natural Selection
     - [x] Random Selection
     - [x] Worst Selection
-    - [ ] Roulette Selection
+    - [x] Roulette Selection
     - [x] Tournament Selection
     - [ ] Stochastic Universal Sampling
     - [ ] Double Tournament Selection

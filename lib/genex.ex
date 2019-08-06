@@ -181,6 +181,7 @@ defmodule Genex do
     eta = Keyword.get(opts, :eta, nil)
     lower_bound = Keyword.get(opts, :lower_bound, nil)
     upper_bound = Keyword.get(opts, :upper_bound, nil)
+    tournsize = Keyword.get(opts, :tournsize, nil)
 
     quote do
       @behaviour Genex
@@ -208,7 +209,7 @@ defmodule Genex do
       @eta unquote(eta)
       @min unquote(lower_bound)
       @max unquote(upper_bound)
-
+      @tournsize unquote(tournsize)
       @doc """
       Seed the population with some chromosomes.
 
@@ -280,6 +281,8 @@ defmodule Genex do
           :natural    -> do_parent_selection(population, @crossover_rate, &Selection.natural/2, [])
           :worst      -> do_parent_selection(population, @crossover_rate, &Selection.worst/2, [])
           :random     -> do_parent_selection(population, @crossover_rate, &Selection.random/2, [])
+          :roulette   -> do_parent_selection(population, @crossover_rate, &Selection.roulette/2, [])
+          :tournament -> do_parent_selection(population, @crossover_rate, &Selection.tournament/3, [@tournsize])
           _           -> {:error, "Invalid Selection Type"}
         end
       end
@@ -323,6 +326,8 @@ defmodule Genex do
           :natural    -> do_survivor_selection(population, &Selection.natural/2, [])
           :worst      -> do_survivor_selection(population, &Selection.worst/2, [])
           :random     -> do_survivor_selection(population, &Selection.random/2, [])
+          :roulette   -> do_survivor_selection(population, &Selection.roulette/2, [])
+          :tournament -> do_survivor_selection(population, &Selection.tournament/3, [@tournsize])
           _           -> {:error, "Invalid Selection Type"}
         end
       end

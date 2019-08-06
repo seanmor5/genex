@@ -1,6 +1,4 @@
 defmodule Genex.Operators.Selection do
-  alias Genex.Chromosome
-
   @moduledoc """
   Implementation of several popular selection methods.
 
@@ -20,6 +18,7 @@ defmodule Genex.Operators.Selection do
     - `chromosomes`: `Enum` of `Chromosomes`.
     - `n`: Number of chromosomes to select.
   """
+  @spec natural(Enum.t(), integer()) :: Enum.t()
   def natural(chromosomes, n) do
     chromosomes
     |> Enum.take(n)
@@ -36,6 +35,7 @@ defmodule Genex.Operators.Selection do
     - `chromosomes`: `Enum` of `Chromosomes`.
     - `n`: Number of chromosomes to select.
   """
+  @spec worst(Enum.t(), integer()) :: Enum.t()
   def worst(chromosomes, n) do
     chromosomes
     |> Enum.reverse
@@ -53,6 +53,7 @@ defmodule Genex.Operators.Selection do
     - `chromosomes`: `Enum` of `Chromosomes`.
     - `n`: Number of chromosomes to select.
   """
+  @spec random(Enum.t(), integer) :: Enum.t()
   def random(chromosomes, n) do
     chromosomes
     |> Enum.take_random(n)
@@ -63,20 +64,55 @@ defmodule Genex.Operators.Selection do
 
   This will select `n` chromosomes from tournaments of size `k`. We randomly select `k` chromosomes from the population and choose the max to be in the tournament.
 
-  Returns `Enum.t`.
+  Returns `Enum.t()`.
 
   # Parameters
     - `chromosomes`: `Enum` of `Chromosomes`.
     - `n`: Number of chromosomes to select.
     - `tournsize`: The size of the tournament to run.
   """
+  @spec tournament(Enum.t(), integer(), integer()) :: Enum.t()
   def tournament(chromosomes, n, tournsize) do
-    0..n
+    0..n-1
     |> Enum.map(
         fn _ ->
           chromosomes
           |> Enum.take_random(tournsize)
           |> Enum.max_by(&Genex.Chromosome.get_fitness/1)
+        end
+      )
+  end
+
+  @doc """
+  Roulette selection of some number of chromosomes.
+
+  This will select `n` chromosomes using a "roulette" wheel where the probability of a chromosome being selected is proportional to it's fitness.
+
+  Returns `Enum.t()`.
+
+  # Parameters
+    - `chromosomes`: `Enum` of `Chromosomes`.
+    - `n`: Number of chromosomes to select.
+  """
+  @spec roulette(Enum.t(), integer()) :: Enum.t()
+  def roulette(chromosomes, n) do
+    sum_fitness =
+      chromosomes
+      |> Enum.reduce(0, fn x, acc -> acc+x.fitness end)
+    0..n-1
+    |> Enum.map(
+        fn _ ->
+          u = :rand.uniform() * sum_fitness
+          chromosomes
+          |> Enum.reduce_while({0, []},
+              fn x, {sum, ls} ->
+                if x.fitness+sum > u do
+                  {:halt, x}
+                else
+                  {:cont, {x.fitness+sum, ls}}
+                end
+              end
+            )
         end
       )
   end
