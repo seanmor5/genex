@@ -298,7 +298,7 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
-      @spec select_parents(Population.t()) :: {:ok, Population.t()}
+      @spec select_parents(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
       def select_parents(population) do
         case @parent_selection_type do
           :natural    -> do_parent_selection(population, @crossover_rate, &Selection.natural/2, [])
@@ -320,7 +320,7 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
-      @spec crossover(Population.t()) :: {:ok, Population.t()} | {:error, "Invalid Crossover Type."}
+      @spec crossover(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
       def crossover(population) do
         case @crossover_type do
           :single_point       -> do_crossover(population, &Crossover.single_point/2, [])
@@ -329,6 +329,7 @@ defmodule Genex do
           :blend              -> do_crossover(population, &Crossover.blend/3, [@alpha])
           :simulated_binary   -> do_crossover(population, &Crossover.simulated_binary/3, [@eta])
           :messy_single_point -> do_crossover(population, &Crossover.messy_single_point/2, [])
+          :davis_order        -> do_crossover(population, &Crossover.davis_order/2, [])
           _                   -> {:error, "Invalid Crossover Type."}
         end
       end
@@ -343,7 +344,7 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
-      @spec mutate(Population.t()) :: {:ok, Population.t()} | {:error, "Invalid Mutation Type."}
+      @spec mutate(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
       def mutate(population) do
         case @mutation_type do
           :bit_flip           -> do_mutation(population, &Mutation.bit_flip/1, [])
@@ -367,7 +368,7 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
-      @spec select_survivors(Population.t()) :: {:ok, Population.t()} | {:error, "Invalid Selection Type."}
+      @spec select_survivors(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
       def select_survivors(population) do
         case @survivor_selection_type do
           :natural    -> do_survivor_selection(population, &Selection.natural/2, [])

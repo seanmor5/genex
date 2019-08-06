@@ -72,7 +72,7 @@ Please see the [documentation](https://hexdocs.pm/genex/Genex.html) for a full l
     - [x] Single Point
     - [x] Two Point
     - [x] Uniform
-    - [ ] Davis Order
+    - [x] Davis Order
     - [ ] Partially Matched
     - [x] Blend
     - [x] Simulated Binary

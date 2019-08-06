@@ -164,4 +164,28 @@ defmodule Genex.Operators.Crossover do
     }
     {%Chromosome{genes: c1, size: length(c1)}, %Chromosome{genes: c2, size: length(c2)}}
   end
+
+  @doc """
+  Performs Davis Order crossover.
+
+  Returns `Chromosome`.
+
+  # Parameters
+    - `p1`: Parent one.
+    - `p2`: Parent two.
+  """
+  @spec davis_order(Chromosome.t(), Chromosome.t()) :: Chromosome.t()
+  def davis_order(p1, p2) do
+    {a, b} = {:rand.uniform(p1.size-1), :rand.uniform(p1.size-2)}
+    point1 = if b >= a, do: a, else: b
+    point2 = if b >= a, do: b+1, else: a
+    slice1 = Enum.slice(p1.genes, point1, point2)
+    slice2 = Enum.slice(p2.genes, point1, point2)
+    rem1 = Enum.filter(p1.genes, fn x -> x not in slice1 end)
+    rem2 = Enum.filter(p2.genes, fn x -> x not in slice2 end)
+    {back1, front1} = Enum.split(rem1, point1)
+    {back2, front2} = Enum.split(rem2, point1)
+    {c1, c2} = {front1 ++ slice1 ++ back1, front2 ++ slice2 ++ back2}
+    {%Chromosome{genes: c1, size: p1.size}, %Chromosome{genes: c2, size: p2.size}}
+  end
 end

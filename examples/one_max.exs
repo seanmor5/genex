@@ -1,5 +1,5 @@
 defmodule OneMax do
-  use Genex
+  use Genex, crossover_type: :davis_order
 
   def encoding do
     for _ <- 1..25, do: Enum.random(0..1)

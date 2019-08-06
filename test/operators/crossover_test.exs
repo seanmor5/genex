@@ -45,5 +45,11 @@ defmodule CrossoverTest do
     test "messy_single_point/2", context do
       assert {%Chromosome{} = c1, %Chromosome{} = c2} = Crossover.messy_single_point(context.p1, context.p2)
     end
+
+    test "davis_order/2", context do
+      assert {%Chromosome{} = c1, %Chromosome{} = c2} = Crossover.davis_order(context.p1, context.p2)
+      assert length(c1.genes) == 10
+      assert length(c2.genes) == 10
+    end
   end
 end
