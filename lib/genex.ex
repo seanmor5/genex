@@ -211,13 +211,19 @@ defmodule Genex do
 
       @doc """
       Seed the population with some chromosomes.
+
+      This function is the first step in the Genetic Algorithm. By default, it makes calls to the encoding function defined by the user to create `n` chromosomes where `n` is the specified `population_size`. By default, `population_size` is set to 100.
+
+      Returns `{:ok, Population}`.
       """
+      @spec seed :: {:ok, Chromosome.t()}
       def seed do
         Text.init()
         history = Genealogy.init()
         chromosomes =
           for n <- 1..@population_size do
-            c = %Chromosome{genes: encoding()}
+            g = encoding()
+            c = %Chromosome{genes: g, size: length(g)}
             Genealogy.update(history, c)
             c
           end
@@ -227,11 +233,19 @@ defmodule Genex do
 
       @doc """
       Evalutes the population using the fitness function.
+
+      This function takes the population and evaluates each chromosome for it's fitness. It attaches this fitness value to the chromosome for use in later parts of the algorithm. This function also sets the strongest chromosome as well as the max_fitness for the current iteration for use in the termination function.
+
+      Returns `{:ok, Population}`.
+
+      # Parameters
+        - `population`: `Population` struct.
       """
+      @spec evaluate(Population.t()) :: {:ok, Population.t()}
       def evaluate(population) do
         chromosomes =
           population.chromosomes
-          |> Enum.map(fn c -> %Chromosome{genes: c.genes, fitness: fitness_function(c)} end)
+          |> Enum.map(fn c -> %Chromosome{c | fitness: fitness_function(c)} end)
         strongest = Enum.max_by(chromosomes, &Chromosome.get_fitness/1)
         pop = %Population{population | chromosomes: chromosomes, strongest: strongest, max_fitness: strongest.fitness}
         {:ok, pop}
@@ -263,9 +277,9 @@ defmodule Genex do
       """
       def select_parents(population) do
         case @parent_selection_type do
-          :natural    -> Selection.natural(population, @crossover_rate)
-          :worst      -> Selection.worst(population, @crossover_rate)
-          :random     -> Selection.random(population, @crossover_rate)
+          :natural    -> do_parent_selection(population, @crossover_rate, &Selection.natural/2, [])
+          :worst      -> do_parent_selection(population, @crossover_rate, &Selection.worst/2, [])
+          :random     -> do_parent_selection(population, @crossover_rate, &Selection.random/2, [])
           _           -> {:error, "Invalid Selection Type"}
         end
       end
@@ -306,9 +320,9 @@ defmodule Genex do
       """
       def select_survivors(population) do
         case @survivor_selection_type do
-          :natural    -> Selection.natural(population)
-          :worst      -> Selection.worst(population)
-          :random     -> Selection.random(population)
+          :natural    -> do_survivor_selection(population, &Selection.natural/2, [])
+          :worst      -> do_survivor_selection(population, &Selection.worst/2, [])
+          :random     -> do_survivor_selection(population, &Selection.random/2, [])
           _           -> {:error, "Invalid Selection Type"}
         end
       end
@@ -366,6 +380,26 @@ defmodule Genex do
           )
        pop = %Population{population | chromosomes: chromosomes}
        {:ok, pop}
+      end
+
+      defp do_parent_selection(population, rate, f, args) do
+        chromosomes = population.chromosomes
+        n = floor(rate * length(chromosomes))
+        parents =
+          f
+          |> apply([chromosomes, n] ++ args)
+          |> Enum.chunk_every(2, 1, :discard)
+          |> Enum.map(fn f -> List.to_tuple(f) end)
+        pop = %Population{population | parents: parents}
+        {:ok, pop}
+      end
+
+      defp do_survivor_selection(population, f, args) do
+        chromosomes = population.chromosomes
+        n = population.size - length(population.children)
+        survivors = apply(f, [chromosomes, n] ++ args)
+        pop = %Population{population | survivors: survivors}
+        {:ok, pop}
       end
 
       defoverridable [

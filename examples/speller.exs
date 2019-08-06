@@ -1,5 +1,5 @@
 defmodule Speller do
-  use Genex, crossover_type: :two_point, crossover_rate: 0.90, mutation_type: :scramble, mutation_rate: 0.005
+  use Genex, crossover_type: :uniform, crossover_rate: 0.90, uniform_crossover_rate: 0.75
 
   def encoding do
     ?a..?z

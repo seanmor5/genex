@@ -25,10 +25,10 @@ defmodule Genex.Operators.Crossover do
   """
   @spec single_point(Chromosome.t(), Chromosome.t()) :: Chromosome.t()
   def single_point(p1, p2) do
-    chromosome_length = length(p1.genes)
+    chromosome_length = p1.size
     point = :rand.uniform(chromosome_length)
     genes = Enum.slice(p1.genes, 0..point) ++ Enum.slice(p2.genes, point+1..chromosome_length-1)
-    %Chromosome{genes: genes}
+    %Chromosome{genes: genes, size: p1.size}
   end
 
   @doc """
@@ -44,7 +44,7 @@ defmodule Genex.Operators.Crossover do
   """
   @spec two_point(Chromosome.t(), Chromosome.t()) :: Chromosome.t()
   def two_point(p1, p2) do
-    chromosome_length = length(p1.genes)
+    chromosome_length = p1.size
     a = :rand.uniform(chromosome_length-1)
     b = :rand.uniform(chromosome_length-2)
     point1 = if b >= a do a else b end
@@ -53,7 +53,7 @@ defmodule Genex.Operators.Crossover do
     slice2 = Enum.slice(p2.genes, point1+1..point2)
     slice3 = Enum.slice(p1.genes, point2+1..chromosome_length-1)
     genes = slice1 ++ slice2 ++ slice3
-    %Chromosome{genes: genes}
+    %Chromosome{genes: genes, size: p1.size}
   end
 
   @doc """
@@ -74,7 +74,7 @@ defmodule Genex.Operators.Crossover do
       p1.genes
       |> Enum.zip(p2.genes)
       |> Enum.map(fn {x, y} -> if :rand.uniform < rate do x else y end end)
-    %Chromosome{genes: genes}
+    %Chromosome{genes: genes, size: p1.size}
   end
 
   @doc """
@@ -95,7 +95,7 @@ defmodule Genex.Operators.Crossover do
       p1.genes
       |> Enum.zip(p2.genes)
       |> Enum.map(fn {x, y} -> alpha*x + (1-alpha)*y end)
-    %Chromosome{genes: genes}
+    %Chromosome{genes: genes, size: p1.size}
   end
 
   @doc """
@@ -121,7 +121,7 @@ defmodule Genex.Operators.Crossover do
             0.5 * (((1 + beta) * x) + ((1-beta) * y))
           end
         )
-    %Chromosome{genes: genes}
+    %Chromosome{genes: genes, size: p1.size}
   end
 
   @doc """
@@ -138,10 +138,10 @@ defmodule Genex.Operators.Crossover do
   @spec messy_single_point(Chromosome.t(), Chromosome.t()) :: Chromosome.t()
   def messy_single_point(p1, p2) do
     chromosome_length = length(p1.genes)
-    point = :rand.uniform(chromosome_length)
+    point = if chromosome_length == 0 do 0 else :rand.uniform(chromosome_length) end
     slice1 = Enum.slice(p1.genes, point..chromosome_length)
     slice2 = Enum.slice(p2.genes, point..chromosome_length)
     genes = slice1 ++ slice2
-    %Chromosome{genes: genes}
+    %Chromosome{genes: genes, size: length(genes)}
   end
 end

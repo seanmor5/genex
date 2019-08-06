@@ -24,7 +24,7 @@ defmodule Genex.Operators.Mutation do
     genes =
       chromosome.genes
       |> Enum.map(fn x -> 1 ^^^ x end)
-    %Chromosome{genes: genes}
+    %Chromosome{chromosome | genes: genes}
   end
 
   @doc """
@@ -42,7 +42,7 @@ defmodule Genex.Operators.Mutation do
     genes =
       chromosome.genes
       |> Enum.shuffle()
-    %Chromosome{genes: genes}
+    %Chromosome{chromosome | genes: genes}
   end
 
   @doc """
@@ -60,7 +60,7 @@ defmodule Genex.Operators.Mutation do
     genes =
       chromosome.genes
       |> Enum.reverse()
-    %Chromosome{genes: genes}
+    %Chromosome{chromosome | genes: genes}
   end
 
   @doc """
@@ -88,7 +88,7 @@ defmodule Genex.Operators.Mutation do
             end
           end
         )
-    %Chromosome{genes: genes}
+    %Chromosome{chromosome | genes: genes}
   end
 
   @doc """
@@ -120,7 +120,7 @@ defmodule Genex.Operators.Mutation do
             end
           end
         )
-    %Chromosome{genes: genes}
+    %Chromosome{chromosome | genes: genes}
   end
 
   @doc """
@@ -163,6 +163,6 @@ defmodule Genex.Operators.Mutation do
             min(max(y, low), high)
           end
         )
-    %Chromosome{genes: genes}
+    %Chromosome{chromosome | genes: genes}
   end
 end

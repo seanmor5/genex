@@ -91,7 +91,7 @@ Please see the [documentation](https://hexdocs.pm/genex/Genex.html) for a full l
     - [x] Random Selection
     - [x] Worst Selection
     - [ ] Roulette Selection
-    - [ ] Tournament Selection
+    - [x] Tournament Selection
     - [ ] Stochastic Universal Sampling
     - [ ] Double Tournament Selection
     - [ ] Lexicase

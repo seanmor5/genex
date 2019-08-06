@@ -1,5 +1,5 @@
 defmodule Genex.Operators.Selection do
-  alias Genex.Population
+  alias Genex.Chromosome
 
   @moduledoc """
   Implementation of several popular selection methods.
@@ -14,32 +14,15 @@ defmodule Genex.Operators.Selection do
 
   This will select the `n` best (fittest) chromosomes.
 
-  Returns `Population`.
+  Returns `Enum.t`.
 
   # Parameters
-    - `population`: `Population` struct.
-    - `type`: `:parents` or `:survivors`.
-    - `rate`: `Float` representing survival rate or crossover rate.
+    - `chromosomes`: `Enum` of `Chromosomes`.
+    - `n`: Number of chromosomes to select.
   """
-  def natural(population, rate) do
-    chromosomes = population.chromosomes
-    n = floor(rate * length(chromosomes))
-    parents =
-      chromosomes
-      |> Enum.take(n)
-      |> Enum.chunk_every(2, 1, :discard)
-      |> Enum.map(fn f -> List.to_tuple(f) end)
-    pop = %Population{population | parents: parents}
-    {:ok, pop}
-  end
-  def natural(population) do
-    chromosomes = population.chromosomes
-    n = length(population.chromosomes) - length(population.children)
-    survivors =
-      chromosomes
-      |> Enum.take(n)
-    pop = %Population{population | survivors: survivors}
-    {:ok, pop}
+  def natural(chromosomes, n) do
+    chromosomes
+    |> Enum.take(n)
   end
 
   @doc """
@@ -47,34 +30,16 @@ defmodule Genex.Operators.Selection do
 
   This will select the `n` worst (least fit) chromosomes.
 
-  Returns `Population`.
+  Returns `Enum.t`.
 
   # Parameters
-    - `population`: `Population` struct.
-    - `type`: `:parents` or `:survivors`.
-    - `rate`: `Float` representing survival rate or crossover rate.
+    - `chromosomes`: `Enum` of `Chromosomes`.
+    - `n`: Number of chromosomes to select.
   """
-  def worst(population, rate) do
-    chromosomes = population.chromosomes
-    n = floor(rate * length(chromosomes))
-    parents =
-      chromosomes
-      |> Enum.reverse
-      |> Enum.take(n)
-      |> Enum.chunk_every(2, 1, :discard)
-      |> Enum.map(fn f -> List.to_tuple(f) end)
-    pop = %Population{population | parents: parents}
-    {:ok, pop}
-  end
-  def worst(population) do
-    chromosomes = population.chromosomes
-    n = length(population.chromosomes) - length(population.children)
-    survivors =
-      chromosomes
-      |> Enum.reverse
-      |> Enum.take(n)
-    pop = %Population{population | survivors: survivors}
-    {:ok, pop}
+  def worst(chromosomes, n) do
+    chromosomes
+    |> Enum.reverse
+    |> Enum.take(n)
   end
 
   @doc """
@@ -82,31 +47,37 @@ defmodule Genex.Operators.Selection do
 
   This will select `n` random chromosomes.
 
-  Returns `Population`.
+  Returns `Enum.t`.
 
   # Parameters
-    - `population`: `Population` struct.
-    - `type`: `:parents` or `:survivors`.
-    - `rate`: `Float` representing survival rate or crossover rate.
+    - `chromosomes`: `Enum` of `Chromosomes`.
+    - `n`: Number of chromosomes to select.
   """
-  def random(population, rate) do
-    chromosomes = population.chromosomes
-    n = floor(rate * length(chromosomes))
-    parents =
-      chromosomes
-      |> Enum.take_random(n)
-      |> Enum.chunk_every(2, 1, :discard)
-      |> Enum.map(fn f -> List.to_tuple(f) end)
-    pop = %Population{population | parents: parents}
-    {:ok, pop}
+  def random(chromosomes, n) do
+    chromosomes
+    |> Enum.take_random(n)
   end
-  def random(population) do
-    chromosomes = population.chromosomes
-    n = length(population.chromosomes) - length(population.children)
-    survivors =
-      chromosomes
-      |> Enum.take_random(n)
-    pop = %Population{population | survivors: survivors}
-    {:ok, pop}
+
+  @doc """
+  Tournament selection of some number of chromosomes.
+
+  This will select `n` chromosomes from tournaments of size `k`. We randomly select `k` chromosomes from the population and choose the max to be in the tournament.
+
+  Returns `Enum.t`.
+
+  # Parameters
+    - `chromosomes`: `Enum` of `Chromosomes`.
+    - `n`: Number of chromosomes to select.
+    - `tournsize`: The size of the tournament to run.
+  """
+  def tournament(chromosomes, n, tournsize) do
+    0..n
+    |> Enum.map(
+        fn _ ->
+          chromosomes
+          |> Enum.take_random(tournsize)
+          |> Enum.max_by(&Genex.Chromosome.get_fitness/1)
+        end
+      )
   end
 end
