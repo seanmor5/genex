@@ -1,6 +1,7 @@
 defmodule Genex.Operators.Mutation do
   use Bitwise
   alias Genex.Chromosome
+  import Genex, only: [valid_rate?: 1]
   @moduledoc """
   Implementation of several population mutation methods.
 
@@ -19,8 +20,8 @@ defmodule Genex.Operators.Mutation do
   # Parameters
     - `chromosome`- `Chromosome` to mutate.
   """
-  @spec bit_flip(Chromosome.t(), number()) :: Chromosome.t()
-  def bit_flip(chromosome, radiation) do
+  @spec bit_flip(Chromosome.t(), float()) :: Chromosome.t()
+  def bit_flip(chromosome, radiation) when valid_rate?(radiation) do
     genes =
       chromosome.genes
       |> Enum.map(
@@ -34,6 +35,7 @@ defmodule Genex.Operators.Mutation do
       )
     %Chromosome{chromosome | genes: genes}
   end
+  def bit_flip(_, _), do: raise "Invalid radiation level!"
 
   @doc """
   Perform a scramble mutation.
@@ -45,8 +47,8 @@ defmodule Genex.Operators.Mutation do
   # Parameters
     - `chromosome`- `Chromosome` to mutate.
   """
-  @spec scramble(Chromosome.t(), number()) :: Chromosome.t()
-  def scramble(chromosome, radiation) do
+  @spec scramble(Chromosome.t(), float()) :: Chromosome.t()
+  def scramble(chromosome, radiation) when valid_rate?(radiation) do
     p = floor(chromosome.size * radiation)
     genes =
       if p == chromosome.size-1 do
@@ -62,6 +64,7 @@ defmodule Genex.Operators.Mutation do
       end
     %Chromosome{chromosome | genes: genes}
   end
+  def scramble(_, _), do: raise "Invalid radiation level!"
 
   @doc """
   Perform inversion mutation.
@@ -74,8 +77,8 @@ defmodule Genex.Operators.Mutation do
     - `chromosome`- `Chromosome` to mutate.
     - `radiation`- Aggressiveness of mutation
   """
-  @spec invert(Chromosome.t(), number()) :: Chromosome.t()
-  def invert(chromosome, radiation) do
+  @spec invert(Chromosome.t(), float()) :: Chromosome.t()
+  def invert(chromosome, radiation) when valid_rate?(radiation) do
     p = floor(chromosome.size * radiation)
     genes =
       if p == chromosome.size-1 do
@@ -91,6 +94,7 @@ defmodule Genex.Operators.Mutation do
       end
     %Chromosome{chromosome | genes: genes}
   end
+  def invert(_, _), do: raise "Invalid radiation level!"
 
   @doc """
   Performs uniform integer mutation.
@@ -105,8 +109,8 @@ defmodule Genex.Operators.Mutation do
     - `min`- lower bound
     - `max`- upper bound
   """
-  @spec uniform_integer(Chromosome.t(), number(), integer(), integer()) :: Chromosome.t()
-  def uniform_integer(chromosome, radiation, min, max) do
+  @spec uniform_integer(Chromosome.t(), float(), integer(), integer()) :: Chromosome.t()
+  def uniform_integer(chromosome, radiation, min, max) when valid_rate?(radiation) do
     genes =
       chromosome.genes
       |> Enum.map(
@@ -120,6 +124,7 @@ defmodule Genex.Operators.Mutation do
         )
     %Chromosome{chromosome | genes: genes}
   end
+  def uniform_integer(_, _, _, _), do: raise "Invalid radiation level!"
 
   @doc """
   Performs a gaussian mutation.
@@ -132,8 +137,8 @@ defmodule Genex.Operators.Mutation do
     - `chromosome`- `Chromosome` to mutate.
     - `radiation`- Aggressiveness of mutation.
   """
-  @spec gaussian(Chromosome.t(), number()) :: Chromosome.t()
-  def gaussian(chromosome, radiation) do
+  @spec gaussian(Chromosome.t(), float()) :: Chromosome.t()
+  def gaussian(chromosome, radiation) when valid_rate?(radiation) do
     mu = Enum.sum(chromosome.genes) / length(chromosome.genes)
     sigma =
       chromosome.genes
@@ -168,7 +173,7 @@ defmodule Genex.Operators.Mutation do
     - `low`
     - `high`
   """
-  def polynomial_bounded(chromosome, radiation, eta, low, high) do
+  def polynomial_bounded(chromosome, radiation, eta, low, high) when valid_rate?(radiation) do
     chromosome_length = length(chromosome.genes)
     genes =
       chromosome.genes
@@ -197,4 +202,5 @@ defmodule Genex.Operators.Mutation do
         )
     %Chromosome{chromosome | genes: genes}
   end
+  def polynomial_bounded(_, _, _, _, _), do: raise "Invalid radiation level!"
 end

@@ -529,7 +529,7 @@ defmodule Genex do
        {:ok, pop}
       end
 
-      defp do_parent_selection(population, rate, f, args) do
+      defp do_parent_selection(population, rate, f, args) when is_float(rate) and rate >= 0.0 and rate <= 1.0 do
         chromosomes = population.chromosomes
         n = floor(rate * length(chromosomes))
         parents =
@@ -540,6 +540,7 @@ defmodule Genex do
         pop = %Population{population | parents: parents}
         {:ok, pop}
       end
+      defp do_parent_selection(_, _, _, _), do: raise "Invalid crossover rate!"
 
       defp do_survivor_selection(population, f, args) do
         chromosomes = population.chromosomes
@@ -578,5 +579,7 @@ defmodule Genex do
       ]
     end
   end
+
+  defguard valid_rate?(rate) when is_float(rate) and rate >= 0.0 and rate <= 1.0
 
 end

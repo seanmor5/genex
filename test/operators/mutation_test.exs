@@ -31,7 +31,6 @@ defmodule MutationTest do
 
     test "uniform_integer/3", context do
       new_c = Mutation.uniform_integer(context.c1, @radiation, 0, 1)
-      refute new_c.genes == [0, 0, 1, 1, 1]
       assert length(new_c.genes) == 5
     end
 
