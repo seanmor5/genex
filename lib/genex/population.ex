@@ -17,7 +17,8 @@ defmodule Genex.Population do
     children: Enum.t() | nil,
     size: integer(),
     strongest: Chromosome.t(),
-    history: :digraph.graph()
+    history: :digraph.graph(),
+    statistics: Keyword.t()
   }
 
   @enforce_keys [:chromosomes]
@@ -30,7 +31,8 @@ defmodule Genex.Population do
     children: nil,
     size: 0,
     strongest: nil,
-    history: nil
+    history: nil,
+    statistics: []
   ]
 
   @doc """

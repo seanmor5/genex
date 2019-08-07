@@ -5,6 +5,7 @@ defmodule Genex do
   alias Genex.Operators.Selection
   alias Genex.Population
   alias Genex.Support.Genealogy
+  alias Genex.Support.Statistics
   alias Genex.Visualizers.Text
 
   @moduledoc """
@@ -125,6 +126,11 @@ defmodule Genex do
   Evaluates a population's fitness.
   """
   @callback evaluate(population :: Population.t()) :: number()
+
+  @doc """
+  Specifies the statistics to collect on the population.
+  """
+  @callback statistics :: Keyword.t()
 
   @doc """
   Calculates a Chromosome's fitness.
@@ -253,6 +259,26 @@ defmodule Genex do
       end
 
       @doc """
+      Specifies the statistics to track throughout the algorithm.
+
+      This function should return a Keyword list formatted like:
+        `[stat: &function/1]`
+      All functions should take a list.
+
+      Returns `Keyword.t`.
+      """
+      @spec statistics :: Keyword.t()
+      def statistics do
+        [
+          mean: &Statistics.mean/1,
+          variance: &Statistics.variance/1,
+          stdev: &Statistics.stdev/1,
+          max: &Statistics.max/1,
+          min: &Statistics.min/1
+        ]
+      end
+
+      @doc """
       Life cycle of the genetic algorithm.
 
       This function represents the life cycle loop of the genetic algorithm. By default the steps are:
@@ -280,7 +306,8 @@ defmodule Genex do
                {:ok, population} <- mutate(population),
                {:ok, population} <- select_survivors(population),
                {:ok, population} <- advance(population),
-               {:ok, population} <- evaluate(population) do
+               {:ok, population} <- evaluate(population),
+               {:ok, population} <- do_statistics(population) do
                  cycle(population)
           else
             {:error, reason} -> raise reason
@@ -416,8 +443,8 @@ defmodule Genex do
         with {:ok, population} <- seed(),
              {:ok, population} <- evaluate(population),
              {:ok, population} <- cycle(population) do
-               soln = Population.sort(population)
-               soln
+              soln = Population.sort(population)
+              soln
         else
           {:error, reason} -> raise reason
         end
@@ -476,6 +503,22 @@ defmodule Genex do
         {:ok, pop}
       end
 
+      defp do_statistics(population) do
+        stats =
+          statistics()
+          |> Enum.map(
+              fn {k, v} ->
+                val =
+                  population.chromosomes
+                  |> Enum.map(fn c -> c.fitness end)
+                  |> v.()
+                {:"#{k}", val}
+              end
+            )
+        pop = %Population{population | statistics: stats}
+        {:ok, pop}
+      end
+
       defoverridable [
         select_parents: 1,
         crossover: 1,
@@ -484,7 +527,8 @@ defmodule Genex do
         seed: 0,
         evaluate: 1,
         advance: 1,
-        cycle: 1
+        cycle: 1,
+        statistics: 0
       ]
     end
   end

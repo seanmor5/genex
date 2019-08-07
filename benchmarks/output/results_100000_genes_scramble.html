@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>Benchee Report</title>
+  <meta charset="utf-8">
+  <meta http-equiv="content-type" content="text/html; charset=utf8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/benchee.css">
+    <link rel="stylesheet" type="text/css" href="assets/fontello/css/fontello.css">
+  
+</head>
+
+  <body>
+
+    <div class="header">
+  <h1>benchee report</h1>
+  
+  <span class="input-label">
+    100000 Genes
+  </span>
+
+
+  <span class="version-note">
+  <a href="javascript:toggleSystemDataInfo();" title="Click to toggle system info">System info</a>
+</span>
+
+</div>
+
+
+    <article id="system-info" class="benchee-systeminfo" >
+  <h3>System info</h3>
+  <ul class="benchee-systeminfo-list">
+    <li>Elixir: 1.9.0</li>
+    <li>Erlang: 22.0.4</li>
+    <li>Operating system: Linux</li>
+    <li>Available memory: 3.74 GB</li>
+    <li>CPU Information: Intel(R) Core(TM) i3-3217U CPU @ 1.80GHz</li>
+    <li>Number of Available Cores: 4</li>
+  </ul>
+</article>
+
+
+    
+      <article>
+        <h2>
+          <a name="run_time" href="#run_time">scramble Run Time</a>
+          <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#individual">
+            <i
+              class="benchee-help-icon icon-question-circle-o"
+              title="Graphs showing the individual run time distribution for scramble.
+  Run Times Histogram shows the distribution of occurrences of specific run times in buckets.
+  Raw Run Times shows all individual recorded run times in the order they were recorded in."
+            ></i>
+          </a>
+        </h2>
+
+        <section>
+          <table>
+  <thead>
+    <tr>
+      <th class="text-left">Name</th>
+      
+        <th>Iterations per Second</th>
+      
+      <th>Average</th>
+      <th>Deviation</th>
+      <th>Median</th>
+      <th>Mode</th>
+      <th>Minimum</th>
+      <th>Maximum</th>
+      <th>Sample size</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+      
+      <tr>
+        
+          <td class="text-left">scramble</td>
+        
+        
+          <td>5.74</td>
+          <td>174.31 ms</td>
+          <td>±6.18%</td>
+          <td>171.68 ms</td>
+          <td>none</td>
+          <td>160.51 ms</td>
+          <td>203.20 ms</td>
+        
+        <td>29</td>
+      </tr>
+    
+  </tbody>
+</table>
+
+        </section>
+
+        <section class="benchee-plot-container">
+          <div id="run-times-histogram" class="plot"></div>
+        </section>
+        <section class="benchee-plot-container">
+          <div id="raw-run-times" class="plot"></div>
+        </section>
+      </article>
+    
+
+    
+
+    <footer>
+      <a href="https://github.com/PragTob/benchee" target="blank">benchee version: 1.0.1 </a>
+<br/>
+<a href="https://github.com/PragTob/benchee_html" target="blank">benchee_html version: 1.0.0</a>
+
+
+    </footer>
+
+    
+  <script src="assets/javascripts/plotly-1.30.1.min.js"></script>
+  <script src="assets/javascripts/benchee.js"></script>
+
+
+
+    <script>
+      var scenario = {"name":"scramble","job_name":"scramble","input_name":"100000 Genes","run_time_data":{"statistics":{"absolute_difference":172913288.56921086,"average":174310878.24137932,"ips":5.736876608557021,"maximum":203202636.0,"median":171682319.0,"minimum":160509804.0,"mode":null,"percentiles":{"50":171682319.0,"99":203202636.0},"relative_less":0.008017799498624165,"relative_more":124.72250025354182,"sample_size":29,"std_dev":10770421.53400148,"std_dev_ips":0.3544734556219111,"std_dev_ratio":0.06178857936271192},"samples":[192762990.0,170391816.0,166429086.0,167442438.0,177800570.0,177212130.0,169416782.0,183182815.0,1.705166e8,193899138.0,203202636.0,169194568.0,171796795.0,172542589.0,165714344.0,165609979.0,171189761.0,160509804.0,161710297.0,162370969.0,174447560.0,171682319.0,166453560.0,180333686.0,172731922.0,173379372.0,188829650.0,191361852.0,162899441.0]},"memory_usage_data":{"statistics":{"absolute_difference":null,"average":null,"ips":null,"maximum":null,"median":null,"minimum":null,"mode":null,"percentiles":null,"relative_less":null,"relative_more":null,"sample_size":0,"std_dev":null,"std_dev_ips":null,"std_dev_ratio":null},"samples":[]},"tag":null};
+
+      var inputHeadline = " (100000 Genes)"
+
+      
+        drawRunTimeHistogram(scenario, inputHeadline);
+        drawRawRunTimeChart(scenario, inputHeadline);
+      
+
+      
+    </script>
+  </body>
+</html>
