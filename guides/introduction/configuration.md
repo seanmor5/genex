@@ -2,6 +2,15 @@
 
 Genex offers a number of customization options. This is a comprehensive list.
 
+Configuration options are provided after the `use Genex` line in your module.
+
+```
+defmodule MyGeneticAlgorithm do
+    use Genex, crossover_type: :two_point, mutation_type: :invert
+    ...
+end
+```
+
 ## Defaults
 - `:population_size`: `100`
 - `:crossover_type`: `:single_point`

@@ -13,12 +13,13 @@ large = %Chromosome{genes: g_10000.(), size: 10000}
 xlarge = %Chromosome{genes: g_100000.(), size: 100000}
 xxlarge = %Chromosome{genes: g_1000000.(), size: 1000000}
 
+radiation = 0.5
 Benchee.run(%{
-  "bit_flip" => fn c -> Mutation.bit_flip(c) end,
-  "scramble" => fn c -> Mutation.scramble(c) end,
-  "invert" => fn c -> Mutation.invert(c) end,
-  "gaussian" => fn c -> Mutation.gaussian(c) end,
-  "uniform_integer" => fn c -> Mutation.uniform_integer(c, 1, 10) end
+  "bit_flip" => fn c -> Mutation.bit_flip(c, radiation) end,
+  "scramble" => fn c -> Mutation.scramble(c, radiation) end,
+  "invert" => fn c -> Mutation.invert(c, radiation) end,
+  "gaussian" => fn c -> Mutation.gaussian(c, radiation) end,
+  "uniform_integer" => fn c -> Mutation.uniform_integer(c, radiation, 1, 10) end
   # "polynomial_bounded" => fn c -> Mutation.polynomial_bounded(c, 0.5, 1, 10) end
   },
   formatters: [

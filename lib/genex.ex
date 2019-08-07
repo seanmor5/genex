@@ -138,6 +138,21 @@ defmodule Genex do
   @callback fitness_function(chromosome :: Chromosome.t()) :: number()
 
   @doc """
+  Crossover rate as a function of the population.
+  """
+  @callback crossover_rate(Population.t()) :: number()
+
+  @doc """
+  Mutation rate as a function of the population.
+  """
+  @callback mutation_rate(Population.t()) :: number()
+
+  @doc """
+  Radiation level is affects the "aggressiveness" of mutations.
+  """
+  @callback radiation(Population.t()) :: number()
+
+  @doc """
   Selects a number of individuals for crossover.
   The number of individuals selected depends on the crossover rate. This phase populates the `parent` field of the population struct with a `List` of tuples. Each tuple is a pair of parents to crossover.
   """
@@ -176,11 +191,6 @@ defmodule Genex do
     crossover_type = Keyword.get(opts, :crossover_type, :single_point)
     mutation_type = Keyword.get(opts, :mutation_type, :scramble)
 
-    # Rates
-    crossover_rate = Keyword.get(opts, :crossover_rate, 0.75)
-    mutation_rate = Keyword.get(opts, :mutation_rate, 0.05)
-    mutation_aggressiveness = Keyword.get(opts, :mutation_aggressiveness, 0.5)
-
     # Unique to some algorithms
     uniform_crossover_rate = Keyword.get(opts, :uniform_crossover_rate, nil)
     alpha = Keyword.get(opts, :alpha, nil)
@@ -204,11 +214,6 @@ defmodule Genex do
       @survivor_selection_type unquote(survivor_selection_type)
       @parent_selection_type unquote(parent_selection_type)
 
-      # Rates
-      @crossover_rate unquote(crossover_rate)
-      @mutation_rate unquote(mutation_rate)
-      @mutation_aggressiveness unquote(mutation_aggressiveness)
-
       # Unique Algorithm Parameters
       @uniform_crossover_rate unquote(uniform_crossover_rate)
       @alpha unquote(alpha)
@@ -216,6 +221,46 @@ defmodule Genex do
       @min unquote(lower_bound)
       @max unquote(upper_bound)
       @tournsize unquote(tournsize)
+
+      @doc """
+      Define the crossover rate as a function of `Population`.
+
+      This allows for a changing crossover rate based on population parameters.
+
+      Returns `Number`.
+
+      # Parameters
+        - `population`: `Population` struct.
+      """
+      @spec crossover_rate(Population.t()) :: number()
+      def crossover_rate(_), do: 0.75
+
+      @doc """
+      Define the crossover rate as a function of `Population`.
+
+      This allows for a changing mutation rate based on population parameters.
+
+      Returns `Number`.
+
+      # Parameters
+        - `population`: `Population` struct.
+      """
+      @spec mutation_rate(Population.t()) :: number()
+      def mutation_rate(_), do: 0.05
+
+      @doc """
+      Define the radiation level as a function of `Population`.
+
+      This changes the "aggressiveness" of mutations based on population parameters.
+
+      Returns `Number`.
+
+      # Parameters
+        - `population`: `Population` struct.
+      """
+      @spec radiation(Population.t()) :: number()
+      def radiation(_), do: 0.5
+
       @doc """
       Seed the population with some chromosomes.
 
@@ -328,12 +373,12 @@ defmodule Genex do
       @spec select_parents(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
       def select_parents(population) do
         case @parent_selection_type do
-          :natural    -> do_parent_selection(population, @crossover_rate, &Selection.natural/2, [])
-          :worst      -> do_parent_selection(population, @crossover_rate, &Selection.worst/2, [])
-          :random     -> do_parent_selection(population, @crossover_rate, &Selection.random/2, [])
-          :roulette   -> do_parent_selection(population, @crossover_rate, &Selection.roulette/2, [])
-          :tournament -> do_parent_selection(population, @crossover_rate, &Selection.tournament/3, [@tournsize])
-          :stochastic -> do_parent_selection(population, @crossover_rate, &Selection.stochastic_universal_sampling/2, [])
+          :natural    -> do_parent_selection(population, crossover_rate(population), &Selection.natural/2, [])
+          :worst      -> do_parent_selection(population, crossover_rate(population), &Selection.worst/2, [])
+          :random     -> do_parent_selection(population, crossover_rate(population), &Selection.random/2, [])
+          :roulette   -> do_parent_selection(population, crossover_rate(population), &Selection.roulette/2, [])
+          :tournament -> do_parent_selection(population, crossover_rate(population), &Selection.tournament/3, [@tournsize])
+          :stochastic -> do_parent_selection(population, crossover_rate(population), &Selection.stochastic_universal_sampling/2, [])
           _           -> {:error, "Invalid Selection Type"}
         end
       end
@@ -375,12 +420,12 @@ defmodule Genex do
       @spec mutate(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
       def mutate(population) do
         case @mutation_type do
-          :bit_flip           -> do_mutation(population, &Mutation.bit_flip/1, [])
-          :scramble           -> do_mutation(population, &Mutation.scramble/1, [])
-          :invert             -> do_mutation(population, &Mutation.invert/1, [])
-          :uniform_integer    -> do_mutation(population, &Mutation.uniform_integer/3, [@min, @max])
-          :gaussian           -> do_mutation(population, &Mutation.gaussian/1, [])
-          :polynomial_bounded -> do_mutation(population, &Mutation.polynomial_bounded/4, [@eta, @min, @max])
+          :bit_flip           -> do_mutation(population, &Mutation.bit_flip/1, [radiation(population)])
+          :scramble           -> do_mutation(population, &Mutation.scramble/1, [radiation(population)])
+          :invert             -> do_mutation(population, &Mutation.invert/1, [radiation(population)])
+          :uniform_integer    -> do_mutation(population, &Mutation.uniform_integer/3, [radiation(population), @min, @max])
+          :gaussian           -> do_mutation(population, &Mutation.gaussian/1, [radiation(population)])
+          :polynomial_bounded -> do_mutation(population, &Mutation.polynomial_bounded/4, [radiation(population), @eta, @min, @max])
           :none               -> {:ok, population}
           _                   -> {:error, "Invalid Mutation Type."}
         end
@@ -468,11 +513,12 @@ defmodule Genex do
       end
 
       defp do_mutation(population, f, args) do
+        u = mutation_rate(population)
         chromosomes =
           population.chromosomes
           |> Enum.map(
             fn c ->
-              if :rand.uniform() < @mutation_rate do
+              if :rand.uniform() < u do
                 apply(f, [c] ++ args)
               else
                 c
