@@ -41,7 +41,7 @@ Let's take a closer look at the module, line-by-line.
 
 This is how we tell Elixir we want to implement a Genetic Algorithm using Genex. We didn't include any configuration options. This tells Genex we want to use the defaults.
 
-Please see the [configuration](https://hexdocs.pm/genex/0.1.1/introduction-configuration.html) guide for a list of options and defaults.
+Please see the [configuration](https://hexdocs.pm/genex/introduction-configuration.html) guide for a list of options and defaults.
 
 ### Encoding
 

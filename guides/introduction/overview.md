@@ -16,9 +16,17 @@ The basic outline is:
 
 Genex follows the same basic outline and exposes several helpful methods and configuration options to make writing Genetic Algorithms trivial.
 
+## Configuration
+
+For information on how to configure Genex, please see the [configuration](https://hexdocs.pm/genex/introduction-configuration.html) guide.
+
+## Customization
+
+For information on how to customize Genex, please see the [customization](https://hexdocs.com/genex/introduction-customization.html) guide.
+
 ## Tutorials
 
-- Getting Started
+- [Getting Started](https://hexdocs.pm/genex/tutorials-getting-started.html)
 
 ## Guides
 

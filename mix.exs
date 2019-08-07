@@ -1,7 +1,7 @@
 defmodule Genex.MixProject do
   use Mix.Project
 
-  @version "0.1.1"
+  @version "0.1.2"
   @url "https://www.github.com/seanmor5/genex"
   @maintainers ["Sean Moriarity"]
 
@@ -63,8 +63,14 @@ defmodule Genex.MixProject do
       "guides/introduction/configuration.md": [
         filename: "introduction-configuration"
       ],
+      "guides/introduction/customization.md": [
+        filename: "introduction-customization"
+      ],
       "guides/tutorials/getting-started.md": [
         filename: "tutorials-getting-started"
+      ],
+      "guides/support/statistics.md": [
+        filename: "support-statistics"
       ]
     ]
   end
@@ -72,6 +78,7 @@ defmodule Genex.MixProject do
   defp groups_for_extras do
     [
       Introduction: Path.wildcard("guides/introduction/*.md"),
+      Support: Path.wildcard("guides/support/*.md"),
       Tutorials: Path.wildcard("guides/tutorials/*.md")
     ]
   end

@@ -174,7 +174,6 @@ defmodule Genex.Operators.Mutation do
     - `high`
   """
   def polynomial_bounded(chromosome, radiation, eta, low, high) when valid_rate?(radiation) do
-    chromosome_length = length(chromosome.genes)
     genes =
       chromosome.genes
       |> Enum.map(
@@ -184,17 +183,17 @@ defmodule Genex.Operators.Mutation do
             rand = :rand.uniform()
             mut_pow = 1.0 / (eta + 1)
 
-            {xy, val, delta_q} =
+            delta_q =
               if rand < radiation do
                 a = 1.0 - delta_1
                 b = 2.0 * rand + (1.0 - 2.0 * rand) * :math.pow(a, eta+1)
                 c = :math.pow(b, mut_pow - 1)
-                {a, b, c}
+                c
               else
                 a = 1.0 - delta_2
                 b = 2.0 * rand + (1.0 - 2.0 * rand) * :math.pow(a, eta+1)
                 c = 1.0 - :math.pow(b, mut_pow)
-                {a, b, c}
+                c
               end
             y = x + delta_q * (high - low)
             min(max(y, low), high)

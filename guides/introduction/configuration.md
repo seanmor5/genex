@@ -1,6 +1,8 @@
 # Configuration
 
-Genex offers a number of customization options. This is a comprehensive list.
+Genex offers a number of configuration options. This is a comprehensive list.
+
+To adjust radiation, crossover, and mutation rates, please see the [Customization]() guide.
 
 Configuration options are provided after the `use Genex` line in your module.
 
@@ -17,8 +19,6 @@ end
 - `:parent_selection`: `:natural`
 - `:survivor_selection`: `:natural`
 - `:mutation_type`: `:scramble`
-- `:crossover_rate`: `0.75`
-- `:mutation_rate`: `0.05`
 
 ## `crossover_type`
 
