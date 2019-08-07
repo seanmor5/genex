@@ -420,12 +420,12 @@ defmodule Genex do
       @spec mutate(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
       def mutate(population) do
         case @mutation_type do
-          :bit_flip           -> do_mutation(population, &Mutation.bit_flip/1, [radiation(population)])
-          :scramble           -> do_mutation(population, &Mutation.scramble/1, [radiation(population)])
-          :invert             -> do_mutation(population, &Mutation.invert/1, [radiation(population)])
-          :uniform_integer    -> do_mutation(population, &Mutation.uniform_integer/3, [radiation(population), @min, @max])
-          :gaussian           -> do_mutation(population, &Mutation.gaussian/1, [radiation(population)])
-          :polynomial_bounded -> do_mutation(population, &Mutation.polynomial_bounded/4, [radiation(population), @eta, @min, @max])
+          :bit_flip           -> do_mutation(population, &Mutation.bit_flip/2, [radiation(population)])
+          :scramble           -> do_mutation(population, &Mutation.scramble/2, [radiation(population)])
+          :invert             -> do_mutation(population, &Mutation.invert/2, [radiation(population)])
+          :uniform_integer    -> do_mutation(population, &Mutation.uniform_integer/4, [radiation(population), @min, @max])
+          :gaussian           -> do_mutation(population, &Mutation.gaussian/2, [radiation(population)])
+          :polynomial_bounded -> do_mutation(population, &Mutation.polynomial_bounded/5, [radiation(population), @eta, @min, @max])
           :none               -> {:ok, population}
           _                   -> {:error, "Invalid Mutation Type."}
         end

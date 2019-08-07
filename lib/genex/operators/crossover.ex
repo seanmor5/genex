@@ -26,9 +26,10 @@ defmodule Genex.Operators.Crossover do
   @spec single_point(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
   def single_point(p1, p2) do
     chromosome_length = p1.size
-    point = :rand.uniform(chromosome_length)
-    c1 = Enum.slice(p1.genes, 0..point) ++ Enum.slice(p2.genes, point+1..chromosome_length-1)
-    c2 = Enum.slice(p2.genes, 0..point) ++ Enum.slice(p1.genes, point+1..chromosome_length-1)
+    point = floor(chromosome_length * :rand.uniform())
+    {g1, g2} = Enum.split(p1.genes, point)
+    {g3, g4} = Enum.split(p2.genes, point)
+    {c1, c2} = {g1 ++ g4, g3 ++ g2}
     {%Chromosome{genes: c1, size: p1.size}, %Chromosome{genes: c2, size: p1.size}}
   end
 
