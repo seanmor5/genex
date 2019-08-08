@@ -8,6 +8,7 @@ defmodule GenexTest do
     def encoding, do: for _ <- 1..15, do: Enum.random(0..1)
     def fitness_function(c), do: Enum.sum(c.genes)
     def terminate?(p), do: p.max_fitness == 15
+    def statistics, do: [mean: &Statistics.mean/1]
   end
 
   setup do
@@ -73,6 +74,43 @@ defmodule GenexTest do
       {:ok, pop} = context.impl.select_parents(pop)
       assert {:ok, %Population{} = pop} = context.impl.crossover(pop)
       refute length(pop.children) == 0
+    end
+
+    test "mutation/1", context do
+      {:ok, pop} = context.impl.seed()
+      {:ok, pop} = context.impl.evaluate(pop)
+      {:ok, pop} = context.impl.select_parents(pop)
+      {:ok, pop} = context.impl.crossover(pop)
+      assert {:ok, %Population{} = pop} = context.impl.mutate(pop)
+      refute length(pop.chromosomes) == 0
+    end
+
+    test "select_survivors/1", context do
+      {:ok, pop} = context.impl.seed()
+      {:ok, pop} = context.impl.evaluate(pop)
+      {:ok, pop} = context.impl.select_parents(pop)
+      {:ok, pop} = context.impl.crossover(pop)
+      {:ok, pop} = context.impl.mutate(pop)
+      assert {:ok, %Population{} = pop} = context.impl.select_survivors(pop)
+      refute length(pop.survivors) == 0
+    end
+
+    test "advance/0", context do
+      {:ok, pop} = context.impl.seed()
+      {:ok, pop} = context.impl.evaluate(pop)
+      {:ok, pop} = context.impl.select_parents(pop)
+      {:ok, pop} = context.impl.crossover(pop)
+      {:ok, pop} = context.impl.mutate(pop)
+      {:ok, pop} = context.impl.select_survivors(pop)
+      assert {:ok, %Population{} = pop} = context.impl.advance(pop)
+      assert pop.generation == 1
+      assert pop.survivors == nil
+      assert pop.parents == nil
+      assert pop.children == nil
+    end
+
+    test "statistics/0", context do
+      assert [mean: fun] = context.impl.statistics()
     end
   end
 end

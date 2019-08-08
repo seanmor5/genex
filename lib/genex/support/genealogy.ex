@@ -10,7 +10,7 @@ defmodule Genex.Support.Genealogy do
 
   Returns `Graph`.
   """
-  def init, do: :digraph.new()
+  def init, do: Graph.new(type: :directed)
 
   @doc """
   Updates a Genealogy Tree with just a vertex.
@@ -22,25 +22,46 @@ defmodule Genex.Support.Genealogy do
     - `chromosome` - Chromosome to add to Genealogy.
   """
   def update(genealogy, chromosome) do
-    :digraph.add_vertex(genealogy, chromosome)
     genealogy
+    |> Graph.add_vertex(chromosome)
   end
 
   @doc """
-  Updates a Genealogy Tree with a vertex and it's corresponding parents.
+  Updates a Genealogy Tree with a vertex and it's parents.
 
   Returns `Graph`.
 
   # Parameters
     - `genealogy` - Reference to a Genealogy Tree.
-    - `chromosome` - Chromosome to add to genealogy.
-    - `parent_a` - Parent Chromosome.
-    - `parent_b` - Parent Chromosome.
+    - `child` - Chromosome to add.
+    - `parent_a` - Child's parent.
+    - `parent_b` - Child's parent.
   """
-  def update(genealogy, chromosome, parent_a, parent_b) do
-    :digraph.add_vertex(genealogy, chromosome)
-    :digraph.add_edge(genealogy, parent_a, chromosome)
-    :digraph.add_edge(genealogy, parent_b, chromosome)
+  def update(genealogy, child, parent_a, parent_b) do
     genealogy
+    |> Graph.add_vertex(child)
+    |> Graph.add_edge(parent_a, child)
+    |> Graph.add_edge(parent_b, child)
+  end
+
+  @doc """
+  Add a generation of `Chromosomes` to Genealogy Tree.
+
+  Returns `Graph`.
+
+  # Parameters
+    - `genealogy` - Reference to a Genealogy tree.
+    - `chromosome` - Chromosome to add.
+  """
+  def add_generation(genealogy, chromosomes) do
+    Graph.add_vertices(genealogy, chromosomes)
+  end
+
+  @doc """
+  Exports the genealogy tree.
+  """
+  def export(genealogy) do
+    genealogy
+    |> Graph.Serializers.DOT.serialize()
   end
 end

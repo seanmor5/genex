@@ -1,7 +1,7 @@
 defmodule Genex.MixProject do
   use Mix.Project
 
-  @version "0.1.3"
+  @version "0.1.4"
   @url "https://www.github.com/seanmor5/genex"
   @maintainers ["Sean Moriarity"]
 
@@ -111,7 +111,8 @@ defmodule Genex.MixProject do
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
       {:table_rex, "~> 2.0.0"},
-      {:benchee, "~> 1.0"}
+      {:benchee, "~> 1.0"},
+      {:libgraph, "~> 0.13.0"}
     ]
   end
 

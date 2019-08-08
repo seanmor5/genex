@@ -19,7 +19,6 @@ end
 - `:parent_selection`: `:natural`
 - `:survivor_selection`: `:natural`
 - `:mutation_type`: `:scramble`
-- `track_history?`: `false`
 
 ## `crossover_type`
 

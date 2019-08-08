@@ -1,5 +1,5 @@
 defmodule OneMax do
-  use Genex
+  use Genex, parent_selection: :roulette
 
   def encoding do
     for _ <- 1..15, do: Enum.random(0..1)
@@ -9,5 +9,3 @@ defmodule OneMax do
 
   def terminate?(population), do: population.max_fitness == 15
 end
-
-soln = OneMax.run()

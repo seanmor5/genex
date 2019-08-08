@@ -184,7 +184,6 @@ defmodule Genex do
   defmacro __using__(opts \\ []) do
     # Population
     population_size = Keyword.get(opts, :population_size, 100)
-    track_history? = Keyword.get(opts, :track_history?, false)
 
     # Strategies
     parent_selection_type = Keyword.get(opts, :parent_selection, :natural)
@@ -205,10 +204,10 @@ defmodule Genex do
 
       alias Genex.Chromosome
       alias Genex.Population
+      alias Genex.Support.Statistics
 
       # Population Characteristics
       @population_size unquote(population_size)
-      @track_history? unquote(track_history?)
 
       # Strategies
       @crossover_type unquote(crossover_type)
@@ -277,9 +276,11 @@ defmodule Genex do
           for n <- 1..@population_size do
             g = encoding()
             c = %Chromosome{genes: g, size: length(g)}
-            if @track_history?, do: Genealogy.update(history, c)
             c
           end
+        history =
+          history
+          |> Genealogy.add_generation(chromosomes)
         pop = %Population{chromosomes: chromosomes, size: @population_size, history: history}
         {:ok, pop}
       end
@@ -531,20 +532,19 @@ defmodule Genex do
 
       defp do_crossover(population, f, args) do
         parents = population.parents
-        children =
+        {children, history} =
           parents
-          |> Enum.map(
-            fn {p1, p2} ->
+          |> Enum.reduce({[], population.history},
+            fn {p1, p2}, {chd, his} ->
               {c1, c2} = apply(f, [p1, p2] ++ args)
-              if @track_history? do
-                Genealogy.update(population.history, c1, p1, p2)
-                Genealogy.update(population.history, c2, p1, p2)
-              end
-              [c1, c2]
+              newHis =
+                his
+                |> Genealogy.update(c1, p1, p2)
+                |> Genealogy.update(c1, p1, p2)
+              {[c1 | [c2 | chd]], newHis}
             end
           )
-          |> List.flatten
-        pop = %Population{population | children: children}
+        pop = %Population{population | children: children, history: history}
         {:ok, pop}
       end
 

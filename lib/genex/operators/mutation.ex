@@ -35,7 +35,7 @@ defmodule Genex.Operators.Mutation do
       )
     %Chromosome{chromosome | genes: genes}
   end
-  def bit_flip(_, _), do: raise "Invalid radiation level!"
+  def bit_flip(_, _), do: raise ArgumentError, message: "Invalid radiation level!"
 
   @doc """
   Perform a scramble mutation.
@@ -64,7 +64,7 @@ defmodule Genex.Operators.Mutation do
       end
     %Chromosome{chromosome | genes: genes}
   end
-  def scramble(_, _), do: raise "Invalid radiation level!"
+  def scramble(_, _), do: raise ArgumentError, message: "Invalid radiation level!"
 
   @doc """
   Perform inversion mutation.
@@ -94,7 +94,7 @@ defmodule Genex.Operators.Mutation do
       end
     %Chromosome{chromosome | genes: genes}
   end
-  def invert(_, _), do: raise "Invalid radiation level!"
+  def invert(_, _), do: raise ArgumentError, message: "Invalid radiation level!"
 
   @doc """
   Performs uniform integer mutation.
@@ -124,7 +124,7 @@ defmodule Genex.Operators.Mutation do
         )
     %Chromosome{chromosome | genes: genes}
   end
-  def uniform_integer(_, _, _, _), do: raise "Invalid radiation level!"
+  def uniform_integer(_, _, _, _), do: raise ArgumentError, message: "Invalid radiation level!"
 
   @doc """
   Performs a gaussian mutation.
@@ -158,6 +158,7 @@ defmodule Genex.Operators.Mutation do
         )
     %Chromosome{chromosome | genes: genes}
   end
+  def gaussian(_, _), do: raise ArgumentError, "Invalid radiation level!"
 
   @doc """
   Performs Polynomial Bounded mutation.
@@ -201,5 +202,5 @@ defmodule Genex.Operators.Mutation do
         )
     %Chromosome{chromosome | genes: genes}
   end
-  def polynomial_bounded(_, _, _, _, _), do: raise "Invalid radiation level!"
+  def polynomial_bounded(_, _, _, _, _), do: raise ArgumentError, message: "Invalid radiation level!"
 end
