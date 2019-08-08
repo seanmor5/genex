@@ -23,7 +23,6 @@ Benchee.run(%{
     "stochastic universal sampling" => fn {c, n} -> Selection.stochastic_universal_sampling(c, n) end
   },
   formatters: [
-    {Benchee.Formatters.Markdown, file: "selection.md"},
     Benchee.Formatters.Console
   ],
   inputs: %{

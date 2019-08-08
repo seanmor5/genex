@@ -13,11 +13,11 @@ defmodule Genex.Operators.Crossover do
   """
 
   @doc """
-  Performs single point crossover.
+  Performs single point crossover at a random point.
 
-  This will swap a slice of genes from each chromosome, producing 2 new chromosomes.
+  This will swap a random slice of genes from each chromosome, producing 2 new chromosomes.
 
-  Returns `%Chromosome{}`.
+  Returns `{%Chromosome{}, %Chromosome{}}`.
 
   # Parameters
     - `p1`: Parent One.
@@ -26,17 +26,57 @@ defmodule Genex.Operators.Crossover do
   @spec single_point(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
   def single_point(p1, p2) do
     chromosome_length = p1.size
-    point = floor(chromosome_length * :rand.uniform())
-    {g1, g2} = Enum.split(p1.genes, point)
-    {g3, g4} = Enum.split(p2.genes, point)
-    {c1, c2} = {g1 ++ g4, g3 ++ g2}
-    {%Chromosome{genes: c1, size: p1.size}, %Chromosome{genes: c2, size: p1.size}}
+    point = :rand.uniform(chromosome_length)
+    single_point(p1, p2, point)
   end
 
   @doc """
-  Performs two-point crossover.
+  Performs single point crossover at a known point.
 
-  This will swap multiple slices of genes from each chromosome, producing 2 new chromosomes.
+  This will swap a known slice of genes from each chromosome, producing 2 new chromosomes.
+
+  Returns `{%Chromosome{}, %Chromosome{}}`.
+
+  # Parameters
+    - `p1`: Parent One.
+    - `p2`: Parent Two.
+    - `point`: Slice to swap.
+
+  # Examples
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> c2 = %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}
+      iex> single_point(c1, c2, 2)
+      {%#{Chromosome}{genes: [1, 2, 8, 9, 10], size: 5}, %#{Chromosome}{genes: [6, 7, 3, 4, 5], size: 5}}
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> c2 = %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}
+      iex> single_point(c1, c2, 10)
+      {%#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}, %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}}
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> c2 = %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}
+      iex> single_point(c1, c2, 0)
+      {%#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}, %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}}
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> c2 = %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}
+      iex> single_point(c1, c2, -5)
+      {%#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}, %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}}
+  """
+  @spec single_point(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
+  def single_point(p1, p2, point) when point <= 0, do:
+    {%Chromosome{genes: p1.genes, size: p1.size}, %Chromosome{genes: p2.genes, size: p2.size}}
+  def single_point(p1, p2, point) do
+    {g1, g2} = Enum.split(p1.genes, point)
+    {g3, g4} = Enum.split(p2.genes, point)
+    {c1, c2} = {g1 ++ g4, g3 ++ g2}
+    {%Chromosome{genes: c1, size: length(c1)}, %Chromosome{genes: c2, size: length(c2)}}
+  end
+  @doc """
+  Performs two-point crossover at a random point.
+
+  This will swap two random slices of genes from each chromosome, producing 2 new chromosomes.
 
   Returns `%Chromosome{}`.
 
@@ -44,7 +84,7 @@ defmodule Genex.Operators.Crossover do
     - `p1`: Parent One.
     - `p2`: Parent Two.
   """
-  @spec two_point(Chromosome.t(), Chromosome.t()) :: Chromosome.t()
+  @spec two_point(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
   def two_point(p1, p2) do
     chromosome_length = p1.size
     a = :rand.uniform(chromosome_length-1)
@@ -52,16 +92,53 @@ defmodule Genex.Operators.Crossover do
     point1 = if b >= a do a else b end
     point2 = if b >= a do b+1 else a end
     # Split
-    {slice1, rem1} = Enum.split(p1.genes, point1)
-    {slice2, rem2} = Enum.split(p2.genes, point1)
-    {slice3, rem3} = Enum.split(rem1, point2-point1)
-    {slice4, rem4} = Enum.split(rem2, point2-point1)
+    two_point(p1, p2, point1, point2)
+  end
+
+  @doc """
+  Performs two-point crossover at a known point.
+
+  This will swap a known slice of genes from each chromosome, producing 2 new chromosomes.
+
+  Returns `{%Chromosome{}, %Chromosome{}}`.
+
+  # Parameters
+    - `p1`: Parent One.
+    - `p2`: Parent Two.
+    - `first`: First Split Point.
+    - `second`: Second Split Point.
+
+  # Examples
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> c2 = %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}
+      iex> two_point(c1, c2, 1, 3)
+      {%#{Chromosome}{genes: [1, 7, 8, 4, 5], size: 5}, %#{Chromosome}{genes: [6, 2, 3, 9, 10], size: 5}}
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> c2 = %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}
+      iex> two_point(c1, c2, 10, 3)
+      {%#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}, %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}}
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> c2 = %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}
+      iex> two_point(c1, c2, -3, 3)
+      {%#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}, %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}}
+  """
+  @spec two_point(Chromosome.t(), Chromosome.t(), integer(), integer()) :: {Chromosome.t(), Chromosome.t()}
+  def two_point(p1, p2, first, second) when first < 0 or second < 0, do:
+    {%Chromosome{genes: p1.genes, size: p1.size}, %Chromosome{genes: p2.genes, size: p2.size}}
+  def two_point(p1, p2, first, second) do
+    {slice1, rem1} = Enum.split(p1.genes, first)
+    {slice2, rem2} = Enum.split(p2.genes, first)
+    {slice3, rem3} = Enum.split(rem1, second-first)
+    {slice4, rem4} = Enum.split(rem2, second-first)
     {c1, c2} =
       {
         slice1 ++ slice4 ++ rem3,
         slice2 ++ slice3 ++ rem4
       }
-    {%Chromosome{genes: c1, size: p1.size}, %Chromosome{genes: c2, size: p1.size}}
+    {%Chromosome{genes: c1, size: length(c1)}, %Chromosome{genes: c2, size: length(c2)}}
   end
 
   @doc """
@@ -91,14 +168,14 @@ defmodule Genex.Operators.Crossover do
 
   This will blend genes according to some alpha between 0 and 1. If alpha=.5, the resulting chromosomes will be identical to one another.
 
-  Returns `Chromosome`.
+  Returns `{%Chromosome{}, %Chromosome{}}`.
 
   # Parameters
     - `p1`: Parent one.
     - `p2`: Parent two.
     - `alpha`: `Float` between 0 and 1 representing percentage of each parent to blend into children.
   """
-  @spec blend(Chromosome.t(), Chromosome.t(), float()) :: Chromosome.t()
+  @spec blend(Chromosome.t(), Chromosome.t(), float()) :: {Chromosome.t(), Chromosome.t()}
   def blend(p1, p2, alpha) do
     {c1, c2} =
       p1.genes
@@ -119,14 +196,14 @@ defmodule Genex.Operators.Crossover do
   @doc """
   Performs a simulated binary crossover.
 
-  Returns `Chromosome`.
+  Returns `{%Chromosome{}, %Chromosome{}}`.
 
   # Parameters
     - `p1`: Parent one.
     - `p2`: Parent two.
     - `eta`: `Float`
   """
-  @spec simulated_binary(Chromosome.t(), Chromosome.t(), number()) :: Chromosome.t()
+  @spec simulated_binary(Chromosome.t(), Chromosome.t(), number()) :: {Chromosome.t(), Chromosome.t()}
   def simulated_binary(p1, p2, eta) do
     {c1, c2} =
       p1.genes
@@ -147,31 +224,66 @@ defmodule Genex.Operators.Crossover do
   end
 
   @doc """
-  Performs a messy single point crossover.
+  Performs a messy single point crossover at random points.
 
   This crossover disregards the length of the chromosome and will often arbitrarily increase or decrease it's size.
 
-  Returns `Chromosome`.
+  Returns `{%Chromosome{}, %Chromosome{}}`.
 
   # Parameters
     - `p1`: Parent one.
     - `p2`: Parent two.
   """
-  @spec messy_single_point(Chromosome.t(), Chromosome.t()) :: Chromosome.t()
+  @spec messy_single_point(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
   def messy_single_point(p1, p2) do
     chromosome_length = length(p1.genes)
-    point = if chromosome_length == 0 do 0 else :rand.uniform(chromosome_length) end
-    {c1, c2} = {
-      Enum.slice(p1.genes, 0..point)
-      ++ Enum.slice(p2.genes, 0..point),
-      Enum.slice(p1.genes, point..chromosome_length-1)
-      ++ Enum.slice(p1.genes, point..chromosome_length-1)
-    }
+    point1 = if chromosome_length == 0, do: 0, else: :rand.uniform(chromosome_length)
+    point2 = if chromosome_length == 0, do: 0, else: :rand.uniform(chromosome_length)
+    messy_single_point(p1, p2, point1, point2)
+  end
+
+  @doc """
+  Performs a messy single point crossover at known points.
+
+  This crossover disregards the length of the chromosome and will often arbitrarily increase or decrease it's size.
+
+  Returns `{%Chromosome{}, %Chromosome{}}`.
+
+  # Parameters
+    - `p1`: Parent one.
+    - `p2`: Parent two.
+    - `point1`: `p1` split point.
+    - `point2`: `p2` split point.
+
+  # Examples
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> c2 = %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}
+      iex> messy_single_point(c1, c2, 2, 4)
+      {%#{Chromosome}{genes: [1, 2, 10], size: 3}, %#{Chromosome}{genes: [6, 7, 8, 9, 3, 4, 5], size: 7}}
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> c2 = %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}
+      iex> messy_single_point(c1, c2, 0, 10)
+      {%#{Chromosome}{genes: [], size: 0}, %#{Chromosome}{genes: [6, 7, 8, 9, 10, 1, 2, 3, 4, 5], size: 10}}
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> c2 = %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}
+      iex> messy_single_point(c1, c2, -2, 3)
+      {%#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}, %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}}
+  """
+  @spec messy_single_point(Chromosome.t(), Chromosome.t(), integer(), integer()) :: {Chromosome.t(), Chromosome.t()}
+  def messy_single_point(p1, p2, point1, point2) when point1 < 0 or point2 < 0, do:
+    {%Chromosome{genes: p1.genes, size: 5}, %Chromosome{genes: p2.genes, size: 5}}
+  def messy_single_point(p1, p2, point1, point2) do
+    {g1, g2} = Enum.split(p1.genes, point1)
+    {g3, g4} = Enum.split(p2.genes, point2)
+    {c1, c2} = {g1 ++ g4, g3 ++ g2}
     {%Chromosome{genes: c1, size: length(c1)}, %Chromosome{genes: c2, size: length(c2)}}
   end
 
   @doc """
-  Performs Davis Order crossover.
+  Performs Davis Order crossover of a random slice.
 
   Returns `Chromosome`.
 

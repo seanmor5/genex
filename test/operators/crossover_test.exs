@@ -1,5 +1,6 @@
 defmodule CrossoverTest do
   use ExUnit.Case
+  doctest Genex.Operators.Crossover, import: true
 
   alias Genex.Chromosome
   alias Genex.Operators.Crossover

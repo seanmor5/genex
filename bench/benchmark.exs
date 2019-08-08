@@ -1,5 +1,5 @@
 defmodule OneMax do
-  use Genex
+  use Genex, population_size: 10_000
 
   def encoding, do: for _ <- 1..100, do: Enum.random(0..1)
 

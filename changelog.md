@@ -1,3 +1,8 @@
+# v0.1.2
+- Bug fixes
+- Added population statistics
+- Crossover rate and mutation rate implemented as functions
+
 # v0.1.4
 - Bug fixes
 - 3.51x Performance Improvement in single_point crossover
