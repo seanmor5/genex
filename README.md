@@ -8,6 +8,10 @@
 
 This library is inspired by Python's [DEAP](https://github.com/deap/deap).
 
+## Documentation
+
+Documentation is available at [https://hexdocs.pm/genex/introduction-overview.html](https://hexdocs.pm/genex/introduction-overview.html)
+
 ## Installation
 
 The package can be installed by adding `genex` to your list of dependencies in `mix.exs`.
@@ -22,11 +26,7 @@ end
 
 ## Usage
 
-Genex works by making transformations on a `Population`.
-
-The simplest way to use Genex is by including it in one of your modules with default parameters.
-
-It requires you to implement 3 functions: `encoding/0`, `fitness_function/1`, `terminate?/1`.
+Genex requires an implementation module with 3 functions: `encoding/0`, `fitness_function/1`, and `terminate?/1`.
 
 ```elixir
 defmodule OneMax do
@@ -42,28 +42,42 @@ defmodule OneMax do
 end
 ```
 
-Your algorithm can then be run by calling the `run/0` method Genex provides.
+Now, run `iex -S mix`.
 
-## Visualization
-
-Genex currently offers text visualization of populations. To view a summary of the solution your algorithm produced simply do:
-```elixir
-soln = OneMax.run()
-Genex.Visualizers.Text.display_summary(soln)
+Then:
+```
+  iex> OneMax.run()
 ```
 
-## Genealogy
+## Features
 
-Genex comes with an implementation of a Genealogy tree using an Erlang digraph. The tree is available in the `history` field of the `Population` struct. As of this version of Genex, there are no pre-packaged genealogy visualizers. You'll have to find a third-party solution.
+Genex strives to be as simple and customizable as possible. Along with the ability to customize EVERY step of your Genetic algorithm, Genex comes with the following features:
 
-## Configuration
+- 6 Selection Operators
+- 7 Crossover Operators
+- 6 Mutation Operators
+- Customizable Population Statistics
+- Customizable Benchmarking of Algorithms
+- Exportable Genealogy Tree
+- Flexible Encoding of Chromosomes
+- Simple Text Visualizations
 
-Genex can be configured like so:
-```elixir
-def MyGA do
-    use Genex, crossover_type: :two_point, crossover_rate: 0.5
-    ...
-end
+## Benchmarks
+
+To run benchmarks, clone this repo. In the `genex` directory run:
+
+```
+mix run bench/benchmarks.exs
 ```
 
-Please see the [documentation](https://hexdocs.pm/genex/tutorials-getting-started.html#content) for a full list of configuration options.
+You can also run the individual benchmarks available in the `bench/` directory. This will take some time!
+
+## Contributing
+
+If you have any problems with Genex, please open an issue! If you have a fix for an issue, submit a pull request.
+
+## Roadmap
+
+The next phase of this library will involve extensive performance improvements. Most of the algorithms involve processing very large lists. This is an ideal job for a NIF.
+
+If anybody has any experience writing NIFs or writing algorithms for processing large lists, [email me](smoriarity.5@gmail.com) to get involved!

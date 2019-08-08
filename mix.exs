@@ -1,7 +1,7 @@
 defmodule Genex.MixProject do
   use Mix.Project
 
-  @version "0.1.4"
+  @version "0.2.0"
   @url "https://www.github.com/seanmor5/genex"
   @maintainers ["Sean Moriarity"]
 
@@ -74,6 +74,9 @@ defmodule Genex.MixProject do
       ],
       "guides/support/benchmarking.md": [
         filename: "support-benchmarking"
+      ],
+      "guides/support/genealogy.md": [
+        filename: "support-genealogy"
       ]
     ]
   end

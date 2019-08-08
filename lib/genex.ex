@@ -705,7 +705,8 @@ defmodule Genex do
                      evaluate: 1,
                      advance: 1,
                      cycle: 1,
-                     statistics: 0
+                     statistics: 0,
+                     benchmark: 0
     end
   end
 

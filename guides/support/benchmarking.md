@@ -1,5 +1,23 @@
 # Benchmarking
 
-Genex offers benchmarking capabilities to benchmark your algorithm. You can benchmark each step of your algorithm by calling the `benchmark/0` function after you have defined an implementation module.
+Genex offers the ability to benchmark your application through the use of `benchmark/0`. This function will use [Benchee](https://hex.pm/packages/benchee) to benchmark the runtime of each of the functions in your Genetic algorithm.
 
-Please note, this option will NOT work if `track_history?` is set to `true`. This has something to do with the fact that Erlang's `digraph` can only be written to by the process that owns it and `Benchee` runs in it's own process. Please bear with us as we attempt to fix this issue.
+The current benchmark function simply runs each function using `Benchee.run/0` with default settings. The output will display in your console.
+
+## Customization
+
+There are many reasons you'd want to customize the benchmarking features of Genex. Perhaps you prefer another benchmarking tool or you want to only benchmark one function. Regardless, Genex makes this all possible.
+
+You can customize the benchmarking features by overriding the `benchmark/0` function in your implementation module. You can then utilize your own benchmarking module or package, or change the settings of passed to Benchee.
+
+```
+defmodule MyGA do
+    use Genex
+    ...
+    def benchmark do
+        Benchee.run(%{
+            "seed/0" => fn -> seed() end
+        })
+    end
+end
+```

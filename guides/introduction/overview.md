@@ -1,6 +1,6 @@
 # Overview
 
-Genex is a framework for writing Genetic Algorithms in Elixir. It provides methods and implementations for each step in a Genetic Algorithm.
+Genex is a framework for writing Genetic Algorithms in Elixir. It provides methods and implementations mirroring each step in a typical Genetic Algorithm.
 
 ## Genetic Algorithms
 

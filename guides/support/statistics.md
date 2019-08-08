@@ -11,7 +11,7 @@ By default Genex will collect the following information on a population during e
 - max via `Statistics.max/1`
 - min via `Statistics.min/1`
 
-## Customizing
+## Customization
 
 You can customize the statistics collected on the population with your own methods by overriding the `statistics/0` function in your implementation module. Your function must return a `Keyword` list where the key represents the statistic and the value is a reference to the function you want to run.
 
