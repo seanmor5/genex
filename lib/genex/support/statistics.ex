@@ -22,6 +22,7 @@ defmodule Genex.Support.Statistics do
       0
   """
   def mean([]), do: 0
+
   def mean(list) do
     list
     |> Enum.sum()
@@ -47,6 +48,7 @@ defmodule Genex.Support.Statistics do
       0
   """
   def variance([]), do: 0
+
   def variance(list) do
     avg = mean(list)
     size = length(list)
@@ -80,6 +82,7 @@ defmodule Genex.Support.Statistics do
       0
   """
   def stdev([]), do: 0
+
   def stdev(list) do
     :math.sqrt(variance(list))
   end
