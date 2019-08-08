@@ -71,6 +71,9 @@ defmodule Genex.MixProject do
       ],
       "guides/support/statistics.md": [
         filename: "support-statistics"
+      ],
+      "guides/support/benchmarking.md": [
+        filename: "support-benchmarking"
       ]
     ]
   end
