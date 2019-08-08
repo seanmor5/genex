@@ -80,4 +80,4 @@ If you have any problems with Genex, please open an issue! If you have a fix for
 
 The next phase of this library will involve extensive performance improvements. Most of the algorithms involve processing very large lists. This is an ideal job for a NIF.
 
-If anybody has any experience writing NIFs or writing algorithms for processing large lists, [email me](smoriarity.5@gmail.com) to get involved!
+If anybody has any experience writing NIFs or writing algorithms for processing large lists, [email me](mailto:smoriarity.5@gmail.com) to get involved!
