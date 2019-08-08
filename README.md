@@ -3,6 +3,8 @@
 > Genex makes it easy to write Genetic Algorithms with Elixir.
 
 [![Build Status](https://travis-ci.org/seanmor5/genex.svg?branch=master)](https://travis-ci.org/seanmor5/genex)
+[![Coverage Status](https://coveralls.io/repos/github/seanmor5/genex/badge.svg?branch=master)](https://coveralls.io/github/seanmor5/genex?branch=master)
+[![Hex Version](https://img.shields.io/hexpm/v/genex)](https://hex.pm/packages/genex/0.1.4)
 
 This library is inspired by Python's [DEAP](https://github.com/deap/deap).
 
