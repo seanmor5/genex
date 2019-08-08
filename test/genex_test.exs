@@ -5,7 +5,7 @@ defmodule GenexTest do
 
   defmodule Impl do
     use Genex
-    def encoding, do: for _ <- 1..15, do: Enum.random(0..1)
+    def encoding, do: for(_ <- 1..15, do: Enum.random(0..1))
     def fitness_function(c), do: Enum.sum(c.genes)
     def terminate?(p), do: p.max_fitness == 15
     def statistics, do: [mean: &Statistics.mean/1]
@@ -25,6 +25,7 @@ defmodule GenexTest do
       impl: Impl
     ]
   end
+
   describe "chromosome" do
     test "get_fitness/1" do
       c1 = %Chromosome{genes: [1, 2, 3], fitness: 6}
@@ -46,6 +47,7 @@ defmodule GenexTest do
         %Chromosome{genes: [0, 0, 1, 0, 1], fitness: 2, size: 5},
         %Chromosome{genes: [0, 0, 0, 0, 1], fitness: 1, size: 5}
       ]
+
       sorted = Population.sort(context.pop)
       refute context.pop.chromosomes == sorted_chromosomes
       assert sorted.chromosomes == sorted_chromosomes

@@ -2,6 +2,7 @@ defmodule SelectionTest do
   use ExUnit.Case
   alias Genex.Operators.Selection
   alias Genex.Chromosome
+
   setup do
     [
       pop: [

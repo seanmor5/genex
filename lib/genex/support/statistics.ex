@@ -28,13 +28,15 @@ defmodule Genex.Support.Statistics do
   def variance(list) do
     avg = mean(list)
     size = length(list)
+
     list
-    |> Enum.reduce(0,
-        fn x, total ->
-          total + :math.pow(x - avg, 2)
-        end
-        )
-    |> Kernel./(size-1)
+    |> Enum.reduce(
+      0,
+      fn x, total ->
+        total + :math.pow(x - avg, 2)
+      end
+    )
+    |> Kernel./(size - 1)
   end
 
   @doc """

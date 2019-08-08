@@ -27,7 +27,7 @@ defmodule Genex.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test
-      ],
+      ]
     ]
   end
 
@@ -93,11 +93,9 @@ defmodule Genex.MixProject do
         Genex.Operators.Mutation,
         Genex.Operators.Selection
       ],
-
       Support: [
         Genex.Support.Genealogy
       ],
-
       Structures: [
         Genex.Population,
         Genex.Chromosome

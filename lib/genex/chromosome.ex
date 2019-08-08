@@ -1,5 +1,6 @@
 defmodule Genex.Chromosome do
   alias __MODULE__, as: Chromosome
+
   @moduledoc """
   A collection of genes.
 
@@ -7,11 +8,11 @@ defmodule Genex.Chromosome do
   """
 
   @type t :: %Chromosome{
-    genes: Enum.t,
-    fitness: number(),
-    size: integer(),
-    age: integer()
-  }
+          genes: Enum.t(),
+          fitness: number(),
+          size: integer(),
+          age: integer()
+        }
 
   @enforce_keys [:genes]
   defstruct [:genes, fitness: 0, size: 0, age: 0]

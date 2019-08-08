@@ -156,7 +156,8 @@ defmodule Genex do
   Selects a number of individuals for crossover.
   The number of individuals selected depends on the crossover rate. This phase populates the `parent` field of the population struct with a `List` of tuples. Each tuple is a pair of parents to crossover.
   """
-  @callback select_parents(population :: Population.t()) :: {:ok, Population.t()} | {:error, any()}
+  @callback select_parents(population :: Population.t()) ::
+              {:ok, Population.t()} | {:error, any()}
 
   @doc """
   Crossover a number of individuals to create a new population.
@@ -174,12 +175,13 @@ defmodule Genex do
   Select a number of individuals to survive to the next generation.
   The number of individuals depends on the survival rate. This phase populates the `survivors` field of the population struct with a `List` of `Chromosomes`.
   """
-  @callback select_survivors(population :: Population.t()) :: {:ok, Population.t()} | {:error, any()}
+  @callback select_survivors(population :: Population.t()) ::
+              {:ok, Population.t()} | {:error, any()}
 
   @doc """
   Tests the population for some termination criteria.
   """
-  @callback terminate?(population :: Population.t) :: boolean()
+  @callback terminate?(population :: Population.t()) :: boolean()
 
   defmacro __using__(opts \\ []) do
     # Population
@@ -272,15 +274,18 @@ defmodule Genex do
       @spec seed :: {:ok, Chromosome.t()}
       def seed do
         history = Genealogy.init()
+
         chromosomes =
           for n <- 1..@population_size do
             g = encoding()
             c = %Chromosome{genes: g, size: length(g)}
             c
           end
+
         history =
           history
           |> Genealogy.add_generation(chromosomes)
+
         pop = %Population{chromosomes: chromosomes, size: @population_size, history: history}
         {:ok, pop}
       end
@@ -300,8 +305,16 @@ defmodule Genex do
         chromosomes =
           population.chromosomes
           |> Enum.map(fn c -> %Chromosome{c | fitness: fitness_function(c)} end)
+
         strongest = Enum.max_by(chromosomes, &Chromosome.get_fitness/1)
-        pop = %Population{population | chromosomes: chromosomes, strongest: strongest, max_fitness: strongest.fitness}
+
+        pop = %Population{
+          population
+          | chromosomes: chromosomes,
+            strongest: strongest,
+            max_fitness: strongest.fitness
+        }
+
         {:ok, pop}
       end
 
@@ -348,6 +361,7 @@ defmodule Genex do
           {:ok, population}
         else
           Text.display_summary(population)
+
           with {:ok, population} <- select_parents(population),
                {:ok, population} <- crossover(population),
                {:ok, population} <- mutate(population),
@@ -355,7 +369,7 @@ defmodule Genex do
                {:ok, population} <- advance(population),
                {:ok, population} <- evaluate(population),
                {:ok, population} <- do_statistics(population) do
-                 cycle(population)
+            cycle(population)
           else
             {:error, reason} -> raise reason
           end
@@ -375,13 +389,33 @@ defmodule Genex do
       @spec select_parents(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
       def select_parents(population) do
         case @parent_selection_type do
-          :natural    -> do_parent_selection(population, crossover_rate(population), &Selection.natural/2, [])
-          :worst      -> do_parent_selection(population, crossover_rate(population), &Selection.worst/2, [])
-          :random     -> do_parent_selection(population, crossover_rate(population), &Selection.random/2, [])
-          :roulette   -> do_parent_selection(population, crossover_rate(population), &Selection.roulette/2, [])
-          :tournament -> do_parent_selection(population, crossover_rate(population), &Selection.tournament/3, [@tournsize])
-          :stochastic -> do_parent_selection(population, crossover_rate(population), &Selection.stochastic_universal_sampling/2, [])
-          _           -> {:error, "Invalid Selection Type"}
+          :natural ->
+            do_parent_selection(population, crossover_rate(population), &Selection.natural/2, [])
+
+          :worst ->
+            do_parent_selection(population, crossover_rate(population), &Selection.worst/2, [])
+
+          :random ->
+            do_parent_selection(population, crossover_rate(population), &Selection.random/2, [])
+
+          :roulette ->
+            do_parent_selection(population, crossover_rate(population), &Selection.roulette/2, [])
+
+          :tournament ->
+            do_parent_selection(population, crossover_rate(population), &Selection.tournament/3, [
+              @tournsize
+            ])
+
+          :stochastic ->
+            do_parent_selection(
+              population,
+              crossover_rate(population),
+              &Selection.stochastic_universal_sampling/2,
+              []
+            )
+
+          _ ->
+            {:error, "Invalid Selection Type"}
         end
       end
 
@@ -398,14 +432,14 @@ defmodule Genex do
       @spec crossover(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
       def crossover(population) do
         case @crossover_type do
-          :single_point       -> do_crossover(population, &Crossover.single_point/2, [])
-          :two_point          -> do_crossover(population, &Crossover.two_point/2, [])
-          :uniform            -> do_crossover(population, &Crossover.uniform/3, [@uniform_crossover_rate])
-          :blend              -> do_crossover(population, &Crossover.blend/3, [@alpha])
-          :simulated_binary   -> do_crossover(population, &Crossover.simulated_binary/3, [@eta])
+          :single_point -> do_crossover(population, &Crossover.single_point/2, [])
+          :two_point -> do_crossover(population, &Crossover.two_point/2, [])
+          :uniform -> do_crossover(population, &Crossover.uniform/3, [@uniform_crossover_rate])
+          :blend -> do_crossover(population, &Crossover.blend/3, [@alpha])
+          :simulated_binary -> do_crossover(population, &Crossover.simulated_binary/3, [@eta])
           :messy_single_point -> do_crossover(population, &Crossover.messy_single_point/2, [])
-          :davis_order        -> do_crossover(population, &Crossover.davis_order/2, [])
-          _                   -> {:error, "Invalid Crossover Type."}
+          :davis_order -> do_crossover(population, &Crossover.davis_order/2, [])
+          _ -> {:error, "Invalid Crossover Type."}
         end
       end
 
@@ -422,14 +456,38 @@ defmodule Genex do
       @spec mutate(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
       def mutate(population) do
         case @mutation_type do
-          :bit_flip           -> do_mutation(population, &Mutation.bit_flip/2, [radiation(population)])
-          :scramble           -> do_mutation(population, &Mutation.scramble/2, [radiation(population)])
-          :invert             -> do_mutation(population, &Mutation.invert/2, [radiation(population)])
-          :uniform_integer    -> do_mutation(population, &Mutation.uniform_integer/4, [radiation(population), @min, @max])
-          :gaussian           -> do_mutation(population, &Mutation.gaussian/2, [radiation(population)])
-          :polynomial_bounded -> do_mutation(population, &Mutation.polynomial_bounded/5, [radiation(population), @eta, @min, @max])
-          :none               -> {:ok, population}
-          _                   -> {:error, "Invalid Mutation Type."}
+          :bit_flip ->
+            do_mutation(population, &Mutation.bit_flip/2, [radiation(population)])
+
+          :scramble ->
+            do_mutation(population, &Mutation.scramble/2, [radiation(population)])
+
+          :invert ->
+            do_mutation(population, &Mutation.invert/2, [radiation(population)])
+
+          :uniform_integer ->
+            do_mutation(population, &Mutation.uniform_integer/4, [
+              radiation(population),
+              @min,
+              @max
+            ])
+
+          :gaussian ->
+            do_mutation(population, &Mutation.gaussian/2, [radiation(population)])
+
+          :polynomial_bounded ->
+            do_mutation(population, &Mutation.polynomial_bounded/5, [
+              radiation(population),
+              @eta,
+              @min,
+              @max
+            ])
+
+          :none ->
+            {:ok, population}
+
+          _ ->
+            {:error, "Invalid Mutation Type."}
         end
       end
 
@@ -446,13 +504,26 @@ defmodule Genex do
       @spec select_survivors(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
       def select_survivors(population) do
         case @survivor_selection_type do
-          :natural    -> do_survivor_selection(population, &Selection.natural/2, [])
-          :worst      -> do_survivor_selection(population, &Selection.worst/2, [])
-          :random     -> do_survivor_selection(population, &Selection.random/2, [])
-          :roulette   -> do_survivor_selection(population, &Selection.roulette/2, [])
-          :tournament -> do_survivor_selection(population, &Selection.tournament/3, [@tournsize])
-          :stochastic -> do_survivor_selection(population, &Selection.stochastic_universal_sampling/2, [])
-          _           -> {:error, "Invalid Selection Type"}
+          :natural ->
+            do_survivor_selection(population, &Selection.natural/2, [])
+
+          :worst ->
+            do_survivor_selection(population, &Selection.worst/2, [])
+
+          :random ->
+            do_survivor_selection(population, &Selection.random/2, [])
+
+          :roulette ->
+            do_survivor_selection(population, &Selection.roulette/2, [])
+
+          :tournament ->
+            do_survivor_selection(population, &Selection.tournament/3, [@tournsize])
+
+          :stochastic ->
+            do_survivor_selection(population, &Selection.stochastic_universal_sampling/2, [])
+
+          _ ->
+            {:error, "Invalid Selection Type"}
         end
       end
 
@@ -468,13 +539,25 @@ defmodule Genex do
       """
       @spec advance(Population.t()) :: {:ok, Population.t()}
       def advance(population) do
-        generation = population.generation+1
+        generation = population.generation + 1
+
         survivors =
           population.survivors
-          |> Enum.map(fn c -> %Chromosome{c | age: c.age+1} end)
+          |> Enum.map(fn c -> %Chromosome{c | age: c.age + 1} end)
+
         chromosomes = survivors ++ population.children
         size = length(chromosomes)
-        pop = %Population{population | size: size, chromosomes: chromosomes, generation: generation, children: nil, parents: nil, survivors: nil}
+
+        pop = %Population{
+          population
+          | size: size,
+            chromosomes: chromosomes,
+            generation: generation,
+            children: nil,
+            parents: nil,
+            survivors: nil
+        }
+
         {:ok, pop}
       end
 
@@ -488,11 +571,12 @@ defmodule Genex do
       @spec run :: Population.t()
       def run do
         Text.init()
+
         with {:ok, population} <- seed(),
              {:ok, population} <- evaluate(population),
              {:ok, population} <- cycle(population) do
-              soln = Population.sort(population)
-              soln
+          soln = Population.sort(population)
+          soln
         else
           {:error, reason} -> raise reason
         end
@@ -516,6 +600,7 @@ defmodule Genex do
         {:ok, survivor_pop} = select_survivors(mutated_pop)
         genes = encoding()
         c = %Chromosome{genes: genes, size: length(genes)}
+
         Benchee.run(%{
           "encoding/0" => fn -> encoding() end,
           "seed/0" => fn -> seed() end,
@@ -527,56 +612,66 @@ defmodule Genex do
           "mutate/1" => fn -> mutate(child_pop) end,
           "select_survivors/1" => fn -> select_survivors(mutated_pop) end
         })
+
         :ok
       end
 
       defp do_crossover(population, f, args) do
         parents = population.parents
+
         {children, history} =
           parents
-          |> Enum.reduce({[], population.history},
+          |> Enum.reduce(
+            {[], population.history},
             fn {p1, p2}, {chd, his} ->
               {c1, c2} = apply(f, [p1, p2] ++ args)
+
               newHis =
                 his
                 |> Genealogy.update(c1, p1, p2)
                 |> Genealogy.update(c1, p1, p2)
+
               {[c1 | [c2 | chd]], newHis}
             end
           )
+
         pop = %Population{population | children: children, history: history}
         {:ok, pop}
       end
 
       defp do_mutation(population, f, args) do
         u = mutation_rate(population)
+
         chromosomes =
           population.chromosomes
-          |> Enum.map(
-            fn c ->
-              if :rand.uniform() < u do
-                apply(f, [c] ++ args)
-              else
-                c
-              end
+          |> Enum.map(fn c ->
+            if :rand.uniform() < u do
+              apply(f, [c] ++ args)
+            else
+              c
             end
-          )
-       pop = %Population{population | chromosomes: chromosomes}
-       {:ok, pop}
+          end)
+
+        pop = %Population{population | chromosomes: chromosomes}
+        {:ok, pop}
       end
 
-      defp do_parent_selection(population, rate, f, args) when is_float(rate) and rate >= 0.0 and rate <= 1.0 do
+      defp do_parent_selection(population, rate, f, args)
+           when is_float(rate) and rate >= 0.0 and rate <= 1.0 do
         chromosomes = population.chromosomes
         n = floor(rate * length(chromosomes))
+
         parents =
           f
           |> apply([chromosomes, n] ++ args)
           |> Enum.chunk_every(2, 2, :discard)
           |> Enum.map(fn f -> List.to_tuple(f) end)
+
         pop = %Population{population | parents: parents}
         {:ok, pop}
       end
-      defp do_parent_selection(_, _, _, _), do: raise "Invalid crossover rate!"
+
+      defp do_parent_selection(_, _, _, _), do: raise("Invalid crossover rate!")
 
       defp do_survivor_selection(population, f, args) do
         chromosomes = population.chromosomes
@@ -589,33 +684,30 @@ defmodule Genex do
       defp do_statistics(population) do
         stats =
           statistics()
-          |> Enum.map(
-              fn {k, v} ->
-                val =
-                  population.chromosomes
-                  |> Enum.map(fn c -> c.fitness end)
-                  |> v.()
-                {:"#{k}", val}
-              end
-            )
+          |> Enum.map(fn {k, v} ->
+            val =
+              population.chromosomes
+              |> Enum.map(fn c -> c.fitness end)
+              |> v.()
+
+            {:"#{k}", val}
+          end)
+
         pop = %Population{population | statistics: stats}
         {:ok, pop}
       end
 
-      defoverridable [
-        select_parents: 1,
-        crossover: 1,
-        mutate: 1,
-        select_survivors: 1,
-        seed: 0,
-        evaluate: 1,
-        advance: 1,
-        cycle: 1,
-        statistics: 0
-      ]
+      defoverridable select_parents: 1,
+                     crossover: 1,
+                     mutate: 1,
+                     select_survivors: 1,
+                     seed: 0,
+                     evaluate: 1,
+                     advance: 1,
+                     cycle: 1,
+                     statistics: 0
     end
   end
 
   defguard valid_rate?(rate) when is_float(rate) and rate >= 0.0 and rate <= 1.0
-
 end

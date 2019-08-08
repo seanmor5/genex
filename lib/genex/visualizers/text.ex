@@ -9,10 +9,12 @@ defmodule Genex.Visualizers.Text do
   def init do
     title = "Genetic Algorithm"
     header = ["Generation", "Size", "Max Fitness", "Strongest"]
+
     rows = [
       [0, 0, 0, ""],
       [0, 0, 0, ""]
     ]
+
     IO.write(TableRex.quick_render!(rows, header, title))
   end
 
@@ -22,8 +24,9 @@ defmodule Genex.Visualizers.Text do
   def display_summary(population) do
     title = "Genetic Algorithm"
     header = ["Generation", "Size", "Max Fitness", "Strongest"]
+
     rows = [
-      [population.generation, population.size, population.max_fitness, population.strongest],
+      [population.generation, population.size, population.max_fitness, population.strongest]
     ]
 
     IO.ANSI.cursor_up(7)

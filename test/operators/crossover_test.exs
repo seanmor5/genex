@@ -14,7 +14,9 @@ defmodule CrossoverTest do
 
   describe "crossover methods" do
     test "single_point/2", context do
-      assert {%Chromosome{} = c1, %Chromosome{} = c2} = Crossover.single_point(context.p1, context.p2)
+      assert {%Chromosome{} = c1, %Chromosome{} = c2} =
+               Crossover.single_point(context.p1, context.p2)
+
       assert length(c1.genes) == 10
       assert length(c2.genes) == 10
     end
@@ -26,29 +28,38 @@ defmodule CrossoverTest do
     end
 
     test "uniform/2", context do
-      assert {%Chromosome{} = c1, %Chromosome{} = c2} = Crossover.uniform(context.p1, context.p2, 0.5)
+      assert {%Chromosome{} = c1, %Chromosome{} = c2} =
+               Crossover.uniform(context.p1, context.p2, 0.5)
+
       assert length(c1.genes) == 10
       assert length(c2.genes) == 10
     end
 
     test "blend/2", context do
-      assert {%Chromosome{} = c1, %Chromosome{} = c2} = Crossover.blend(context.p1, context.p2, 0.5)
+      assert {%Chromosome{} = c1, %Chromosome{} = c2} =
+               Crossover.blend(context.p1, context.p2, 0.5)
+
       assert length(c1.genes) == 10
       assert length(c2.genes) == 10
     end
 
     test "simulated_binary/2", context do
-      assert {%Chromosome{} = c1, %Chromosome{} = c2} = Crossover.simulated_binary(context.p1, context.p2, 0.5)
+      assert {%Chromosome{} = c1, %Chromosome{} = c2} =
+               Crossover.simulated_binary(context.p1, context.p2, 0.5)
+
       assert length(c1.genes) == 10
       assert length(c2.genes) == 10
     end
 
     test "messy_single_point/2", context do
-      assert {%Chromosome{} = c1, %Chromosome{} = c2} = Crossover.messy_single_point(context.p1, context.p2)
+      assert {%Chromosome{} = c1, %Chromosome{} = c2} =
+               Crossover.messy_single_point(context.p1, context.p2)
     end
 
     test "davis_order/2", context do
-      assert {%Chromosome{} = c1, %Chromosome{} = c2} = Crossover.davis_order(context.p1, context.p2)
+      assert {%Chromosome{} = c1, %Chromosome{} = c2} =
+               Crossover.davis_order(context.p1, context.p2)
+
       assert length(c1.genes) == 10
       assert length(c2.genes) == 10
     end

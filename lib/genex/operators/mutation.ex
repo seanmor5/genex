@@ -2,6 +2,7 @@ defmodule Genex.Operators.Mutation do
   use Bitwise
   alias Genex.Chromosome
   import Genex, only: [valid_rate?: 1]
+
   @moduledoc """
   Implementation of several population mutation methods.
 
@@ -24,18 +25,18 @@ defmodule Genex.Operators.Mutation do
   def bit_flip(chromosome, radiation) when valid_rate?(radiation) do
     genes =
       chromosome.genes
-      |> Enum.map(
-        fn x ->
-          if :rand.uniform > radiation do
-            1 ^^^ x
-          else
-            x
-          end
+      |> Enum.map(fn x ->
+        if :rand.uniform() > radiation do
+          1 ^^^ x
+        else
+          x
         end
-      )
+      end)
+
     %Chromosome{chromosome | genes: genes}
   end
-  def bit_flip(_, _), do: raise ArgumentError, message: "Invalid radiation level!"
+
+  def bit_flip(_, _), do: raise(ArgumentError, message: "Invalid radiation level!")
 
   @doc """
   Perform a scramble mutation.
@@ -50,21 +51,25 @@ defmodule Genex.Operators.Mutation do
   @spec scramble(Chromosome.t(), float()) :: Chromosome.t()
   def scramble(chromosome, radiation) when valid_rate?(radiation) do
     p = floor(chromosome.size * radiation)
+
     genes =
-      if p == chromosome.size-1 do
+      if p == chromosome.size - 1 do
         chromosome.genes
         |> Enum.shuffle()
       else
         {head, tail} =
           chromosome.genes
           |> Enum.split(p)
+
         head
         |> Enum.shuffle()
         |> Kernel.++(tail)
       end
+
     %Chromosome{chromosome | genes: genes}
   end
-  def scramble(_, _), do: raise ArgumentError, message: "Invalid radiation level!"
+
+  def scramble(_, _), do: raise(ArgumentError, message: "Invalid radiation level!")
 
   @doc """
   Perform inversion mutation.
@@ -80,21 +85,25 @@ defmodule Genex.Operators.Mutation do
   @spec invert(Chromosome.t(), float()) :: Chromosome.t()
   def invert(chromosome, radiation) when valid_rate?(radiation) do
     p = floor(chromosome.size * radiation)
+
     genes =
-      if p == chromosome.size-1 do
+      if p == chromosome.size - 1 do
         chromosome.genes
         |> Enum.reverse()
       else
         {head, tail} =
           chromosome.genes
           |> Enum.split(p)
+
         head
         |> Enum.reverse()
         |> Kernel.++(tail)
       end
+
     %Chromosome{chromosome | genes: genes}
   end
-  def invert(_, _), do: raise ArgumentError, message: "Invalid radiation level!"
+
+  def invert(_, _), do: raise(ArgumentError, message: "Invalid radiation level!")
 
   @doc """
   Performs uniform integer mutation.
@@ -113,18 +122,18 @@ defmodule Genex.Operators.Mutation do
   def uniform_integer(chromosome, radiation, min, max) when valid_rate?(radiation) do
     genes =
       chromosome.genes
-      |> Enum.map(
-          fn x ->
-            if :rand.uniform() < radiation do
-              Enum.random(min..max)
-            else
-              x
-            end
-          end
-        )
+      |> Enum.map(fn x ->
+        if :rand.uniform() < radiation do
+          Enum.random(min..max)
+        else
+          x
+        end
+      end)
+
     %Chromosome{chromosome | genes: genes}
   end
-  def uniform_integer(_, _, _, _), do: raise ArgumentError, message: "Invalid radiation level!"
+
+  def uniform_integer(_, _, _, _), do: raise(ArgumentError, message: "Invalid radiation level!")
 
   @doc """
   Performs a gaussian mutation.
@@ -140,25 +149,27 @@ defmodule Genex.Operators.Mutation do
   @spec gaussian(Chromosome.t(), float()) :: Chromosome.t()
   def gaussian(chromosome, radiation) when valid_rate?(radiation) do
     mu = Enum.sum(chromosome.genes) / length(chromosome.genes)
+
     sigma =
       chromosome.genes
       |> Enum.map(fn x -> (mu - x) * (mu - x) end)
       |> Enum.sum()
       |> Kernel./(length(chromosome.genes))
+
     genes =
       chromosome.genes
-      |> Enum.map(
-          fn x ->
-            if :rand.uniform() < radiation do
-              :rand.normal(mu, sigma)
-            else
-              x
-            end
-          end
-        )
+      |> Enum.map(fn x ->
+        if :rand.uniform() < radiation do
+          :rand.normal(mu, sigma)
+        else
+          x
+        end
+      end)
+
     %Chromosome{chromosome | genes: genes}
   end
-  def gaussian(_, _), do: raise ArgumentError, "Invalid radiation level!"
+
+  def gaussian(_, _), do: raise(ArgumentError, "Invalid radiation level!")
 
   @doc """
   Performs Polynomial Bounded mutation.
@@ -177,30 +188,32 @@ defmodule Genex.Operators.Mutation do
   def polynomial_bounded(chromosome, radiation, eta, low, high) when valid_rate?(radiation) do
     genes =
       chromosome.genes
-      |> Enum.map(
-          fn x ->
-            delta_1 = (x - low) / (high - low)
-            delta_2 = (high - x) / (high - low)
-            rand = :rand.uniform()
-            mut_pow = 1.0 / (eta + 1)
+      |> Enum.map(fn x ->
+        delta_1 = (x - low) / (high - low)
+        delta_2 = (high - x) / (high - low)
+        rand = :rand.uniform()
+        mut_pow = 1.0 / (eta + 1)
 
-            delta_q =
-              if rand < radiation do
-                a = 1.0 - delta_1
-                b = 2.0 * rand + (1.0 - 2.0 * rand) * :math.pow(a, eta+1)
-                c = :math.pow(b, mut_pow - 1)
-                c
-              else
-                a = 1.0 - delta_2
-                b = 2.0 * rand + (1.0 - 2.0 * rand) * :math.pow(a, eta+1)
-                c = 1.0 - :math.pow(b, mut_pow)
-                c
-              end
-            y = x + delta_q * (high - low)
-            min(max(y, low), high)
+        delta_q =
+          if rand < radiation do
+            a = 1.0 - delta_1
+            b = 2.0 * rand + (1.0 - 2.0 * rand) * :math.pow(a, eta + 1)
+            c = :math.pow(b, mut_pow - 1)
+            c
+          else
+            a = 1.0 - delta_2
+            b = 2.0 * rand + (1.0 - 2.0 * rand) * :math.pow(a, eta + 1)
+            c = 1.0 - :math.pow(b, mut_pow)
+            c
           end
-        )
+
+        y = x + delta_q * (high - low)
+        min(max(y, low), high)
+      end)
+
     %Chromosome{chromosome | genes: genes}
   end
-  def polynomial_bounded(_, _, _, _, _), do: raise ArgumentError, message: "Invalid radiation level!"
+
+  def polynomial_bounded(_, _, _, _, _),
+    do: raise(ArgumentError, message: "Invalid radiation level!")
 end

@@ -38,7 +38,7 @@ defmodule Genex.Operators.Selection do
   @spec worst(Enum.t(), integer()) :: Enum.t()
   def worst(chromosomes, n) do
     chromosomes
-    |> Enum.reverse
+    |> Enum.reverse()
     |> Enum.take(n)
   end
 
@@ -73,14 +73,12 @@ defmodule Genex.Operators.Selection do
   """
   @spec tournament(Enum.t(), integer(), integer()) :: Enum.t()
   def tournament(chromosomes, n, tournsize) do
-    0..n-1
-    |> Enum.map(
-        fn _ ->
-          chromosomes
-          |> Enum.take_random(tournsize)
-          |> Enum.max_by(&Genex.Chromosome.get_fitness/1)
-        end
-      )
+    0..(n - 1)
+    |> Enum.map(fn _ ->
+      chromosomes
+      |> Enum.take_random(tournsize)
+      |> Enum.max_by(&Genex.Chromosome.get_fitness/1)
+    end)
   end
 
   @doc """
@@ -98,23 +96,24 @@ defmodule Genex.Operators.Selection do
   def roulette(chromosomes, n) do
     sum_fitness =
       chromosomes
-      |> Enum.reduce(0, fn x, acc -> acc+x.fitness end)
-    0..n-1
-    |> Enum.map(
-        fn _ ->
-          u = :rand.uniform() * sum_fitness
-          chromosomes
-          |> Enum.reduce_while(0,
-              fn x, sum ->
-                if x.fitness+sum > u do
-                  {:halt, x}
-                else
-                  {:cont, x.fitness+sum}
-                end
-              end
-            )
+      |> Enum.reduce(0, fn x, acc -> acc + x.fitness end)
+
+    0..(n - 1)
+    |> Enum.map(fn _ ->
+      u = :rand.uniform() * sum_fitness
+
+      chromosomes
+      |> Enum.reduce_while(
+        0,
+        fn x, sum ->
+          if x.fitness + sum > u do
+            {:halt, x}
+          else
+            {:cont, x.fitness + sum}
+          end
         end
       )
+    end)
   end
 
   @doc """
@@ -132,24 +131,25 @@ defmodule Genex.Operators.Selection do
   def stochastic_universal_sampling(chromosomes, n) do
     sum_fitness =
       chromosomes
-      |> Enum.reduce(0, fn x, acc -> acc+x.fitness end)
+      |> Enum.reduce(0, fn x, acc -> acc + x.fitness end)
+
     p = sum_fitness / n
     start = p * :rand.uniform()
-    pointers = for i <- 0..n-1, do: start + i*p
+    pointers = for i <- 0..(n - 1), do: start + i * p
+
     pointers
-    |> Enum.map(
-        fn x ->
-          chromosomes
-          |> Enum.reduce_while(0,
-              fn y, sum ->
-                if y.fitness+sum >= x do
-                  {:halt, y}
-                else
-                  {:cont, y.fitness+sum}
-                end
-              end
-            )
+    |> Enum.map(fn x ->
+      chromosomes
+      |> Enum.reduce_while(
+        0,
+        fn y, sum ->
+          if y.fitness + sum >= x do
+            {:halt, y}
+          else
+            {:cont, y.fitness + sum}
+          end
         end
       )
+    end)
   end
 end

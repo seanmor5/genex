@@ -9,9 +9,10 @@
 - 2.35x Performance Improvement in two_point crossover
 - Addition of `benchmark/0` function to benchmark your algorithm
 
-# v0.1.5
+# v0.2.0
 - Changed to `libgraph` for Genealogy tree.
 - Added ability to export graph as DOT file.
 - Removed `track_history?` flag.
-- Added 17 Tests
+- Added 17 Tests, Plus Doctests
 - Fixed Variance bug
+- Added methods WITHOUT random variables to verify validity of operator algorithms.
