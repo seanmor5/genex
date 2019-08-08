@@ -51,12 +51,16 @@ defmodule Genex.Operators.Crossover do
     b = :rand.uniform(chromosome_length-2)
     point1 = if b >= a do a else b end
     point2 = if b >= a do b+1 else a end
-    c1 = Enum.slice(p1.genes, 0..point1) ++
-          Enum.slice(p2.genes, point1+1..point2) ++
-          Enum.slice(p1.genes, point2+1..chromosome_length-1)
-    c2 = Enum.slice(p2.genes, 0..point1) ++
-          Enum.slice(p1.genes, point1+1..point2) ++
-          Enum.slice(p2.genes, point2+1..chromosome_length-1)
+    # Split
+    {slice1, rem1} = Enum.split(p1.genes, point1)
+    {slice2, rem2} = Enum.split(p2.genes, point1)
+    {slice3, rem3} = Enum.split(rem1, point2-point1)
+    {slice4, rem4} = Enum.split(rem2, point2-point1)
+    {c1, c2} =
+      {
+        slice1 ++ slice4 ++ rem3,
+        slice2 ++ slice3 ++ rem4
+      }
     {%Chromosome{genes: c1, size: p1.size}, %Chromosome{genes: c2, size: p1.size}}
   end
 

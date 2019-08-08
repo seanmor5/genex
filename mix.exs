@@ -1,7 +1,7 @@
 defmodule Genex.MixProject do
   use Mix.Project
 
-  @version "0.1.2"
+  @version "0.1.3"
   @url "https://www.github.com/seanmor5/genex"
   @maintainers ["Sean Moriarity"]
 
@@ -107,11 +107,8 @@ defmodule Genex.MixProject do
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
-      {:inch_ex, ">= 0.0.0", only: :docs},
-      {:benchee, "~> 1.0", only: :dev},
-      {:benchee_html, "~> 1.0", only: :dev},
-      {:dialyxir, "~> 1.0.0-rc.6", only: [:dev], runtime: false},
-      {:table_rex, "~> 2.0.0"}
+      {:table_rex, "~> 2.0.0"},
+      {:benchee, "~> 1.0"}
     ]
   end
 

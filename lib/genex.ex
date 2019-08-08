@@ -184,6 +184,7 @@ defmodule Genex do
   defmacro __using__(opts \\ []) do
     # Population
     population_size = Keyword.get(opts, :population_size, 100)
+    track_history? = Keyword.get(opts, :track_history?, false)
 
     # Strategies
     parent_selection_type = Keyword.get(opts, :parent_selection, :natural)
@@ -207,6 +208,7 @@ defmodule Genex do
 
       # Population Characteristics
       @population_size unquote(population_size)
+      @track_history? unquote(track_history?)
 
       # Strategies
       @crossover_type unquote(crossover_type)
@@ -270,13 +272,12 @@ defmodule Genex do
       """
       @spec seed :: {:ok, Chromosome.t()}
       def seed do
-        Text.init()
         history = Genealogy.init()
         chromosomes =
           for n <- 1..@population_size do
             g = encoding()
             c = %Chromosome{genes: g, size: length(g)}
-            Genealogy.update(history, c)
+            if @track_history?, do: Genealogy.update(history, c)
             c
           end
         pop = %Population{chromosomes: chromosomes, size: @population_size, history: history}
@@ -485,6 +486,7 @@ defmodule Genex do
       """
       @spec run :: Population.t()
       def run do
+        Text.init()
         with {:ok, population} <- seed(),
              {:ok, population} <- evaluate(population),
              {:ok, population} <- cycle(population) do
@@ -495,6 +497,38 @@ defmodule Genex do
         end
       end
 
+      @doc """
+      Benchmark your genetic algorithm.
+
+      This function will benchmark every function defined in your Genetic Algorithm.
+
+      Returns `:ok`.
+      """
+      @spec benchmark :: :ok
+      def benchmark do
+        IO.write("Benchmarking your algorith. This may take awhile...\n")
+        {:ok, init_pop} = seed()
+        {:ok, evaluated_pop} = evaluate(init_pop)
+        {:ok, parent_pop} = select_parents(evaluated_pop)
+        {:ok, child_pop} = crossover(parent_pop)
+        {:ok, mutated_pop} = mutate(child_pop)
+        {:ok, survivor_pop} = select_survivors(mutated_pop)
+        genes = encoding()
+        c = %Chromosome{genes: genes, size: length(genes)}
+        Benchee.run(%{
+          "encoding/0" => fn -> encoding() end,
+          "seed/0" => fn -> seed() end,
+          "fitness_function/1" => fn -> fitness_function(c) end,
+          "terminate?/1" => fn -> terminate?(survivor_pop) end,
+          "evaluate/1" => fn -> evaluate(init_pop) end,
+          "select_parents/1" => fn -> select_parents(evaluated_pop) end,
+          "crossover/1" => fn -> crossover(parent_pop) end,
+          "mutate/1" => fn -> mutate(child_pop) end,
+          "select_survivors/1" => fn -> select_survivors(mutated_pop) end
+        })
+        :ok
+      end
+
       defp do_crossover(population, f, args) do
         parents = population.parents
         children =
@@ -502,8 +536,10 @@ defmodule Genex do
           |> Enum.map(
             fn {p1, p2} ->
               {c1, c2} = apply(f, [p1, p2] ++ args)
-              Genealogy.update(population.history, c1, p1, p2)
-              Genealogy.update(population.history, c2, p1, p2)
+              if @track_history? do
+                Genealogy.update(population.history, c1, p1, p2)
+                Genealogy.update(population.history, c2, p1, p2)
+              end
               [c1, c2]
             end
           )
