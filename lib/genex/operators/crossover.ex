@@ -321,13 +321,13 @@ defmodule Genex.Operators.Crossover do
   @doc """
   Performs Davis Order crossover of a random slice.
 
-  Returns `Chromosome`.
+  Returns `{%Chromosome{}, %Chromosome{}}`.
 
   # Parameters
     - `p1`: Parent one.
     - `p2`: Parent two.
   """
-  @spec davis_order(Chromosome.t(), Chromosome.t()) :: Chromosome.t()
+  @spec davis_order(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
   def davis_order(p1, p2) do
     {a, b} = {:rand.uniform(p1.size - 1), :rand.uniform(p1.size - 2)}
     point1 = if b >= a, do: a, else: b

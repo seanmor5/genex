@@ -41,42 +41,54 @@ defmodule Genex.Operators.Mutation do
   @doc """
   Perform a scramble mutation.
 
-  This mutation shuffles the genes of the Chromosome.
+  This mutation shuffles the genes of the Chromosome between 2 random points.
 
-  Returns `Chromosome`.
+  Returns `%Chromosome{}`.
 
   # Parameters
-    - `chromosome`- `Chromosome` to mutate.
+    - `chromosome`: `Chromosome` to mutate.
+    - `radiation`: Aggressiveness of the mutation.
   """
   @spec scramble(Chromosome.t(), float()) :: Chromosome.t()
   def scramble(chromosome, radiation) when valid_rate?(radiation) do
-    p = floor(chromosome.size * radiation)
-
-    genes =
-      if p == chromosome.size - 1 do
-        chromosome.genes
-        |> Enum.shuffle()
-      else
-        {head, tail} =
-          chromosome.genes
-          |> Enum.split(p)
-
-        head
-        |> Enum.shuffle()
-        |> Kernel.++(tail)
-      end
-
-    %Chromosome{chromosome | genes: genes}
+    chromosome_length = chromosome.size
+    num_to_scramble = floor(radiation * chromosome_length)
+    point = if chromosome_length == 0, do: 0, else: :rand.uniform(chromosome_length)
+    scramble(chromosome, point, point + num_to_scramble)
   end
 
   def scramble(_, _), do: raise(ArgumentError, message: "Invalid radiation level!")
 
   @doc """
-  Perform inversion mutation.
+  Performs a scramble mutation of a known slice.
 
-  This mutation reverses (inverts) the genes of the Chromosome.
+  This mutation shuffles the genes of a Chromosome between 2 known points.
 
-  Returns `Chromosome`.
+  # Parameters
+    - `chromosome`: `Chromosome` to mutate.
+    - `start`: First scramble point.
+    - `finish`: Second scramble point.
+
+  # Examples
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> scramble(c1, 10, 4)
+      %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+  """
+  @spec scramble(Chromosome.t(), integer(), integer()) :: Chromosome.t()
+  def scramble(chromosome, start, finish) do
+    {head, slice} = Enum.split(chromosome.genes, start)
+    {slice, tail} = Enum.split(slice, finish - start)
+    genes = head ++ Enum.shuffle(slice) ++ tail
+    %Chromosome{chromosome | genes: genes}
+  end
+
+  @doc """
+  Perform inversion mutation on a random slice.
+
+  This mutation reverses (inverts) a random slice of genes of the Chromosome.
+
+  Returns `%Chromosome{}`.
 
   # Parameters
     - `chromosome`- `Chromosome` to mutate.
@@ -84,26 +96,47 @@ defmodule Genex.Operators.Mutation do
   """
   @spec invert(Chromosome.t(), float()) :: Chromosome.t()
   def invert(chromosome, radiation) when valid_rate?(radiation) do
-    p = floor(chromosome.size * radiation)
-
-    genes =
-      if p == chromosome.size - 1 do
-        chromosome.genes
-        |> Enum.reverse()
-      else
-        {head, tail} =
-          chromosome.genes
-          |> Enum.split(p)
-
-        head
-        |> Enum.reverse()
-        |> Kernel.++(tail)
-      end
-
-    %Chromosome{chromosome | genes: genes}
+    chromosome_length = chromosome.size
+    point = if chromosome_length == 0, do: 0, else: :rand.uniform(chromosome_length)
+    num_to_invert = floor(radiation * chromosome_length)
+    invert(chromosome, point, point + num_to_invert)
   end
 
   def invert(_, _), do: raise(ArgumentError, message: "Invalid radiation level!")
+
+  @doc """
+  Perform inversion mutation on a known slice.
+
+  This mutation reverses (inverts) a known slice of genes of the Chromosome.
+
+  Returns `%Chromosome{}`.
+
+  # Parameters
+    - `chromosome`: `Chromosome` to mutate.
+    - `start`: Start of slice.
+    - `finish`: End of slice.
+
+  # Examples
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> invert(c1, 2, 4)
+      %#{Chromosome}{genes: [1, 2, 4, 3, 5], size: 5}
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> invert(c1, 10, 3)
+      %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+
+      iex> c1 = %#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}
+      iex> invert(c1, 0, 10)
+      %#{Chromosome}{genes: [5, 4, 3, 2, 1], size: 5}
+  """
+  @spec invert(Chromosome.t(), integer(), integer()) :: Chromosome.t()
+  def invert(chromosome, start, finish) do
+    {head, slice} = Enum.split(chromosome.genes, start)
+    {slice, tail} = Enum.split(slice, finish - start)
+    genes = head ++ Enum.reverse(slice) ++ tail
+    %Chromosome{chromosome | genes: genes}
+  end
 
   @doc """
   Performs uniform integer mutation.

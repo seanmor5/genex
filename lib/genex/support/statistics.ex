@@ -10,7 +10,18 @@ defmodule Genex.Support.Statistics do
 
   # Parameters
     - `list`: List of values.
+
+  # Examples
+
+      iex> list = [1, 2, 3, 4, 5]
+      iex> mean(list)
+      3.0
+
+      iex> list = []
+      iex> mean(list)
+      0
   """
+  def mean([]), do: 0
   def mean(list) do
     list
     |> Enum.sum()
@@ -24,7 +35,18 @@ defmodule Genex.Support.Statistics do
 
   # Parameters
     - `list`: List of values.
+
+  # Examples
+
+      iex> list = [0, 1, 1, 1]
+      iex> variance(list)
+      0.25
+
+      iex> list = []
+      iex> variance(list)
+      0
   """
+  def variance([]), do: 0
   def variance(list) do
     avg = mean(list)
     size = length(list)
@@ -46,7 +68,18 @@ defmodule Genex.Support.Statistics do
 
   # Parameters
     - `list`: List of values.
+
+  # Examples
+
+      iex> list = [0, 1, 1, 1]
+      iex> stdev(list)
+      0.5
+
+      iex> list = []
+      iex> stdev(list)
+      0
   """
+  def stdev([]), do: 0
   def stdev(list) do
     :math.sqrt(variance(list))
   end
@@ -58,7 +91,18 @@ defmodule Genex.Support.Statistics do
 
   # Parameters
     - `list`: List of values.
+
+  # Examples
+
+      iex> list = [1, 2, 3, 4, 5]
+      iex> min(list)
+      1
+
+      iex> list = []
+      iex> min(list)
+      nil
   """
+  def min([]), do: nil
   def min(list), do: Enum.min(list)
 
   @doc """
@@ -68,6 +112,17 @@ defmodule Genex.Support.Statistics do
 
   # Parameters
     - `list`: List of values.
+
+  # Examples
+
+      iex> list = [1, 2, 3, 4, 5]
+      iex> max(list)
+      5
+
+      iex> list = []
+      iex> max(list)
+      nil
   """
+  def max([]), do: nil
   def max(list), do: Enum.max(list)
 end
