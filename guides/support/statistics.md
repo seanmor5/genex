@@ -10,6 +10,7 @@ By default Genex will collect the following information on a population during e
 - variance via `Statistics.variance/1`
 - max via `Statistics.max/1`
 - min via `Statistics.min/1`
+- stdev via `Statistics.stdev/1`
 
 ## Customization
 
@@ -24,7 +25,7 @@ def MyGA do
     def statistics do
         [
             mean: &MyPackage.my_mean/1,
-            stdev: &MyPackage.stdev/1
+            stdev: &Statistics.stdev/1
         ]
     end
 end

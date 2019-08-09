@@ -21,8 +21,8 @@ defmodule Genex.Operators.Crossover do
   Returns `{%Chromosome{}, %Chromosome{}}`.
 
   # Parameters
-    - `p1`: Parent One.
-    - `p2`: Parent Two.
+    - `p1`: Parent one.
+    - `p2`: Parent two.
   """
   @spec single_point(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
   def single_point(p1, p2) do
@@ -39,8 +39,8 @@ defmodule Genex.Operators.Crossover do
   Returns `{%Chromosome{}, %Chromosome{}}`.
 
   # Parameters
-    - `p1`: Parent One.
-    - `p2`: Parent Two.
+    - `p1`: Parent one.
+    - `p2`: Parent two.
     - `point`: Slice to swap.
 
   # Examples
@@ -84,8 +84,8 @@ defmodule Genex.Operators.Crossover do
   Returns `%Chromosome{}`.
 
   # Parameters
-    - `p1`: Parent One.
-    - `p2`: Parent Two.
+    - `p1`: Parent one.
+    - `p2`: Parent two.
   """
   @spec two_point(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
   def two_point(p1, p2) do
@@ -119,8 +119,8 @@ defmodule Genex.Operators.Crossover do
   Returns `{%Chromosome{}, %Chromosome{}}`.
 
   # Parameters
-    - `p1`: Parent One.
-    - `p2`: Parent Two.
+    - `p1`: Parent one.
+    - `p2`: Parent two.
     - `first`: First Split Point.
     - `second`: Second Split Point.
 
@@ -168,8 +168,8 @@ defmodule Genex.Operators.Crossover do
   Returns `Chromosome`.
 
   # Parameters
-    - `p1`: Parent One.
-    - `p2`: Parent Two.
+    - `p1`: Parent one.
+    - `p2`: Parent two.
     - `rate`: `Float` between 0 and 1 representing rates to swap genes.
   """
   @spec uniform(Chromosome.t(), Chromosome.t(), float()) :: {Chromosome.t(), Chromosome.t()}
@@ -192,7 +192,7 @@ defmodule Genex.Operators.Crossover do
   @doc """
   Performs a blend crossover.
 
-  This will blend genes according to some alpha between 0 and 1. If alpha=.5, the resulting chromosomes will be identical to one another.
+  This will blend genes according to some alpha between 0 and 1.
 
   Returns `{%Chromosome{}, %Chromosome{}}`.
 

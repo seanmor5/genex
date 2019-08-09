@@ -77,6 +77,9 @@ defmodule Genex.MixProject do
       ],
       "guides/support/genealogy.md": [
         filename: "support-genealogy"
+      ],
+      "guides/operators/crossover.md": [
+        filename: "operators-crossover"
       ]
     ]
   end
@@ -85,7 +88,8 @@ defmodule Genex.MixProject do
     [
       Introduction: Path.wildcard("guides/introduction/*.md"),
       Support: Path.wildcard("guides/support/*.md"),
-      Tutorials: Path.wildcard("guides/tutorials/*.md")
+      Tutorials: Path.wildcard("guides/tutorials/*.md"),
+      Operators: Path.wildcard("guides/operators/*.md")
     ]
   end
 

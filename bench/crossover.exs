@@ -19,5 +19,7 @@ Benchee.run(%{
   ],
   inputs: %{
     "1_000_000 Genes" => {xxlarge1, xxlarge2}
-  }
+  },
+  time: 10,
+  memory_time: 2
 )

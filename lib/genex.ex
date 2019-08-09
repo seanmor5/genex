@@ -14,18 +14,20 @@ defmodule Genex do
   Genex is a simple library for creating Genetic Algorithms in Elixir. A Genetic Algorithm is a search-based optimization technique based on the principles of Genetics and Natural Selection.
 
   The basic life-cycle of a Genetic Algorithm is as follows:
-      1) Initialize the Population
-      2) Loop until goal is reached
-        a) Select Parents
-        b) Perform Crossover
-        c) Mutate some of population
-        d) Select Survivors
 
-  Genex follows a structure similar to the one above and offers callbacks corresponding to each stage in the genetic algorithm to allow for full customization.
+  1) Initialize the Population
+  2) Loop until goal is reached
+    a) Select Parents
+    b) Perform Crossover
+    c) Mutate some of population
+    d) Select Survivors
 
-  # Implementation
+  Genex uses a structure similar to the one above, using callbacks to give you full control over your genetic algorithm.
+
+  ## Implementation
 
   Genex requires an implementation module:
+
   ```
   defmodule OneMax do
     use Genex
@@ -39,9 +41,10 @@ defmodule Genex do
     def terminate?(population), do: population.max_fitness == 15
   end
   ```
+
   Genex requires 3 function definitions: `encoding/0`, `fitness_function/1`, and `terminate?/1`. Let's take a closer look at each of these:
 
-  ## Encoding
+  ### Encoding
   ```
   def encoding do
     for _ <- 1..15, do: Enum.random(0..1)
@@ -50,7 +53,7 @@ defmodule Genex do
 
   `encoding/0` defines your encoding of the chromosome's genes for your use-case. In the example above, we define a Binary Gene Set of length 15. Genex uses this function to generate an initial population of Chromosomes matching your encoding.
 
-  ## Fitness Function
+  ### Fitness Function
   ```
   def fitness_function(chromosome) do
     Enum.sum(chromosome.genes)
@@ -59,7 +62,7 @@ defmodule Genex do
 
   `fitness_function/1` defines how the algorithm evaluates the fitness of a chromosome. It takes in a chromosome struct and returns a number. Fitness is how your algorithm determines which chromosomes should be persisted to the next generation as well as which chromosomes should be selected to crossover. In this case, we want to maximize 1's in our set of genes, so we define fitness as the sum of genes.
 
-  ## Termination Criteria
+  ### Termination Criteria
   ```
   def terminate?(population) do
     population.max_fitness == 15
@@ -68,7 +71,7 @@ defmodule Genex do
 
   `terminate?/1` defines the termination criteria for your algorithm. This tells Genex when your algorithm should stop running. In this case we use a Max Fitness; however, you can also tell the algorithm to stop after a certain number of generations.
 
-  # Running
+  ## Running
 
   Once you have defined an implementation module. Utilize the `run/0` function to run the algorithm. The function will return the solution population for analysis. You can display a summary of the solution with the: `Genex.Visualizers.Text.display_summary/1` function.
 
@@ -77,39 +80,13 @@ defmodule Genex do
   Genex.Visualizers.Text.display_summary(soln)
   ```
 
-  # Configuration
+  ## Configuration
 
-  Genex offers a number of settings to adjust the algorithm to your liking. You can adjust: strategies, rates, and more. Below is a comprehensive list of settings and options.
+  Genex offers a number of settings to adjust the algorithm to your liking. You can adjust: strategies, rates, and more. See the [configuration](https://hexdocs.pm/genex/introduction-configuration.html) guide for a full list.
 
-  ## Strategies
-    - `:crossover_type`- `:single_point`, `:two_point`, `:uniform`, `:blend`
-    - `:mutation_type`- `:scramble`, `:invert`, `:bit_flip`
-    - `:parent_selection`- `:natural`, `:random`, `:worst`
-    - `:survivor_selection`- `:natural`, `:random`, `:worst`
+  ## Customization
 
-  ## Rates
-    - `:crossover_rate`- between 0 and 1
-    - `:mutation_rate`- between 0 and 1
-
-  ## Population
-    - `:population_size`- `integer` greater than 0
-
-  ## Unique to some Strategies
-    - `:uniform_crossover_rate`- between 0 and 1 (Uniform Crossover)
-    - `:alpha`- between 0 and 1 (Blend Crossover)
-
-  # Customization
-
-  You can customize every step of your genetic algorithm utilizing some of the many callbacks Genex provides. A list of callbacks is provided below.
-
-    - `seed/0` - Seed the Population.
-    - `evaluate/1` - Evaluate the entire Population.
-    - `cycle/1` - The Genetic Algorithm Cycle.
-    - `select_parents/1` - Select Parents for Crossover.
-    - `crossover/1` - Perform Crossover.
-    - `mutate/1` - Perform Mutation.
-    - `select_survivors/1` - Select a number of chromosomes to survive.
-    - `advance/1` - Advance to the next generation.
+  You can customize every step of your genetic algorithm utilizing one or more of the many callbacks Genex provides. See the [customization](https://hexdocs.pm/genex/introduction-customization.html) guide for more.
   """
 
   @doc """
@@ -148,32 +125,28 @@ defmodule Genex do
   @callback mutation_rate(Population.t()) :: number()
 
   @doc """
-  Radiation level is affects the "aggressiveness" of mutations.
+  Radiation level (aggressiveness) of mutation as a function of the population.
   """
   @callback radiation(Population.t()) :: number()
 
   @doc """
-  Selects a number of individuals for crossover.
-  The number of individuals selected depends on the crossover rate. This phase populates the `parent` field of the population struct with a `List` of tuples. Each tuple is a pair of parents to crossover.
+  Selects a number of individuals for crossover, depending on the `crossover_rate`.
   """
   @callback select_parents(population :: Population.t()) ::
               {:ok, Population.t()} | {:error, any()}
 
   @doc """
   Crossover a number of individuals to create a new population.
-  The number of individuals depends on the crossover rate. This phase populates the `children` field of the populaton struct with a `List` of `Chromosomes`.
   """
   @callback crossover(population :: Population.t()) :: {:ok, Population.t()} | {:error, any()}
 
   @doc """
-  Mutate a number of individuals to add novelty to the population.
-  The number of individuals depends on the mutation rate. This phase populates the `mutant` field of the population struct with a `List` of `Chromosomes`.
+  Mutate a number of individuals, depending on the `mutation_rate`.
   """
   @callback mutate(population :: Population.t()) :: {:ok, Population.t()} | {:error, any()}
 
   @doc """
-  Select a number of individuals to survive to the next generation.
-  The number of individuals depends on the survival rate. This phase populates the `survivors` field of the population struct with a `List` of `Chromosomes`.
+  Select a number of individuals to survive to the next generation, depending on the `crossover_rate`.s
   """
   @callback select_survivors(population :: Population.t()) ::
               {:ok, Population.t()} | {:error, any()}
