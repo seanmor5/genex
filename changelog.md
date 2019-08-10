@@ -16,3 +16,10 @@
 - Added 17 Tests, Plus Doctests
 - Fixed Variance bug
 - Added methods WITHOUT random variables to verify validity of operator algorithms.
+
+# v0.2.1
+- Fixed Population Sorting Bug
+- Added `minimize` flag for minimiIng fitness
+
+# v0.2.2
+- Fixed mutation and crossover rate bug
