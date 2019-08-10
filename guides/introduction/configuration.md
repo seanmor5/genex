@@ -19,8 +19,11 @@ end
 - `:parent_selection`: `:natural`
 - `:survivor_selection`: `:natural`
 - `:mutation_type`: `:scramble`
+- `:minimize`: `false`
 
 ## `crossover_type`
+
+This option determines what kind of Crossover to use. For a detailed explanation of each Crossover method, see the [Crossover]() guide.
 
 - `:single_point`
 - `:two_point`
@@ -32,6 +35,8 @@ end
 
 ## `parent_selection` and `survivor_selection`
 
+This option determines what kind of Selection to use. For a detailed explanation of each Selection method, see the [Selection]() guide.
+
 - `:natural`
 - `:random`
 - `:worst`
@@ -41,6 +46,8 @@ end
 
 ## `mutation_type`
 
+This option determines what kind of mutation to use. For a detailed explanation of each Mutation method, see the [Mutation]() guide.
+
 - `:bit_flip`
 - `:invert`
 - `:scramble`
@@ -48,3 +55,7 @@ end
 - `:uniform_integer` *(requires `upper_bound` and `lower_bound` parameters set)*
 - `:polynomial_bounded` *(requires `upper_bound`, `lower_bound` and `eta` parameters set)*
 - `:none`
+
+## `minimize`
+
+This option tells Genex if you want to minimize or maximize fitness. When set to true, Genex will sort population fitness in ascending order. The "strongest" chromosome will be the one with the lowest fitness.
