@@ -39,7 +39,7 @@ defmodule GenexTest do
   end
 
   describe "population" do
-    test "sort/1", context do
+    test "sort/2", context do
       sorted_chromosomes = [
         %Chromosome{genes: [1, 1, 1, 1, 1], fitness: 5, size: 5},
         %Chromosome{genes: [1, 1, 1, 0, 1], fitness: 4, size: 5},
@@ -48,7 +48,7 @@ defmodule GenexTest do
         %Chromosome{genes: [0, 0, 0, 0, 1], fitness: 1, size: 5}
       ]
 
-      sorted = Population.sort(context.pop)
+      sorted = Population.sort(context.pop, false)
       refute context.pop.chromosomes == sorted_chromosomes
       assert sorted.chromosomes == sorted_chromosomes
     end
