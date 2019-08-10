@@ -174,6 +174,9 @@ defmodule Genex do
     upper_bound = Keyword.get(opts, :upper_bound, nil)
     tournsize = Keyword.get(opts, :tournsize, nil)
 
+    # Other
+    minimize = Keyword.get(opts, :minimize, false)
+
     quote do
       @behaviour Genex
 
@@ -197,6 +200,9 @@ defmodule Genex do
       @min unquote(lower_bound)
       @max unquote(upper_bound)
       @tournsize unquote(tournsize)
+
+      # Other
+      @minimize unquote(minimize)
 
       @doc """
       Define the crossover rate as a function of `Population`.
@@ -279,15 +285,7 @@ defmodule Genex do
           population.chromosomes
           |> Enum.map(fn c -> %Chromosome{c | fitness: fitness_function(c)} end)
 
-        strongest = Enum.max_by(chromosomes, &Chromosome.get_fitness/1)
-
-        pop = %Population{
-          population
-          | chromosomes: chromosomes,
-            strongest: strongest,
-            max_fitness: strongest.fitness
-        }
-
+        pop = Population.sort(%Population{population | chromosomes: chromosomes}, @minimize)
         {:ok, pop}
       end
 
@@ -548,7 +546,7 @@ defmodule Genex do
         with {:ok, population} <- seed(),
              {:ok, population} <- evaluate(population),
              {:ok, population} <- cycle(population) do
-          soln = Population.sort(population)
+          soln = Population.sort(population, @minimize)
           soln
         else
           {:error, reason} -> raise reason

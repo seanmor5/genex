@@ -39,12 +39,20 @@ defmodule Genex.Population do
   @doc """
   Sort the population by fitness.
   """
-  def sort(population) do
+  def sort(population, false) do
     sorted_chromosomes =
       population.chromosomes
       |> Enum.sort_by(&Chromosome.get_fitness/1)
       |> Enum.reverse()
 
-    %__MODULE__{population | chromosomes: sorted_chromosomes, strongest: hd(sorted_chromosomes)}
+    %__MODULE__{population | chromosomes: sorted_chromosomes, strongest: hd(sorted_chromosomes), max_fitness: hd(sorted_chromosomes).fitness}
+  end
+
+  def sort(population, true) do
+    sorted_chromosomes =
+      population.chromosomes
+      |> Enum.sort_by(&Chromosome.get_fitness/1)
+
+    %__MODULE__{population | chromosomes: sorted_chromosomes, strongest: hd(sorted_chromosomes), max_fitness: hd(sorted_chromosomes).fitness}
   end
 end
