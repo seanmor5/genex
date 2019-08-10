@@ -19,7 +19,7 @@ The package can be installed by adding `genex` to your list of dependencies in `
 ```elixir
 def deps do
   [
-    {:genex, "~> 0.1.0"}
+    {:genex, "~> 0.2.1"}
   ]
 end
 ```
