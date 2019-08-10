@@ -62,6 +62,20 @@ Genex strives to be as simple and customizable as possible. Along with the abili
 - Flexible Encoding of Chromosomes
 - Simple Text Visualizations
 
+## Examples
+
+There are currently 3 basic examples available in the `examples` directory. To run them, clone the repo and run:
+
+```
+mix run examples/[example].exs
+```
+
+The current examples are:
+
+- `one_max.exs`
+- `speller.exs`
+- `linear_regression.exs`
+
 ## Benchmarks
 
 To run benchmarks, clone this repo. In the `genex` directory run:
