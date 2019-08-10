@@ -2,7 +2,6 @@ defmodule LinearRegression do
   use Genex, minimize: true,
              crossover_type: :blend,
              alpha: 0.5,
-             crossover_rate: 0.90,
              mutation_type: :gaussian
 
   # Solutions are lists of [m, b]
@@ -26,6 +25,9 @@ defmodule LinearRegression do
   end
 
   def terminate?(p), do: p.generation == 1000
+
+  # Higher crossover rate for more novelty
+  def crossover_rate(_), do: 0.9
 
   # Data Points to run regression on
   defp dataset do

@@ -677,7 +677,10 @@ defmodule Genex do
                      advance: 1,
                      cycle: 1,
                      statistics: 0,
-                     benchmark: 0
+                     benchmark: 0,
+                     crossover_rate: 1,
+                     mutation_rate: 1,
+                     radiation: 1
     end
   end
 
