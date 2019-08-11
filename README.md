@@ -75,6 +75,7 @@ The current examples are:
 - `one_max.exs`
 - `speller.exs`
 - `linear_regression.exs`
+- `n_queens.exs`
 
 ## Benchmarks
 
