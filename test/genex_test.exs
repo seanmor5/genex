@@ -27,14 +27,18 @@ defmodule GenexTest do
   end
 
   describe "chromosome" do
-    test "get_fitness/1" do
-      c1 = %Chromosome{genes: [1, 2, 3], fitness: 6}
-      assert Chromosome.get_fitness(c1) == 6
-    end
-
     test "String.Chars impl" do
       c1 = %Chromosome{genes: [1, 2, 3]}
       assert "#{c1}" == "[1, 2, 3]"
+    end
+
+    test "binary/1" do
+      g1 = Chromosome.binary()
+      g2 = Chromosome.binary(size: 64)
+      assert length(g1) == 32
+      assert length(g2) == 64
+      assert length(Enum.filter(g1, fn x -> x != 0 and x != 1 end)) == 0
+      assert length(Enum.filter(g2, fn x -> x != 0 and x != 1 end)) == 0
     end
   end
 

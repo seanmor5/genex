@@ -18,9 +18,21 @@ defmodule Genex.Chromosome do
   defstruct [:genes, fitness: 0, size: 0, age: 0]
 
   @doc """
-  Return the fitness of chromosome.
+  Creates a binary geneset.
+
+  Returns `Enum.t()`.
+
+  # Parameters
+
+    - `opts`: Configuration options.
+
+  # Options
+    - `size`: Size of the chromosomes. Defaults to 32.
   """
-  def get_fitness(chromosome), do: chromosome.fitness
+  def binary(opts \\ []) do
+    size = Keyword.get(opts, :size, 32)
+    for _ <- 0..(size - 1), do: Enum.random(0..1)
+  end
 
   defimpl String.Chars, for: __MODULE__ do
     def to_string(chromosome), do: "#{inspect(chromosome.genes)}"
