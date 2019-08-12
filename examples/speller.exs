@@ -1,11 +1,7 @@
 defmodule Speller do
   use Genex
 
-  def encoding do
-    ?a..?z
-    |> Enum.to_list
-    |> Enum.take_random(5)
-  end
+  def encoding, do: Chromosome.alphabetic(size: 5)
 
   def fitness_function(chromosome) do
     genes = chromosome.genes

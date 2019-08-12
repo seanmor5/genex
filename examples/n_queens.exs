@@ -7,7 +7,8 @@ defmodule NQueens do
              upper_bound: 7
 
   # Encoded as a 1-D list where each block is row-index of queen
-  def encoding, do: for _ <- 0..7, do: Enum.random(0..7)
+  # We also get a lot more novelty using "integer_value" encoding.
+  def encoding, do: Chromosome.integer_value(size: 8, min: 0, max: 7)
 
   # Since we only have 1 queen per column, clashes only happen on diagonals and rows.
   def fitness_function(c) do

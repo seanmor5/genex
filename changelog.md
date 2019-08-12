@@ -23,3 +23,4 @@
 
 # v0.2.2
 - Fixed mutation and crossover rate bug
+- Added encoding generators
