@@ -29,4 +29,3 @@ defmodule Knapsack do
 end
 
 soln = Knapsack.run()
-IO.inspect(Enum.reverse(soln.chromosomes))
