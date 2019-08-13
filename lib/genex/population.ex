@@ -38,11 +38,18 @@ defmodule Genex.Population do
 
   @doc """
   Sort the population by fitness.
+
+  Returns `%Population{}`.
+
+  # Parameters
+
+    - `population`- Population struct.
+    - `minimize`- Flag for minimization.
   """
   def sort(population, false) do
     sorted_chromosomes =
       population.chromosomes
-      |> Enum.sort_by(&Chromosome.get_fitness/1)
+      |> Enum.sort_by(& &1.fitness)
       |> Enum.reverse()
 
     %__MODULE__{
@@ -56,7 +63,7 @@ defmodule Genex.Population do
   def sort(population, true) do
     sorted_chromosomes =
       population.chromosomes
-      |> Enum.sort_by(&Chromosome.get_fitness/1)
+      |> Enum.sort_by(& &1.fitness)
 
     %__MODULE__{
       population

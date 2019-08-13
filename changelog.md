@@ -21,5 +21,7 @@
 - Fixed Population Sorting Bug
 - Added `minimize` flag for minimiIng fitness
 
-# v0.2.2
+# v0.3.0
 - Fixed mutation and crossover rate bug
+- Added encoding generators
+- Configuration now done using Genex.Config library

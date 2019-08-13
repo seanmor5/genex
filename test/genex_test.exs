@@ -22,19 +22,40 @@ defmodule GenexTest do
           %Chromosome{genes: [0, 0, 1, 0, 1], fitness: 2, size: 5}
         ]
       },
-      impl: Impl
+      impl: Impl,
     ]
   end
 
   describe "chromosome" do
-    test "get_fitness/1" do
-      c1 = %Chromosome{genes: [1, 2, 3], fitness: 6}
-      assert Chromosome.get_fitness(c1) == 6
-    end
-
     test "String.Chars impl" do
       c1 = %Chromosome{genes: [1, 2, 3]}
       assert "#{c1}" == "[1, 2, 3]"
+    end
+
+    test "binary/1" do
+      g1 = Chromosome.binary()
+      g2 = Chromosome.binary(size: 64)
+      assert length(g1) == 32
+      assert length(g2) == 64
+      assert length(Enum.filter(g1, fn x -> x != 0 and x != 1 end)) == 0
+      assert length(Enum.filter(g2, fn x -> x != 0 and x != 1 end)) == 0
+    end
+
+    test "integer_value/1" do
+      g1 = Chromosome.integer_value(size: 10, min: 0, max: 10)
+      assert length(g1) == 10
+      assert length(Enum.filter(g1, fn x -> x >= 0 and x <= 10 end)) == 10
+    end
+
+    test "permutation/1" do
+      g1 = Chromosome.permutation()
+      assert length(g1) == 10
+      assert length(Enum.uniq(g1)) == 10
+    end
+
+    test "alphabetic/1" do
+      g1 = Chromosome.alphabetic()
+      assert length(g1) == 10
     end
   end
 
@@ -60,17 +81,17 @@ defmodule GenexTest do
       assert pop.size == 100
     end
 
-    test "evaluate/1", context do
+    test "evaluate/2", context do
       assert {:ok, %Population{} = pop} = context.impl.evaluate(context.pop)
       refute hd(pop.chromosomes).fitness == 0
     end
 
-    test "parent_selection/1", context do
+    test "parent_selection/2", context do
       assert {:ok, %Population{} = pop} = context.impl.select_parents(context.pop)
       refute length(pop.parents) == 0
     end
 
-    test "crossover/1", context do
+    test "crossover/2", context do
       {:ok, pop} = context.impl.seed()
       {:ok, pop} = context.impl.evaluate(pop)
       {:ok, pop} = context.impl.select_parents(pop)
@@ -78,7 +99,7 @@ defmodule GenexTest do
       refute length(pop.children) == 0
     end
 
-    test "mutation/1", context do
+    test "mutation/2", context do
       {:ok, pop} = context.impl.seed()
       {:ok, pop} = context.impl.evaluate(pop)
       {:ok, pop} = context.impl.select_parents(pop)
@@ -87,7 +108,7 @@ defmodule GenexTest do
       refute length(pop.chromosomes) == 0
     end
 
-    test "select_survivors/1", context do
+    test "select_survivors/2", context do
       {:ok, pop} = context.impl.seed()
       {:ok, pop} = context.impl.evaluate(pop)
       {:ok, pop} = context.impl.select_parents(pop)
@@ -97,7 +118,7 @@ defmodule GenexTest do
       refute length(pop.survivors) == 0
     end
 
-    test "advance/0", context do
+    test "advance/2", context do
       {:ok, pop} = context.impl.seed()
       {:ok, pop} = context.impl.evaluate(pop)
       {:ok, pop} = context.impl.select_parents(pop)

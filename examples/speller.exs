@@ -1,11 +1,7 @@
 defmodule Speller do
   use Genex
 
-  def encoding do
-    ?a..?z
-    |> Enum.to_list
-    |> Enum.take_random(5)
-  end
+  def encoding, do: Chromosome.alphabetic(size: 5)
 
   def fitness_function(chromosome) do
     genes = chromosome.genes
@@ -15,5 +11,4 @@ defmodule Speller do
   def terminate?(population), do: population.max_fitness == 1
 end
 
-soln = Speller.run()
-Genex.Visualizers.Text.display_summary(soln)
+Speller.run()

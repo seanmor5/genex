@@ -5,10 +5,7 @@ defmodule LinearRegression do
              mutation_type: :gaussian
 
   # Solutions are lists of [m, b]
-  def encoding do
-    for _ <- 0..1, do: :rand.uniform(15)
-  end
-
+  def encoding, do: Chromosome.integer_value(size: 2, min: 0, max: 12)
   # Fitness is the sum of squared errors
   def fitness_function(c) do
     {m, b} = List.to_tuple(c.genes)
@@ -41,5 +38,9 @@ defmodule LinearRegression do
   end
 end
 
-soln = LinearRegression.run()
-Genex.Visualizers.Text.display_summary(soln)
+import Genex.Config
+
+[]
+|> use_crossover(:blend, alpha: 0.5)
+|> use_mutation(:gaussian)
+|> LinearRegression.run()

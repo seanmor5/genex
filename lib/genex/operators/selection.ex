@@ -77,7 +77,7 @@ defmodule Genex.Operators.Selection do
     |> Enum.map(fn _ ->
       chromosomes
       |> Enum.take_random(tournsize)
-      |> Enum.max_by(&Genex.Chromosome.get_fitness/1)
+      |> Enum.max_by(& &1.fitness)
     end)
   end
 
