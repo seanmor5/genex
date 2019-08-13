@@ -45,7 +45,12 @@ defmodule Genex.Population do
       |> Enum.sort_by(&Chromosome.get_fitness/1)
       |> Enum.reverse()
 
-    %__MODULE__{population | chromosomes: sorted_chromosomes, strongest: hd(sorted_chromosomes), max_fitness: hd(sorted_chromosomes).fitness}
+    %__MODULE__{
+      population
+      | chromosomes: sorted_chromosomes,
+        strongest: hd(sorted_chromosomes),
+        max_fitness: hd(sorted_chromosomes).fitness
+    }
   end
 
   def sort(population, true) do
@@ -53,6 +58,11 @@ defmodule Genex.Population do
       population.chromosomes
       |> Enum.sort_by(&Chromosome.get_fitness/1)
 
-    %__MODULE__{population | chromosomes: sorted_chromosomes, strongest: hd(sorted_chromosomes), max_fitness: hd(sorted_chromosomes).fitness}
+    %__MODULE__{
+      population
+      | chromosomes: sorted_chromosomes,
+        strongest: hd(sorted_chromosomes),
+        max_fitness: hd(sorted_chromosomes).fitness
+    }
   end
 end
