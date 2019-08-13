@@ -1,6 +1,5 @@
 defmodule Knapsack do
   use Genex, crossover_type: :two_point,
-             uniform_crossover_rate: 0.5,
              parent_selection: :roulette
 
   def encoding, do: Chromosome.binary(size: 7)
@@ -22,10 +21,13 @@ defmodule Knapsack do
 
   def terminate?(p), do: p.generation == 1000
 
-  def mutation_rate(_), do: 0.25
-
   defp profits, do: [6, 5, 8, 9, 6, 7, 3]
   defp weights, do: [2, 3, 6, 7, 5, 9, 4]
 end
 
-soln = Knapsack.run()
+import Genex.Config
+
+[]
+|> use_crossover(:two_point)
+|> use_selection(:roulette)
+|> Knapsack.run()

@@ -8,5 +8,4 @@ defmodule OneMax do
   def terminate?(population), do: population.max_fitness == 32
 end
 
-soln = OneMax.run()
-Genex.Visualizers.Text.display_summary(soln)
+OneMax.run()

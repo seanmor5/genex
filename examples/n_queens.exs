@@ -1,10 +1,5 @@
 defmodule NQueens do
-  use Genex, minimize: true,
-             crossover_type: :uniform,
-             uniform_crossover_rate: 0.5,
-             mutation_type: :uniform_integer,
-             lower_bound: 0,
-             upper_bound: 7
+  use Genex, minimize: true
 
   # Encoded as a 1-D list where each block is row-index of queen
   # We also get a lot more novelty using "integer_value" encoding.
@@ -36,5 +31,17 @@ defmodule NQueens do
   def mutation_rate(_), do: 0.15
 end
 
-soln = NQueens.run()
-IO.inspect(soln.strongest.genes)
+import Genex.Config
+
+# Run with uniform crossover and mutation
+[]
+|> use_crossover(:uniform, rate: 0.5)
+|> use_mutation(:uniform_integer, min: 0, max: 7)
+|> NQueens.run()
+
+# Run with two point crossover and scramble mutation
+[]
+|> use_crossover(:two_point)
+|> with_crossover_rate(0.9)
+|> with_mutation_rate(0.1)
+|> NQueens.run()

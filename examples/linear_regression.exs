@@ -38,5 +38,9 @@ defmodule LinearRegression do
   end
 end
 
-soln = LinearRegression.run()
-Genex.Visualizers.Text.display_summary(soln)
+import Genex.Config
+
+[]
+|> use_crossover(:blend, alpha: 0.5)
+|> use_mutation(:gaussian)
+|> LinearRegression.run()

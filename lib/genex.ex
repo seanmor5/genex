@@ -97,12 +97,12 @@ defmodule Genex do
   @doc """
   Seeds a population.
   """
-  @callback seed :: {:ok, Population.t()}
+  @callback seed(opts :: Keyword.t()) :: {:ok, Population.t()}
 
   @doc """
   Evaluates a population's fitness.
   """
-  @callback evaluate(population :: Population.t()) :: number()
+  @callback evaluate(population :: Population.t(), opts :: Keyword.t()) :: number()
 
   @doc """
   Specifies the statistics to collect on the population.
@@ -115,21 +115,6 @@ defmodule Genex do
   @callback fitness_function(chromosome :: Chromosome.t()) :: number()
 
   @doc """
-  Crossover rate as a function of the population.
-  """
-  @callback crossover_rate(Population.t()) :: number()
-
-  @doc """
-  Mutation rate as a function of the population.
-  """
-  @callback mutation_rate(Population.t()) :: number()
-
-  @doc """
-  Radiation level (aggressiveness) of mutation as a function of the population.
-  """
-  @callback radiation(Population.t()) :: number()
-
-  @doc """
   Selects a number of individuals for crossover, depending on the `crossover_rate`.
   """
   @callback select_parents(population :: Population.t()) ::
@@ -138,17 +123,17 @@ defmodule Genex do
   @doc """
   Crossover a number of individuals to create a new population.
   """
-  @callback crossover(population :: Population.t()) :: {:ok, Population.t()} | {:error, any()}
+  @callback crossover(population :: Population.t(), opts :: Keyword.t()) :: {:ok, Population.t()} | {:error, any()}
 
   @doc """
   Mutate a number of individuals, depending on the `mutation_rate`.
   """
-  @callback mutate(population :: Population.t()) :: {:ok, Population.t()} | {:error, any()}
+  @callback mutate(population :: Population.t(), opts :: Keyword.t()) :: {:ok, Population.t()} | {:error, any()}
 
   @doc """
   Select a number of individuals to survive to the next generation, depending on the `crossover_rate`.s
   """
-  @callback select_survivors(population :: Population.t()) ::
+  @callback select_survivors(population :: Population.t(), opts :: Keyword.t()) ::
               {:ok, Population.t()} | {:error, any()}
 
   @doc """
@@ -157,91 +142,16 @@ defmodule Genex do
   @callback terminate?(population :: Population.t()) :: boolean()
 
   defmacro __using__(opts \\ []) do
-    # Population
-    population_size = Keyword.get(opts, :population_size, 100)
-
-    # Strategies
-    parent_selection_type = Keyword.get(opts, :parent_selection, :natural)
-    survivor_selection_type = Keyword.get(opts, :survivor_selection, :natural)
-    crossover_type = Keyword.get(opts, :crossover_type, :single_point)
-    mutation_type = Keyword.get(opts, :mutation_type, :scramble)
-
-    # Unique to some algorithms
-    uniform_crossover_rate = Keyword.get(opts, :uniform_crossover_rate, nil)
-    alpha = Keyword.get(opts, :alpha, nil)
-    eta = Keyword.get(opts, :eta, nil)
-    lower_bound = Keyword.get(opts, :lower_bound, nil)
-    upper_bound = Keyword.get(opts, :upper_bound, nil)
-    tournsize = Keyword.get(opts, :tournsize, nil)
-
-    # Other
     minimize = Keyword.get(opts, :minimize, false)
 
     quote do
       @behaviour Genex
-
       alias Genex.Chromosome
       alias Genex.Population
       alias Genex.Support.Statistics
-
-      # Population Characteristics
-      @population_size unquote(population_size)
-
-      # Strategies
-      @crossover_type unquote(crossover_type)
-      @mutation_type unquote(mutation_type)
-      @survivor_selection_type unquote(survivor_selection_type)
-      @parent_selection_type unquote(parent_selection_type)
-
-      # Unique Algorithm Parameters
-      @uniform_crossover_rate unquote(uniform_crossover_rate)
-      @alpha unquote(alpha)
-      @eta unquote(eta)
-      @min unquote(lower_bound)
-      @max unquote(upper_bound)
-      @tournsize unquote(tournsize)
-
+      use Genex.Config
       # Other
       @minimize unquote(minimize)
-
-      @doc """
-      Define the crossover rate as a function of `Population`.
-
-      This allows for a changing crossover rate based on population parameters.
-
-      Returns `Number`.
-
-      # Parameters
-        - `population`: `Population` struct.
-      """
-      @spec crossover_rate(Population.t()) :: number()
-      def crossover_rate(_), do: 0.75
-
-      @doc """
-      Define the crossover rate as a function of `Population`.
-
-      This allows for a changing mutation rate based on population parameters.
-
-      Returns `Number`.
-
-      # Parameters
-        - `population`: `Population` struct.
-      """
-      @spec mutation_rate(Population.t()) :: number()
-      def mutation_rate(_), do: 0.05
-
-      @doc """
-      Define the radiation level as a function of `Population`.
-
-      This changes the "aggressiveness" of mutations based on population parameters.
-
-      Returns `Number`.
-
-      # Parameters
-        - `population`: `Population` struct.
-      """
-      @spec radiation(Population.t()) :: number()
-      def radiation(_), do: 0.5
 
       @doc """
       Seed the population with some chromosomes.
@@ -249,13 +159,18 @@ defmodule Genex do
       This function is the first step in the Genetic Algorithm. By default, it makes calls to the encoding function defined by the user to create `n` chromosomes where `n` is the specified `population_size`. By default, `population_size` is set to 100.
 
       Returns `{:ok, Population}`.
+
+      # Parameters
+
+        - `opts`: Keyword list of options.
       """
-      @spec seed :: {:ok, Chromosome.t()}
-      def seed do
+      @spec seed(Keyword.t()) :: {:ok, Chromosome.t()}
+      def seed(opts \\ []) do
+        size = Keyword.get(opts, :population_size, 100)
         history = Genealogy.init()
 
         chromosomes =
-          for n <- 1..@population_size do
+          for n <- 1..size do
             g = encoding()
             c = %Chromosome{genes: g, size: length(g)}
             c
@@ -265,7 +180,7 @@ defmodule Genex do
           history
           |> Genealogy.add_generation(chromosomes)
 
-        pop = %Population{chromosomes: chromosomes, size: @population_size, history: history}
+        pop = %Population{chromosomes: chromosomes, size: size, history: history}
         {:ok, pop}
       end
 
@@ -279,8 +194,8 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
-      @spec evaluate(Population.t()) :: {:ok, Population.t()}
-      def evaluate(population) do
+      @spec evaluate(Population.t(), Keyword.t()) :: {:ok, Population.t()}
+      def evaluate(population, _opts \\ []) do
         chromosomes =
           population.chromosomes
           |> Enum.map(fn c -> %Chromosome{c | fitness: fitness_function(c)} end)
@@ -326,21 +241,21 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
-      @spec cycle(Population.t()) :: {:ok, Population.t()}
-      def cycle(population) do
+      @spec cycle(Population.t(), Keyword.t()) :: {:ok, Population.t()}
+      def cycle(population, opts \\ []) do
         if terminate?(population) do
           {:ok, population}
         else
           Text.display_summary(population)
 
-          with {:ok, population} <- select_parents(population),
-               {:ok, population} <- crossover(population),
-               {:ok, population} <- mutate(population),
-               {:ok, population} <- select_survivors(population),
+          with {:ok, population} <- select_parents(population, opts),
+               {:ok, population} <- crossover(population, opts),
+               {:ok, population} <- mutate(population, opts),
+               {:ok, population} <- select_survivors(population, opts),
                {:ok, population} <- advance(population),
                {:ok, population} <- evaluate(population),
                {:ok, population} <- do_statistics(population) do
-            cycle(population)
+            cycle(population, opts)
           else
             {:error, reason} -> raise reason
           end
@@ -357,30 +272,33 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
-      @spec select_parents(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
-      def select_parents(population) do
-        case @parent_selection_type do
+      @spec select_parents(Population.t(), Keyword.t()) :: {:ok, Population.t()} | {:error, String.t()}
+      def select_parents(population, opts \\ []) do
+        selection_type = Keyword.get(opts, :selection_type, :natural)
+        crossover_rate = Keyword.get(opts, :crossover_rate, 0.75)
+        case selection_type do
           :natural ->
-            do_parent_selection(population, crossover_rate(population), &Selection.natural/2, [])
+            do_parent_selection(population, crossover_rate, &Selection.natural/2, [])
 
           :worst ->
-            do_parent_selection(population, crossover_rate(population), &Selection.worst/2, [])
+            do_parent_selection(population, crossover_rate, &Selection.worst/2, [])
 
           :random ->
-            do_parent_selection(population, crossover_rate(population), &Selection.random/2, [])
+            do_parent_selection(population, crossover_rate, &Selection.random/2, [])
 
           :roulette ->
-            do_parent_selection(population, crossover_rate(population), &Selection.roulette/2, [])
+            do_parent_selection(population, crossover_rate, &Selection.roulette/2, [])
 
           :tournament ->
-            do_parent_selection(population, crossover_rate(population), &Selection.tournament/3, [
-              @tournsize
+            tournsize = Keyword.get(opts, :tournsize, nil)
+            do_parent_selection(population, crossover_rate, &Selection.tournament/3, [
+              tournsize
             ])
 
           :stochastic ->
             do_parent_selection(
               population,
-              crossover_rate(population),
+              crossover_rate,
               &Selection.stochastic_universal_sampling/2,
               []
             )
@@ -401,16 +319,35 @@ defmodule Genex do
         - `population`: `Population` struct.
       """
       @spec crossover(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
-      def crossover(population) do
-        case @crossover_type do
-          :single_point -> do_crossover(population, &Crossover.single_point/2, [])
-          :two_point -> do_crossover(population, &Crossover.two_point/2, [])
-          :uniform -> do_crossover(population, &Crossover.uniform/3, [@uniform_crossover_rate])
-          :blend -> do_crossover(population, &Crossover.blend/3, [@alpha])
-          :simulated_binary -> do_crossover(population, &Crossover.simulated_binary/3, [@eta])
-          :messy_single_point -> do_crossover(population, &Crossover.messy_single_point/2, [])
-          :davis_order -> do_crossover(population, &Crossover.davis_order/2, [])
-          _ -> {:error, "Invalid Crossover Type."}
+      def crossover(population, opts \\ []) do
+        crossover_type = Keyword.get(opts, :crossover_type, :single_point)
+        case crossover_type do
+          :single_point ->
+            do_crossover(population, &Crossover.single_point/2, [])
+
+          :two_point ->
+            do_crossover(population, &Crossover.two_point/2, [])
+
+          :uniform ->
+            uniform_crossover_rate = Keyword.get(opts, :uniform_crossover_rate, nil)
+            do_crossover(population, &Crossover.uniform/3, [uniform_crossover_rate])
+
+          :blend ->
+            alpha = Keyword.get(opts, :blend_alpha, nil)
+            do_crossover(population, &Crossover.blend/3, [alpha])
+
+          :simulated_binary ->
+            eta = Keyword.get(opts, :simulated_binary_eta, nil)
+            do_crossover(population, &Crossover.simulated_binary/3, [eta])
+
+          :messy_single_point ->
+            do_crossover(population, &Crossover.messy_single_point/2, [])
+
+          :davis_order ->
+            do_crossover(population, &Crossover.davis_order/2, [])
+
+          _ ->
+            {:error, "Invalid Crossover Type."}
         end
       end
 
@@ -424,34 +361,42 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
-      @spec mutate(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
-      def mutate(population) do
-        case @mutation_type do
+      @spec mutate(Population.t(), Keyword.t()) :: {:ok, Population.t()} | {:error, String.t()}
+      def mutate(population, opts \\ []) do
+        mutation_type = Keyword.get(opts, :mutation_type, :scramble)
+        radiation = Keyword.get(opts, :radiation, 0.5)
+        mutation_rate = Keyword.get(opts, :mutation_rate, 0.05)
+        case mutation_type do
           :bit_flip ->
-            do_mutation(population, &Mutation.bit_flip/2, [radiation(population)])
+            do_mutation(population, mutation_rate, &Mutation.bit_flip/2, [radiation])
 
           :scramble ->
-            do_mutation(population, &Mutation.scramble/2, [radiation(population)])
+            do_mutation(population, mutation_rate, &Mutation.scramble/2, [radiation])
 
           :invert ->
-            do_mutation(population, &Mutation.invert/2, [radiation(population)])
+            do_mutation(population, mutation_rate, &Mutation.invert/2, [radiation])
 
           :uniform_integer ->
-            do_mutation(population, &Mutation.uniform_integer/4, [
-              radiation(population),
-              @min,
-              @max
+            uniform_integer_min = Keyword.get(opts, :uniform_integer_min, nil)
+            uniform_integer_max = Keyword.get(opts, :uniform_integer_max, nil)
+            do_mutation(population, mutation_rate, &Mutation.uniform_integer/4, [
+              radiation,
+              uniform_integer_min,
+              uniform_integer_max
             ])
 
           :gaussian ->
-            do_mutation(population, &Mutation.gaussian/2, [radiation(population)])
+            do_mutation(population, mutation_rate, &Mutation.gaussian/2, [radiation])
 
           :polynomial_bounded ->
-            do_mutation(population, &Mutation.polynomial_bounded/5, [
-              radiation(population),
-              @eta,
-              @min,
-              @max
+            polynomial_bounded_min = Keyword.get(opts, :polynomial_bounded_min, nil)
+            polynomial_bounded_max = Keyword.get(opts, :polynomial_bounded_max, nil)
+            polynomial_bounded_eta = Keyword.get(opts, :polynomial_bounded_eta, nil)
+            do_mutation(population, mutation_rate, &Mutation.polynomial_bounded/5, [
+              radiation,
+              polynomial_bounded_eta,
+              polynomial_bounded_min,
+              polynomial_bounded_max
             ])
 
           :none ->
@@ -472,9 +417,11 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
-      @spec select_survivors(Population.t()) :: {:ok, Population.t()} | {:error, String.t()}
-      def select_survivors(population) do
-        case @survivor_selection_type do
+      @spec select_survivors(Population.t(), Keyword.t()) ::
+              {:ok, Population.t()} | {:error, String.t()}
+      def select_survivors(population, opts \\ []) do
+        selection_type = Keyword.get(opts, :selection_type, :natural)
+        case selection_type do
           :natural ->
             do_survivor_selection(population, &Selection.natural/2, [])
 
@@ -488,7 +435,8 @@ defmodule Genex do
             do_survivor_selection(population, &Selection.roulette/2, [])
 
           :tournament ->
-            do_survivor_selection(population, &Selection.tournament/3, [@tournsize])
+            tournsize = Keyword.get(opts, :tournsize, nil)
+            do_survivor_selection(population, &Selection.tournament/3, [tournsize])
 
           :stochastic ->
             do_survivor_selection(population, &Selection.stochastic_universal_sampling/2, [])
@@ -508,8 +456,8 @@ defmodule Genex do
       # Parameters
         - `population`: `Population` struct.
       """
-      @spec advance(Population.t()) :: {:ok, Population.t()}
-      def advance(population) do
+      @spec advance(Population.t(), Keyword.t()) :: {:ok, Population.t()}
+      def advance(population, _opts \\ []) do
         generation = population.generation + 1
 
         survivors =
@@ -538,14 +486,18 @@ defmodule Genex do
       This function combines all previous steps and executes the Genetic Algorithm until completion. It will return the solution population which contains relevant information for analysis of your algorithms performance.
 
       Returns `%Population{...}`.
+
+      # Parameters
+
+        - `opts`: Configuration options.
       """
-      @spec run :: Population.t()
-      def run do
+      @spec run(Keyword.t()) :: Population.t()
+      def run(opts \\ []) do
         Text.init()
 
-        with {:ok, population} <- seed(),
-             {:ok, population} <- evaluate(population),
-             {:ok, population} <- cycle(population) do
+        with {:ok, population} <- seed(opts),
+             {:ok, population} <- evaluate(population, opts),
+             {:ok, population} <- cycle(population, opts) do
           soln = Population.sort(population, @minimize)
           soln
         else
@@ -561,27 +513,27 @@ defmodule Genex do
       Returns `:ok`.
       """
       @spec benchmark :: :ok
-      def benchmark do
+      def benchmark(opts \\ []) do
         IO.write("Benchmarking your algorith. This may take awhile...\n")
-        {:ok, init_pop} = seed()
-        {:ok, evaluated_pop} = evaluate(init_pop)
-        {:ok, parent_pop} = select_parents(evaluated_pop)
-        {:ok, child_pop} = crossover(parent_pop)
-        {:ok, mutated_pop} = mutate(child_pop)
-        {:ok, survivor_pop} = select_survivors(mutated_pop)
+        {:ok, init_pop} = seed(opts)
+        {:ok, evaluated_pop} = evaluate(init_pop, opts)
+        {:ok, parent_pop} = select_parents(evaluated_pop, opts)
+        {:ok, child_pop} = crossover(parent_pop, opts)
+        {:ok, mutated_pop} = mutate(child_pop, opts)
+        {:ok, survivor_pop} = select_survivors(mutated_pop, opts)
         genes = encoding()
         c = %Chromosome{genes: genes, size: length(genes)}
 
         Benchee.run(%{
           "encoding/0" => fn -> encoding() end,
-          "seed/0" => fn -> seed() end,
+          "seed/0" => fn -> seed(opts) end,
           "fitness_function/1" => fn -> fitness_function(c) end,
           "terminate?/1" => fn -> terminate?(survivor_pop) end,
           "evaluate/1" => fn -> evaluate(init_pop) end,
-          "select_parents/1" => fn -> select_parents(evaluated_pop) end,
-          "crossover/1" => fn -> crossover(parent_pop) end,
-          "mutate/1" => fn -> mutate(child_pop) end,
-          "select_survivors/1" => fn -> select_survivors(mutated_pop) end
+          "select_parents/1" => fn -> select_parents(evaluated_pop, opts) end,
+          "crossover/1" => fn -> crossover(parent_pop, opts) end,
+          "mutate/1" => fn -> mutate(child_pop, opts) end,
+          "select_survivors/1" => fn -> select_survivors(mutated_pop, opts) end
         })
 
         :ok
@@ -610,8 +562,8 @@ defmodule Genex do
         {:ok, pop}
       end
 
-      defp do_mutation(population, f, args) do
-        u = mutation_rate(population)
+      defp do_mutation(population, rate, f, args) do
+        u = rate
 
         chromosomes =
           population.chromosomes
@@ -668,19 +620,16 @@ defmodule Genex do
         {:ok, pop}
       end
 
-      defoverridable select_parents: 1,
-                     crossover: 1,
-                     mutate: 1,
-                     select_survivors: 1,
-                     seed: 0,
-                     evaluate: 1,
-                     advance: 1,
-                     cycle: 1,
+      defoverridable select_parents: 2,
+                     crossover: 2,
+                     mutate: 2,
+                     select_survivors: 2,
+                     seed: 1,
+                     evaluate: 2,
+                     advance: 2,
+                     cycle: 2,
                      statistics: 0,
-                     benchmark: 0,
-                     crossover_rate: 1,
-                     mutation_rate: 1,
-                     radiation: 1
+                     benchmark: 1
     end
   end
 

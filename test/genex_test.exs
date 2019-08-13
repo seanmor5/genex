@@ -22,7 +22,7 @@ defmodule GenexTest do
           %Chromosome{genes: [0, 0, 1, 0, 1], fitness: 2, size: 5}
         ]
       },
-      impl: Impl
+      impl: Impl,
     ]
   end
 
@@ -81,17 +81,17 @@ defmodule GenexTest do
       assert pop.size == 100
     end
 
-    test "evaluate/1", context do
+    test "evaluate/2", context do
       assert {:ok, %Population{} = pop} = context.impl.evaluate(context.pop)
       refute hd(pop.chromosomes).fitness == 0
     end
 
-    test "parent_selection/1", context do
+    test "parent_selection/2", context do
       assert {:ok, %Population{} = pop} = context.impl.select_parents(context.pop)
       refute length(pop.parents) == 0
     end
 
-    test "crossover/1", context do
+    test "crossover/2", context do
       {:ok, pop} = context.impl.seed()
       {:ok, pop} = context.impl.evaluate(pop)
       {:ok, pop} = context.impl.select_parents(pop)
@@ -99,7 +99,7 @@ defmodule GenexTest do
       refute length(pop.children) == 0
     end
 
-    test "mutation/1", context do
+    test "mutation/2", context do
       {:ok, pop} = context.impl.seed()
       {:ok, pop} = context.impl.evaluate(pop)
       {:ok, pop} = context.impl.select_parents(pop)
@@ -108,7 +108,7 @@ defmodule GenexTest do
       refute length(pop.chromosomes) == 0
     end
 
-    test "select_survivors/1", context do
+    test "select_survivors/2", context do
       {:ok, pop} = context.impl.seed()
       {:ok, pop} = context.impl.evaluate(pop)
       {:ok, pop} = context.impl.select_parents(pop)
@@ -118,7 +118,7 @@ defmodule GenexTest do
       refute length(pop.survivors) == 0
     end
 
-    test "advance/0", context do
+    test "advance/2", context do
       {:ok, pop} = context.impl.seed()
       {:ok, pop} = context.impl.evaluate(pop)
       {:ok, pop} = context.impl.select_parents(pop)

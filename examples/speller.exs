@@ -11,5 +11,4 @@ defmodule Speller do
   def terminate?(population), do: population.max_fitness == 1
 end
 
-soln = Speller.run()
-Genex.Visualizers.Text.display_summary(soln)
+Speller.run()
