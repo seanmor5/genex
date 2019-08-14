@@ -22,7 +22,7 @@ defmodule GenexTest do
           %Chromosome{genes: [0, 0, 1, 0, 1], fitness: 2, size: 5}
         ]
       },
-      impl: Impl,
+      impl: Impl
     ]
   end
 
