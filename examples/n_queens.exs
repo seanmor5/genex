@@ -3,7 +3,7 @@ defmodule NQueens do
 
   # Encoded as a 1-D list where each block is row-index of queen
   # We also get a lot more novelty using "integer_value" encoding.
-  def encoding, do: Chromosome.integer_value(size: 8, min: 0, max: 7)
+  def encoding, do: Chromosome.permutation(size: 8, min: 0, max: 7)
 
   # Since we only have 1 queen per column, clashes only happen on diagonals and rows.
   def fitness_function(c) do
@@ -33,15 +33,9 @@ end
 
 import Genex.Config
 
-# Run with uniform crossover and mutation
-[]
-|> use_crossover(:uniform, rate: 0.5)
-|> use_mutation(:uniform_integer, min: 0, max: 7)
-|> NQueens.run()
-
 # Run with two point crossover and scramble mutation
 []
-|> use_crossover(:two_point)
+|> use_crossover(:davis_order)
 |> with_crossover_rate(0.9)
 |> with_mutation_rate(0.1)
 |> NQueens.run()

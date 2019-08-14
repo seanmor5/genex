@@ -322,6 +322,8 @@ defmodule Genex.Operators.Crossover do
   @doc """
   Performs Davis Order crossover of a random slice.
 
+  **Note**: This algorithm only works if your encoding is a permutation.
+
   Returns `{%Chromosome{}, %Chromosome{}}`.
 
   # Parameters
@@ -330,16 +332,29 @@ defmodule Genex.Operators.Crossover do
   """
   @spec davis_order(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
   def davis_order(p1, p2) do
-    {a, b} = {:rand.uniform(p1.size - 1), :rand.uniform(p1.size - 2)}
-    point1 = if b >= a, do: a, else: b
-    point2 = if b >= a, do: b + 1, else: a
-    slice1 = Enum.slice(p1.genes, point1, point2)
-    slice2 = Enum.slice(p2.genes, point1, point2)
-    rem1 = Enum.filter(p1.genes, fn x -> x not in slice1 end)
-    rem2 = Enum.filter(p2.genes, fn x -> x not in slice2 end)
-    {back1, front1} = Enum.split(rem1, point1)
-    {back2, front2} = Enum.split(rem2, point1)
-    {c1, c2} = {front1 ++ slice1 ++ back1, front2 ++ slice2 ++ back2}
+    {c1, c2} = {do_davis_order(p1.genes, p2.genes), do_davis_order(p2.genes, p1.genes)}
     {%Chromosome{genes: c1, size: p1.size}, %Chromosome{genes: c2, size: p2.size}}
+  end
+
+  # https://elixirforum.com/t/elixir-idiom-for-slicing-and-mixing-two-lists/6752/7
+  defp do_davis_order(p1, p2) do
+    {i1, i2} = random_range(p1)
+
+    p1_contrib = Enum.slice(p1, i1..i2)
+    p1_contrib_set = MapSet.new(p1_contrib)
+
+    p2_contrib = p2 |> shiftl(i2 + 1) |> Enum.reject(&MapSet.member?(p1_contrib_set, &1))
+
+    shiftl(p1_contrib ++ p2_contrib, -i1)
+  end
+
+  defp random_range(list) do
+    max_i = length(list) - 1
+    [:rand.uniform(max_i), :rand.uniform(max_i)] |> Enum.sort() |> List.to_tuple()
+  end
+
+  defp shiftl(list, index) do
+    {l1, l2} = Enum.split(list, index)
+    l2 ++ l1
   end
 end
