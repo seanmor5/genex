@@ -65,7 +65,8 @@ defmodule Genex.Operators.Crossover do
       iex> single_point(c1, c2, -5)
       {%#{Chromosome}{genes: [1, 2, 3, 4, 5], size: 5}, %#{Chromosome}{genes: [6, 7, 8, 9, 10], size: 5}}
   """
-  @spec single_point(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
+  @spec single_point(Chromosome.t(), Chromosome.t(), integer()) ::
+          {Chromosome.t(), Chromosome.t()}
   def single_point(p1, p2, point) when point <= 0,
     do: {%Chromosome{genes: p1.genes, size: p1.size}, %Chromosome{genes: p2.genes, size: p2.size}}
 
