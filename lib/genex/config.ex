@@ -15,7 +15,7 @@ defmodule Genex.Config do
           | :davis_order
           | :simulated_binary
   @type selection :: :natural | :worst | :random | :roulette | :tournament | :stochastic
-  @type rate :: float() | ((Genex.Population.t()) -> float())
+  @type rate :: float() | (Genex.Population.t() -> float())
 
   @doc """
   Specify the type of crossover to use.
@@ -93,8 +93,8 @@ defmodule Genex.Config do
 
               _ ->
                 [uniform_integer_min: uniform_integer_min] ++
-                [uniform_integer_max: uniform_integer_max] ++
-                new_opts
+                  [uniform_integer_max: uniform_integer_max] ++
+                  new_opts
             end
         end
 
@@ -117,10 +117,11 @@ defmodule Genex.Config do
                   nil ->
                     raise "You must specify :eta when using polynomial bounded mutation!"
 
-                  _ -> [polynomial_bounded_max: polynomial_bounded_max] ++
-                       [polynomial_bounded_min: polynomial_bounded_min] ++
-                       [polynomial_bounded_eta: polynomial_bounded_eta] ++
-                       new_opts
+                  _ ->
+                    [polynomial_bounded_max: polynomial_bounded_max] ++
+                      [polynomial_bounded_min: polynomial_bounded_min] ++
+                      [polynomial_bounded_eta: polynomial_bounded_eta] ++
+                      new_opts
                 end
             end
         end
@@ -169,7 +170,7 @@ defmodule Genex.Config do
     - `opts`: Keyword list of options. Defaults ot an empty list.
     - `crossover_rate`: `Float` or `Function` that returns a float between 0 and 1.
   """
-  @spec with_crossover_rate(Keyword.t(),  rate()) :: Keyword.t()
+  @spec with_crossover_rate(Keyword.t(), rate()) :: Keyword.t()
   def with_crossover_rate(opts \\ [], crossover_rate) do
     [crossover_rate: crossover_rate] ++ opts
   end
@@ -218,9 +219,10 @@ defmodule Genex.Config do
 
     - `size`: Size of the population.
   """
+  @spec with_population(Keyword.t(), Keyword.t()) :: Keyword.t()
   def with_population(opts \\ [], population_opts) do
     size = Keyword.get(population_opts, :size, 100)
-    [size: size] ++ opts
+    [population_size: size] ++ opts
   end
 
   defmacro __using__(_) do
