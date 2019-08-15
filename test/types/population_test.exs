@@ -1,7 +1,7 @@
 defmodule PopulationTest do
   use ExUnit.Case
-  alias Genex.Chromosome
-  alias Genex.Population
+  alias Genex.Types.Chromosome
+  alias Genex.Types.Population
 
   setup do
     [

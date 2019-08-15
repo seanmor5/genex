@@ -1,6 +1,6 @@
 defmodule Genex.Operators.Mutation do
   use Bitwise
-  alias Genex.Chromosome
+  alias Genex.Types.Chromosome
   import Genex, only: [valid_rate?: 1]
 
   @moduledoc """

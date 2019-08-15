@@ -1,5 +1,5 @@
-defmodule Genex.Population do
-  alias Genex.Chromosome
+defmodule Genex.Types.Population do
+  alias Genex.Types.Chromosome
 
   @moduledoc """
   A collection of `Chromosomes`.

@@ -1,9 +1,6 @@
 defmodule Knapsack do
-  use Genex,
-    crossover_type: :two_point,
-    parent_selection: :roulette,
-    mutation_type: :bit_flip
-
+  use Genex
+  
   @bound_breached 0
 
   def encoding, do: Chromosome.binary(size: Enum.count(weights()))

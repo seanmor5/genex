@@ -1,8 +1,5 @@
 defmodule LinearRegression do
-  use Genex, minimize: true,
-             crossover_type: :blend,
-             alpha: 0.5,
-             mutation_type: :gaussian
+  use Genex
 
   # Solutions are lists of [m, b]
   def encoding, do: Chromosome.integer_value(size: 2, min: 0, max: 12)
@@ -23,9 +20,6 @@ defmodule LinearRegression do
 
   def terminate?(p), do: p.generation == 1000
 
-  # Higher crossover rate for more novelty
-  def crossover_rate(_), do: 0.9
-
   # Data Points to run regression on
   defp dataset do
     [
@@ -40,7 +34,7 @@ end
 
 import Genex.Config
 
-[]
+[minimize?: true]
 |> use_crossover(:blend, alpha: 0.5)
 |> use_mutation(:gaussian)
 |> LinearRegression.run()

@@ -1,5 +1,5 @@
 defmodule NQueens do
-  use Genex, minimize: true
+  use Genex
 
   # Encoded as a 1-D list where each block is row-index of queen
   # We also get a lot more novelty using "integer_value" encoding.
@@ -34,7 +34,7 @@ end
 import Genex.Config
 
 # Run with two point crossover and scramble mutation
-[]
+[minimize?: true]
 |> use_crossover(:davis_order)
 |> with_crossover_rate(0.9)
 |> with_mutation_rate(0.1)

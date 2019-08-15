@@ -1,4 +1,4 @@
-defmodule Genex.Chromosome do
+defmodule Genex.Types.Chromosome do
   alias __MODULE__, as: Chromosome
 
   @moduledoc """

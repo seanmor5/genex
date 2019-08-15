@@ -1,6 +1,6 @@
 defmodule ChromosomeTest do
   use ExUnit.Case
-  alias Genex.Chromosome
+  alias Genex.Types.Chromosome
 
   describe "chromosome" do
     test "String.Chars impl" do

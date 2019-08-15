@@ -1,5 +1,5 @@
 defmodule Genex.Operators.Crossover do
-  alias Genex.Chromosome
+  alias Genex.Types.Chromosome
 
   @moduledoc """
   Implementation of several popular crossover methods.
@@ -332,29 +332,20 @@ defmodule Genex.Operators.Crossover do
   """
   @spec davis_order(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
   def davis_order(p1, p2) do
-    {c1, c2} = {do_davis_order(p1.genes, p2.genes), do_davis_order(p2.genes, p1.genes)}
+    {i1, i2} = random_range(length(p1.genes) - 1)
+    slice1 = Enum.slice(p1.genes, i1..i2)
+    slice1_set = MapSet.new(slice1)
+    p2_contrib = Enum.reject(p2.genes, &MapSet.member?(slice1_set, &1))
+    {head1, tail1} = Enum.split(p2_contrib, i1)
+    slice2 = Enum.slice(p2.genes, i1..i2)
+    slice2_set = MapSet.new(slice2)
+    p1_contrib = Enum.reject(p1.genes, &MapSet.member?(slice2_set, &1))
+    {head2, tail2} = Enum.split(p1_contrib, i1)
+    {c1, c2} = {head1 ++ slice1 ++ tail1, head2 ++ slice2 ++ tail2}
     {%Chromosome{genes: c1, size: p1.size}, %Chromosome{genes: c2, size: p2.size}}
   end
 
-  # https://elixirforum.com/t/elixir-idiom-for-slicing-and-mixing-two-lists/6752/7
-  defp do_davis_order(p1, p2) do
-    {i1, i2} = random_range(p1)
-
-    p1_contrib = Enum.slice(p1, i1..i2)
-    p1_contrib_set = MapSet.new(p1_contrib)
-
-    p2_contrib = p2 |> shiftl(i2 + 1) |> Enum.reject(&MapSet.member?(p1_contrib_set, &1))
-
-    shiftl(p1_contrib ++ p2_contrib, -i1)
-  end
-
-  defp random_range(list) do
-    max_i = length(list) - 1
-    [:rand.uniform(max_i), :rand.uniform(max_i)] |> Enum.sort() |> List.to_tuple()
-  end
-
-  defp shiftl(list, index) do
-    {l1, l2} = Enum.split(list, index)
-    l2 ++ l1
+  defp random_range(lim) do
+    [:rand.uniform(lim), :rand.uniform(lim)] |> Enum.sort() |> List.to_tuple()
   end
 end
