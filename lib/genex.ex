@@ -155,6 +155,9 @@ defmodule Genex do
       # Other
       @minimize unquote(minimize)
 
+      @spec encoding :: Enum.t()
+      def encoding, do: raise "You must implement encoding/0 or seed/1!"
+      
       @doc """
       Seed the population with some chromosomes.
 
@@ -639,7 +642,8 @@ defmodule Genex do
                      advance: 2,
                      cycle: 2,
                      statistics: 0,
-                     benchmark: 1
+                     benchmark: 1,
+                     encoding: 0
     end
   end
 

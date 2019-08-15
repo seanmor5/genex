@@ -8,4 +8,6 @@ defmodule OneMax do
   def terminate?(population), do: population.max_fitness == 32
 end
 
-OneMax.run()
+import Genex.Config
+
+OneMax.benchmark()
