@@ -225,9 +225,11 @@ defmodule Genex.Config do
     [population_size: size] ++ opts
   end
 
-  defmacro __using__(_) do
-    quote do
-      import Genex.Config
-    end
+  @doc """
+  Make the algorithm a minimization algorithm.
+  """
+  @spec minimize(Keyword.t()) :: Keyword.t()
+  def minimize(opts \\ []) do
+    [minimize?: true] ++ opts
   end
 end

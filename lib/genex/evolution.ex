@@ -78,6 +78,18 @@ defmodule Genex.Evolution do
         {:ok, pop}
       end
 
+      @spec evaluation(Population.t(), (Chromosome.t() -> number()), Keyword.t()) :: {:ok, Population.t()}
+      def evaluation(population, func, opts \\ []) do
+        minimize = Keyword.get(opts, :minimize?, false)
+
+        chromosomes =
+          population.chromosomes
+          |> Enum.map(fn c -> %Chromosome{c | fitness: func.(c)} end)
+
+        pop = Population.sort(%Population{population | chromosomes: chromosomes}, minimize)
+        {:ok, pop}
+      end
+
       def match_selection(population, opts \\ []) do
         selection_type = Keyword.get(opts, :selection_type, :natural)
         lambda = Keyword.get(opts, :lambda, 0.75)
@@ -277,6 +289,11 @@ defmodule Genex.Evolution do
         pop = %Population{population | chromosomes: chromosomes}
         {:ok, pop}
       end
+
+      defoverridable [
+        transition: 2,
+        evaluation: 3
+      ]
     end
   end
 end

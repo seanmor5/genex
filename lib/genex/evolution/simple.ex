@@ -4,17 +4,7 @@ defmodule Genex.Evolution.Simple do
   @moduledoc """
   Models the most basic form of evolution.
   """
-  def evaluation(population, func, opts \\ []) do
-    minimize = Keyword.get(opts, :minimize?, false)
-
-    chromosomes =
-      population.chromosomes
-      |> Enum.map(fn c -> %Chromosome{c | fitness: func.(c)} end)
-
-    pop = Population.sort(%Population{population | chromosomes: chromosomes}, minimize)
-    {:ok, pop}
-  end
-
+  @spec selection(Population.t(), Keyword.t()) :: {:ok, Population.t()} | {:error, any()}
   def selection(population, opts \\ []) do
     with {:ok, population} <- match_selection(population, opts) do
       {:ok, population}
@@ -32,6 +22,7 @@ defmodule Genex.Evolution.Simple do
     end
   end
 
+  @spec reinsertion(Population.t(), Keyword.t()) :: {:ok, Population.t()} | {:error, any()}
   def reinsertion(population, opts \\ []) do
     with {:ok, population} <- match_reinsertion(population, opts) do
       {:ok, population}
