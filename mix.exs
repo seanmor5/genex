@@ -54,6 +54,7 @@ defmodule Genex.MixProject do
 
   defp extras do
     [
+      # Intro
       "guides/introduction/overview.md": [
         filename: "introduction-overview"
       ],
@@ -66,9 +67,11 @@ defmodule Genex.MixProject do
       "guides/introduction/customization.md": [
         filename: "introduction-customization"
       ],
+      # Tutorials
       "guides/tutorials/getting-started.md": [
         filename: "tutorials-getting-started"
       ],
+      # Support
       "guides/support/statistics.md": [
         filename: "support-statistics"
       ],
@@ -78,8 +81,22 @@ defmodule Genex.MixProject do
       "guides/support/genealogy.md": [
         filename: "support-genealogy"
       ],
+      # Operators
       "guides/operators/crossover.md": [
         filename: "operators-crossover"
+      ],
+      # Evolutions
+      "guides/evolutions/simple.md": [
+        filename: "evolutions-simple"
+      ],
+      "guides/evolutions/mu_plus_lambda.md": [
+        filename: "evolutions-mu-plus-lambda"
+      ],
+      "guides/evolutions/mu_comma_lambda.md": [
+        filename: "evolutions-mu-comma-lambda"
+      ],
+      "guides/evolutions/coevolution.md": [
+        filename: "evolutions-coevolution"
       ]
     ]
   end
@@ -87,9 +104,10 @@ defmodule Genex.MixProject do
   defp groups_for_extras do
     [
       Introduction: Path.wildcard("guides/introduction/*.md"),
+      Operators: Path.wildcard("guides/operators/*.md"),
+      Evolutions: Path.wildcard("guides/evolutions/*.md"),
       Support: Path.wildcard("guides/support/*.md"),
-      Tutorials: Path.wildcard("guides/tutorials/*.md"),
-      Operators: Path.wildcard("guides/operators/*.md")
+      Tutorials: Path.wildcard("guides/tutorials/*.md")
     ]
   end
 

@@ -72,6 +72,19 @@ defmodule Genex do
       # Parameters
 
         - `opts`: Configuration options.
+
+      # Options
+
+        - `:crossover_type`: `Function` or one of: `:single_point`, `:two_point`, `:davis_order`, `:uniform`, `:blend`, `:simulated_binary`, `:messy_single_point`.
+        - `:mutation_type`: `Function` or one of: `:bit_flip`, `:scramble`, `:invert`, `:uniform_integer`, `:gaussian`, `:polynomial_bounded`.
+        - `:selection_type`: `Function` or one of `:natural`, `:random`, `:worst`, `:tournament`, `:roulette`, `:stochastic`.
+        - `:evolution_type`: `Module` or one of `:simple`, `:mu_plus_lambda`, `:mu_comma_lambda`, `:coevolution`.
+        - `:crossover_rate`: `Function` or `Float` between 0 and 1.
+        - `:mutation_rate`: `Function` or `Float` between 0 and 1.
+        - `:radiation`: `Function` or `Float` between 0 and 1.
+        - `:population_size`: `Integer`.
+        - `:minimize?`: `true` or `false`.
+        - `:hall_of_fame`: Reference to ETS Table.
       """
       @spec run(Keyword.t()) :: Population.t()
       def run(opts \\ []) do

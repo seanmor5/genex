@@ -4,6 +4,7 @@ defmodule Genex.Evolution do
   alias Genex.Operators.Reinsertion
   alias Genex.Operators.Selection
   alias Genex.Support.Genealogy
+  alias Genex.Support.HallOfFame
   alias Genex.Types.Population
 
   @moduledoc """
@@ -70,15 +71,16 @@ defmodule Genex.Evolution do
           population
           | size: size,
             generation: generation,
+            selected: nil,
             children: nil,
-            parents: nil,
             survivors: nil
         }
 
         {:ok, pop}
       end
 
-      @spec evaluation(Population.t(), (Chromosome.t() -> number()), Keyword.t()) :: {:ok, Population.t()}
+      @spec evaluation(Population.t(), (Chromosome.t() -> number()), Keyword.t()) ::
+              {:ok, Population.t()}
       def evaluation(population, func, opts \\ []) do
         minimize = Keyword.get(opts, :minimize?, false)
 
@@ -231,21 +233,24 @@ defmodule Genex.Evolution do
         chromosomes = population.chromosomes
         n = if is_integer(lambda), do: lambda, else: floor(lambda * length(chromosomes))
 
-        parents =
+        selected =
           f
           |> apply([chromosomes, n] ++ args)
-          |> Enum.chunk_every(2, 2, :discard)
-          |> Enum.map(fn f -> List.to_tuple(f) end)
 
-        pop = %Population{population | parents: parents}
+        # |> Enum.chunk_every(2, 2, :discard)
+        # |> Enum.map(fn f -> List.to_tuple(f) end)
+
+        pop = %Population{population | selected: selected}
         {:ok, pop}
       end
 
       defp do_crossover(population, f, args) do
-        parents = population.parents
+        parents = population.selected
 
         {children, history} =
           parents
+          |> Enum.chunk_every(2, 2, :discard)
+          |> Enum.map(fn f -> List.to_tuple(f) end)
           |> Enum.reduce(
             {[], population.history},
             fn {p1, p2}, {chd, his} ->
@@ -260,25 +265,39 @@ defmodule Genex.Evolution do
             end
           )
 
-        pop = %Population{population | children: children, history: history}
+        pop = %Population{population | children: children, history: history, selected: nil}
         {:ok, pop}
       end
 
       defp do_mutation(population, rate, f, args) do
         u = rate
 
-        chromosomes =
-          population.chromosomes
-          |> Enum.map(fn c ->
-            if :rand.uniform() < u do
-              apply(f, [c] ++ args)
-            else
-              c
-            end
-          end)
+        # If selected exists, act on selected
+        case population.selected do
+          nil ->
+            chromosomes =
+              population.chromosomes
+              |> Enum.map(fn c ->
+                if :rand.uniform() < u do
+                  apply(f, [c] ++ args)
+                else
+                  c
+                end
+              end)
 
-        pop = %Population{population | chromosomes: chromosomes}
-        {:ok, pop}
+            pop = %Population{population | chromosomes: chromosomes}
+            {:ok, pop}
+
+          _ ->
+            selected =
+              population.selected
+              |> Enum.map(fn c ->
+                apply(f, [c] ++ args)
+              end)
+
+            pop = %Population{population | selected: selected}
+            {:ok, pop}
+        end
       end
 
       defp do_reinsertion(population, f, args) do
@@ -290,10 +309,8 @@ defmodule Genex.Evolution do
         {:ok, pop}
       end
 
-      defoverridable [
-        transition: 2,
-        evaluation: 3
-      ]
+      defoverridable transition: 2,
+                     evaluation: 3
     end
   end
 end

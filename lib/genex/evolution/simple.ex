@@ -13,6 +13,7 @@ defmodule Genex.Evolution.Simple do
     end
   end
 
+  @spec variation(Population.t(), Keyword.t()) :: {:ok, Population.t()} | {:error, any()}
   def variation(population, opts \\ []) do
     with {:ok, population} <- match_crossover(population, opts),
          {:ok, population} <- match_mutation(population, opts) do

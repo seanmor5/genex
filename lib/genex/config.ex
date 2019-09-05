@@ -232,4 +232,11 @@ defmodule Genex.Config do
   def minimize(opts \\ []) do
     [minimize?: true] ++ opts
   end
+
+  @doc """
+  Define a hall of fame to use.
+  """
+  def hall_of_fame(opts \\ [], ref) do
+    [hall_of_fame: ref] ++ opts
+  end
 end

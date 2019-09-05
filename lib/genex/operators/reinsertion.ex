@@ -15,4 +15,6 @@ defmodule Genex.Operators.Reinsertion do
     chromosomes
     |> Enum.take(n)
   end
+
+  def uniform(chromosomes, n), do: :ok
 end
