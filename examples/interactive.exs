@@ -1,11 +1,11 @@
 defmodule Interactive do
-	use Genex
+  use Genex
 
-	def encoding, do: Chromosome.binary(size: 10)
+  def encoding, do: Chromosome.binary(size: 10)
 
-	def fitness_function(chromosome), do: interactive(chromosome)
+  def fitness_function(chromosome), do: interactive(chromosome)
 
-	def terminate?(population), do: population.max_fitness >= 10
+  def terminate?(population), do: population.max_fitness >= 10
 end
 
 import Genex.Config
