@@ -157,8 +157,8 @@ defmodule Genex do
       @minimize unquote(minimize)
 
       @spec encoding :: Enum.t()
-      def encoding, do: raise "You must implement encoding/0 or seed/1!"
-      
+      def encoding, do: raise("You must implement encoding/0 or seed/1!")
+
       @doc """
       Seed the population with some chromosomes.
 
@@ -650,7 +650,7 @@ defmodule Genex do
 
   @doc """
   A procedure for generating Interactive Genetic Algorithms.
-  
+
   In the `fitness_function/1` of your library, add this function.
   """
   def interactive(chromosome, view \\ &IO.inspect/1) do

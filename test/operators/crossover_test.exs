@@ -57,9 +57,11 @@ defmodule CrossoverTest do
     end
 
     test "davis_order/2" do
-      {p1, p2} = {%Chromosome{genes: [1, 2, 3, 4, 5], size: 5}, %Chromosome{genes: [4, 2, 3, 5, 1], size: 5}}
-      assert {%Chromosome{} = c1, %Chromosome{} = c2} =
-               Crossover.davis_order(p1, p2)
+      {p1, p2} =
+        {%Chromosome{genes: [1, 2, 3, 4, 5], size: 5},
+         %Chromosome{genes: [4, 2, 3, 5, 1], size: 5}}
+
+      assert {%Chromosome{} = c1, %Chromosome{} = c2} = Crossover.davis_order(p1, p2)
 
       assert length(c1.genes) == 5
       assert length(c2.genes) == 5
