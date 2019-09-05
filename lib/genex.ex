@@ -151,6 +151,7 @@ defmodule Genex do
       alias Genex.Chromosome
       alias Genex.Population
       alias Genex.Support.Statistics
+      import Genex
       use Genex.Config
       # Other
       @minimize unquote(minimize)
@@ -645,6 +646,18 @@ defmodule Genex do
                      benchmark: 1,
                      encoding: 0
     end
+  end
+
+  @doc """
+  A procedure for generating Interactive Genetic Algorithms.
+  
+  In the `fitness_function/1` of your library, add this function.
+  """
+  def interactive(chromosome, view \\ &IO.inspect/1) do
+    view.(chromosome)
+    score = IO.gets("\nWhat fitness score do you give to this chromosome?\n")
+    {num, _} = Float.parse(score)
+    num
   end
 
   defguard valid_rate?(rate) when is_float(rate) and rate >= 0.0 and rate <= 1.0
