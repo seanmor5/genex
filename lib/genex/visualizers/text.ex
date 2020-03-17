@@ -1,4 +1,6 @@
 defmodule Genex.Visualizers.Text do
+  use Genex.Visualizers
+
   @moduledoc """
   Text visualizations of the Algorithm.
   """
@@ -21,7 +23,7 @@ defmodule Genex.Visualizers.Text do
   @doc """
   Display a summary of the population.
   """
-  def display_summary(population) do
+  def display(population) do
     title = "Genetic Algorithm"
     header = ["Generation", "Size", "Max Fitness", "Strongest"]
 
@@ -33,4 +35,9 @@ defmodule Genex.Visualizers.Text do
     |> Kernel.<>(TableRex.quick_render!(rows, header, title))
     |> IO.write()
   end
+
+  @doc """
+  Receive input.
+  """
+  def input(prompt), do: IO.gets(prompt)
 end

@@ -1,5 +1,6 @@
 defmodule Genex do
   alias Genex.Support.Genealogy
+  alias Genex.Support.HallOfFame
   alias Genex.Types.Chromosome
   alias Genex.Types.Population
   alias Genex.Visualizers.Text
@@ -7,7 +8,8 @@ defmodule Genex do
   @doc """
   Generates a random gene set.
   """
-  @callback encoding :: Enum.t()
+  # TODO: This should be genotype
+  @callback genotype :: Enum.t()
 
   @doc """
   Seeds a population.
@@ -15,7 +17,7 @@ defmodule Genex do
   @callback seed(opts :: Keyword.t()) :: {:ok, Population.t()}
 
   @doc """
-  Evaluates a chromosome
+  Evaluates a chromosome.
   """
   @callback fitness_function(chromosome :: Chromosome.t()) :: number()
 
@@ -29,15 +31,7 @@ defmodule Genex do
       @behaviour Genex
       alias Genex.Types.Chromosome
       alias Genex.Types.Population
-
-      def match_evolution(opts) do
-        evolution_type = Keyword.get(opts, :evolution_type, :simple)
-
-        case evolution_type do
-          :simple -> Genex.Evolution.Simple
-          _ -> raise "Invalid Evolutin Type!"
-        end
-      end
+      alias Genex.Tools.Genotypes
 
       @doc """
       Seed the population with some chromosomes.
@@ -48,18 +42,26 @@ defmodule Genex do
 
         - `opts`: Keyword list of options.
       """
-      @spec seed(Keyword.t()) :: Enum.t(Chromosome.t())
+      @spec seed(Keyword.t()) :: {:ok, Enum.t(Chromosome.t())}
       def seed(opts \\ []) do
         size = Keyword.get(opts, :population_size, 100)
 
         chromosomes =
           for n <- 1..size do
-            g = encoding()
+            g = genotype()
             c = %Chromosome{genes: g, size: length(g)}
             c
           end
 
-        chromosomes
+        pop = %Population{chromosomes: chromosomes, size: length(chromosomes)}
+        {:ok, pop}
+      end
+
+      @spec init(Population.t(), Keyword.t()) :: {:ok, Population.t()}
+      def init(population, opts \\ []) do
+        history = Genealogy.init()
+        HallOfFame.init()
+        {:ok, %Population{population | history: history}}
       end
 
       @doc """
@@ -88,42 +90,35 @@ defmodule Genex do
       """
       @spec run(Keyword.t()) :: Population.t()
       def run(opts \\ []) do
-        Text.init()
+        visualizer = Keyword.get(opts, :visualizer, Genex.Visualizers.Text)
+        visualizer.init()
 
-        evolve = &match_evolution(opts).evolve/4
+        evolution = Keyword.get(opts, :evolution_type, Genex.Evolution.Simple)
 
-        with {:ok, population} <- init_and_evaluate(opts),
-             {:ok, population} <- evolve.(population, &terminate?/1, &fitness_function/1, opts) do
+        with {:ok, population} <- seed(opts),
+             {:ok, population} <- init(population, opts),
+             {:ok, population} <-
+               evolution.evolve(population, &terminate?/1, &fitness_function/1, opts) do
           soln = Population.sort(population, true)
+          soln
         else
           err -> raise err
         end
       end
 
       @doc """
-      Benchmark your genetic algorithm.
+      Profile your genetic algorithm.
 
-      This function will benchmark every function defined in your Genetic Algorithm.
+      This function will profile your genetic algorithm.
 
       Returns `:ok`.
       """
-      @spec benchmark :: :ok
-      def benchmark(opts \\ []), do: :ok
+      @spec profile :: :ok
+      def profile(opts \\ []), do: :ok
 
-      defp init_and_evaluate(opts) do
-        # Initialize necessary fields
-        chromosomes = seed(opts)
-        history = Genealogy.init() |> Genealogy.add_generation(chromosomes)
+      defp valid_opts?(opts \\ []), do: :ok
 
-        # Initialize the population
-        pop = %Population{chromosomes: chromosomes, history: history, size: length(chromosomes)}
-
-        # Find and apply the eval strategy
-        eval = &match_evolution(opts).evaluation/3
-        eval.(pop, &fitness_function/1, opts)
-      end
-
-      defoverridable seed: 1
+      defoverridable seed: 1, profile: 1
     end
   end
 

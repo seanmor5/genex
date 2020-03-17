@@ -1,9 +1,9 @@
 defmodule CrossoverTest do
   use ExUnit.Case
-  doctest Genex.Operators.Crossover, import: true
+  doctest Genex.Tools.Crossover, import: true
 
   alias Genex.Types.Chromosome
-  alias Genex.Operators.Crossover
+  alias Genex.Tools.Crossover
 
   setup do
     [

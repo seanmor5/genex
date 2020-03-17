@@ -135,7 +135,8 @@ defmodule Genex.MixProject do
       {:excoveralls, "~> 0.10", only: :test},
       {:table_rex, "~> 2.0.0"},
       {:benchee, "~> 1.0"},
-      {:libgraph, "~> 0.13.0"}
+      {:libgraph, "~> 0.13.0"},
+      {:statistics, "~> 0.6.2"}
     ]
   end
 

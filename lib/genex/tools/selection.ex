@@ -1,4 +1,4 @@
-defmodule Genex.Operators.Selection do
+defmodule Genex.Tools.Selection do
   @moduledoc """
   Implementation of several popular selection methods.
 

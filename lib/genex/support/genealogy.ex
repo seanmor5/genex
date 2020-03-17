@@ -27,6 +27,22 @@ defmodule Genex.Support.Genealogy do
   end
 
   @doc """
+    Updates a Genealogy Tree with a vertex and it's parents.
+
+    Returns `Graph`.
+
+    # Parameters
+      - `genealogy` - Reference to a Genealogy Tree.
+      - `child` - Chromosome to add.
+      - `parent` - Child's parent.
+  """
+  def update(genealogy, child, parent) do
+    genealogy
+    |> Graph.add_vertex(child)
+    |> Graph.add_edge(parent, child)
+  end
+
+  @doc """
   Updates a Genealogy Tree with a vertex and it's parents.
 
   Returns `Graph`.

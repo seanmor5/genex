@@ -72,4 +72,8 @@ defmodule Genex.Types.Population do
         max_fitness: hd(sorted_chromosomes).fitness
     }
   end
+
+  # TODO: Implement String.Chars
+
+  # TODO: Implement Enumerable Protocol
 end

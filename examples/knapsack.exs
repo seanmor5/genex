@@ -1,6 +1,6 @@
 defmodule Knapsack do
   use Genex
-  
+
   @bound_breached 0
 
   def encoding, do: Chromosome.binary(size: Enum.count(weights()))

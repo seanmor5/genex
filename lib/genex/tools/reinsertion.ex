@@ -1,4 +1,4 @@
-defmodule Genex.Operators.Reinsertion do
+defmodule Genex.Tools.Reinsertion do
   @doc """
   Elitist reinsertion.
 

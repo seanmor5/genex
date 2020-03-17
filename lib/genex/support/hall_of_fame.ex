@@ -6,6 +6,6 @@ defmodule Genex.Support.HallOfFame do
   def init, do: :ets.new(:hall_of_fame, [:set, :public, :named_table])
 
   def add(population) do
-    :ets.insert(:hall_of_fame, {population.generation, population.chromosome})
+    :ets.insert(:hall_of_fame, {population.generation, population.strongest})
   end
 end

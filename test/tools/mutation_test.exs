@@ -1,8 +1,8 @@
 defmodule MutationTest do
   use ExUnit.Case
-  doctest Genex.Operators.Mutation, import: true
+  doctest Genex.Tools.Mutation, import: true
   alias Genex.Types.Chromosome
-  alias Genex.Operators.Mutation
+  alias Genex.Tools.Mutation
 
   setup do
     [
