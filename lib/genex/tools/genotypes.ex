@@ -20,6 +20,7 @@ defmodule Genex.Tools.Genotypes do
     - `values`: Possible values in the permutation.
   """
   def permutation(values) when is_list(values), do: Enum.shuffle(values)
+  def permutation(lo..hi), do: Enum.shuffle(lo..hi)
   def permutation(values), do: raise("Values must be enumerated.")
 
   @doc """

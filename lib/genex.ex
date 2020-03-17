@@ -3,13 +3,16 @@ defmodule Genex do
   alias Genex.Support.HallOfFame
   alias Genex.Types.Chromosome
   alias Genex.Types.Population
-  alias Genex.Visualizers.Text
 
   @doc """
   Generates a random gene set.
   """
-  # TODO: This should be genotype
   @callback genotype :: Enum.t()
+
+  @doc """
+  Indicates the datatype used to encode solutions.
+  """
+  @callback datatype :: (() -> Enum.t())
 
   @doc """
   Seeds a population.
@@ -34,6 +37,11 @@ defmodule Genex do
       alias Genex.Tools.Genotypes
 
       @doc """
+      Specifies the datatype.
+      """
+      def datatype, do: &(&1)
+
+      @doc """
       Seed the population with some chromosomes.
 
       Returns `Enum.t(%Chromosomes{})`.
@@ -48,8 +56,8 @@ defmodule Genex do
 
         chromosomes =
           for n <- 1..size do
-            g = genotype()
-            c = %Chromosome{genes: g, size: length(g)}
+            g = datatype().(genotype())
+            c = %Chromosome{genes: g, size: Enum.count(g)}
             c
           end
 
@@ -97,6 +105,7 @@ defmodule Genex do
 
         with {:ok, population} <- seed(opts),
              {:ok, population} <- init(population, opts),
+             {:ok, population} <- evolution.evaluation(population, &fitness_function/1, opts),
              {:ok, population} <-
                evolution.evolve(population, &terminate?/1, &fitness_function/1, opts) do
           soln = Population.sort(population, true)

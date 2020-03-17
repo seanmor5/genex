@@ -210,7 +210,7 @@ defmodule Genex.Tools.Crossover do
   """
   @spec davis_order(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
   def davis_order(p1, p2) do
-    lim = length(p1.genes) - 1
+    lim = Enum.count(p1.genes) - 1
     # Get random range
     {i1, i2} =
       [:rand.uniform(lim), :rand.uniform(lim)]

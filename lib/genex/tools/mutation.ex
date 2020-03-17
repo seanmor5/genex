@@ -1,7 +1,6 @@
 defmodule Genex.Tools.Mutation do
   use Bitwise
   alias Genex.Types.Chromosome
-  import Genex, only: [valid_rate?: 1]
 
   @moduledoc """
   Implementation of several population mutation methods.
@@ -89,7 +88,7 @@ defmodule Genex.Tools.Mutation do
     - `
   """
   @spec scramble(Chromosome.t(), integer()) :: Chromosome.t()
-  def scramble(chromosome, n), do: :ok
+  def scramble(chromosome, _), do: :ok
 
   @doc """
   Perform inversion mutation on a random slice.
@@ -121,7 +120,7 @@ defmodule Genex.Tools.Mutation do
     genes =
       chromosome.genes
       |> Enum.map(fn _ ->
-        Enum.randon(min..max)
+        Enum.random(min..max)
       end)
 
     %Chromosome{genes: genes, size: chromosome.size}
@@ -165,7 +164,7 @@ defmodule Genex.Tools.Mutation do
     - `chromosome`- `Chromosome` to mutate.
   """
   @spec gaussian(Chromosome.t()) :: Chromosome.t()
-  def gaussian(chromosome) when valid_rate?() do
+  def gaussian(chromosome) do
     mu = Enum.sum(chromosome.genes) / length(chromosome.genes)
 
     sigma =

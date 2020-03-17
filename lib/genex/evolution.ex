@@ -6,7 +6,6 @@ defmodule Genex.Evolution do
   alias Genex.Support.Genealogy
   alias Genex.Support.HallOfFame
   alias Genex.Types.Population
-  import Genex, only: [valid_rate?: 1]
 
   @moduledoc """
   Evolution behaviour definition for Evolutionary algorithms.
@@ -118,7 +117,8 @@ defmodule Genex.Evolution do
       @spec reinsertion(Population.t(), Keyword.t()) :: {:ok, Population.t()}
       def reinsertion(population, opts \\ []) do
         strategy = Keyword.get(opts, :survival_type, :elitist)
-        survival_rate = Keyword.get(opts, :survival_rate, 0.2)
+        selection_rate = Keyword.get(opts, :selection_rate, 0.8)
+        survival_rate = Keyword.get(opts, :survival_rate, Float.round(1.0 - selection_rate, 1))
 
         survivors =
           case strategy do
@@ -231,7 +231,7 @@ defmodule Genex.Evolution do
 
         [f | args] = strategy
 
-        mutants =
+        {mutants, new_his} =
           mutate
           |> Enum.reduce(
             {[], population.history},
@@ -247,15 +247,15 @@ defmodule Genex.Evolution do
                 new_his = Genealogy.update(his, c, mutant)
                 {[mutant | mut], new_his}
               else
-                {c, his}
+                {[c | mut], his}
               end
             end
           )
 
         pop =
           case population.selected do
-            nil -> %Population{population | chromosomes: mutants}
-            _ -> %Population{population | children: mutants, selected: nil}
+            nil -> %Population{population | chromosomes: mutants, history: new_his}
+            _ -> %Population{population | children: mutants, selected: nil, history: new_his}
           end
 
         {:ok, pop}
@@ -266,9 +266,9 @@ defmodule Genex.Evolution do
 
         n =
           if is_function(rate) do
-            floor(rate.(population) * population.size)
+            floor(rate.(population) * length(chromosomes))
           else
-            floor(rate * population.size)
+            floor(rate * length(chromosomes))
           end
 
         [f | args] = strategy
