@@ -6,7 +6,13 @@ defmodule Genex.Config do
   """
 
   @type mutation ::
-          :scramble | :invert | :uniform_integer | :bit_flip | :gaussian | :polynomial_bounded
+          :scramble
+          | :invert
+          | :uniform_integer
+          | :bit_flip
+          | :gaussian
+          | :polynomial_bounded
+          | :none
   @type crossover ::
           :single_point
           | :two_point
@@ -14,7 +20,14 @@ defmodule Genex.Config do
           | :messy_single_point
           | :davis_order
           | :simulated_binary
-  @type selection :: :natural | :worst | :random | :roulette | :tournament | :stochastic
+          | :none
+  @type selection ::
+          :natural
+          | :worst
+          | :random
+          | :roulette
+          | :tournament
+          | :stochastic
   @type rate :: float() | (Genex.Population.t() -> float())
 
   @doc """

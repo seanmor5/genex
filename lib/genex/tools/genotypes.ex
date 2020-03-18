@@ -53,4 +53,6 @@ defmodule Genex.Tools.Genotypes do
   end
 
   def from_file(path, delimiter), do: :ok
+
+  def distribution(size, name, args \\ []), do: :ok
 end

@@ -3,7 +3,7 @@ defmodule Knapsack do
 
   @bound_breached 0
 
-  def encoding, do: Chromosome.binary(size: Enum.count(weights()))
+  def genotype, do: Genotypes.binary(Enum.count(weights()))
 
   def fitness_function(c) do
     profit =

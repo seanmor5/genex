@@ -1,6 +1,4 @@
 defmodule Genex do
-  alias Genex.Support.Genealogy
-  alias Genex.Support.HallOfFame
   alias Genex.Types.Chromosome
   alias Genex.Types.Population
 
@@ -65,13 +63,6 @@ defmodule Genex do
         {:ok, pop}
       end
 
-      @spec init(Population.t(), Keyword.t()) :: {:ok, Population.t()}
-      def init(population, opts \\ []) do
-        history = Genealogy.init()
-        HallOfFame.init()
-        {:ok, %Population{population | history: history}}
-      end
-
       @doc """
       Run the genetic algorithm.
 
@@ -98,18 +89,14 @@ defmodule Genex do
       """
       @spec run(Keyword.t()) :: Population.t()
       def run(opts \\ []) do
-        visualizer = Keyword.get(opts, :visualizer, Genex.Visualizers.Text)
-        visualizer.init()
-
-        evolution = Keyword.get(opts, :evolution_type, Genex.Evolution.Simple)
+        evolution = Keyword.get(opts, :evolution, Genex.Evolution.Simple)
 
         with {:ok, population} <- seed(opts),
-             {:ok, population} <- init(population, opts),
+             {:ok, population} <- evolution.init(population, opts),
              {:ok, population} <- evolution.evaluation(population, &fitness_function/1, opts),
              {:ok, population} <-
                evolution.evolve(population, &terminate?/1, &fitness_function/1, opts) do
-          soln = Population.sort(population, true)
-          soln
+          evolution.termination(population, opts)
         else
           err -> raise err
         end

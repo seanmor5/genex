@@ -20,29 +20,57 @@ defmodule Genex.Evolution do
 
   Each step performs a transformation on the population struct and returns with `{:ok, Population}` or with an error and a reason.
   """
-  @callback evaluation(
-              population :: Population.t(),
-              (Chromosome.t() -> number()),
-              opts :: Keyword.t()
-            ) :: {:ok, Population.t()}
 
+  @doc """
+  Initialization of the evolution.
+  """
+  @callback init(population :: Population.t(), opts :: Keyword.t()) :: {:ok, Population.t()}
+
+  @doc """
+  Evaluates `population` according to `fitness_fn`.
+  """
+  @callback evaluation(population :: Population.t(), fitness_fn :: (Chromosome.t() -> number()), opts :: Keyword.t()) :: {:ok, Population.t()}
+
+  @doc """
+  Select parents for variation. Must populate `selected` field in `Population`.
+  """
   @callback selection(population :: Population.t(), opts :: Keyword.t()) :: {:ok, Population.t()}
 
+  @doc """
+  Perform variation such as Crossover, Mutation, and Migration.
+  """
   @callback variation(population :: Population.t(), opts :: Keyword.t()) :: {:ok, Population.t()}
 
+  @doc """
+  Recombine population.
+  """
   @callback reinsertion(population :: Population.t(), opts :: Keyword.t()) ::
               {:ok, Population.t()}
 
   @doc """
-  Performs necessary operations for transitioning between generations.
+  Perform housekeeping before next generation. Includes Gene Repair.
   """
   @callback transition(population :: Population.t(), opts :: Keyword.t()) :: {:ok, Population.t()}
+
+  @doc """
+  Termination of the evolution.
+  """
+  @callback termination(population :: Population.t(), opts :: Keyword.t()) :: Population.t()
 
   defmacro __using__(_) do
     quote do
       alias Genex.Types.Chromosome
       alias Genex.Types.Population
       @behaviour Genex.Evolution
+
+      @spec init(Population.t(), Keyword.t()) :: {:ok, Population.t()}
+      def init(population, opts \\ []) do
+        visualizer = Keyword.get(opts, :visualizer, Genex.Visualizers.Text)
+        visualizer.init()
+        history = Genealogy.init()
+        HallOfFame.init()
+        {:ok, %Population{population | history: history}}
+      end
 
       @spec evolve(
               Population.t(),
@@ -52,7 +80,7 @@ defmodule Genex.Evolution do
             ) :: Population.t()
       def evolve(population, terminate?, fitness_function, opts \\ []) do
         visualizer = Keyword.get(opts, :visualizer, Genex.Visualizers.Text)
-
+        # Check if the population meets termination criteria
         if terminate?.(population) do
           {:ok, population}
         else
@@ -69,16 +97,17 @@ defmodule Genex.Evolution do
         end
       end
 
-      @spec evaluation(Population.t(), (Chromosome.t() -> number()), Keyword.t()) ::
-              {:ok, Population.t()}
+      @spec evaluation(Population.t(), (Chromosome.t() -> number()), Keyword.t()) :: {:ok, Population.t()}
       def evaluation(population, func, opts \\ []) do
-        minimize = Keyword.get(opts, :minimize?, false)
-
         chromosomes =
           population.chromosomes
           |> Enum.map(fn c -> %Chromosome{c | fitness: func.(c)} end)
+          |> Enum.sort_by(& &1.fitness, &>=/2)
 
-        pop = Population.sort(%Population{population | chromosomes: chromosomes}, minimize)
+        strongest = hd(chromosomes)
+        max_fitness = strongest.fitness
+
+        pop = %Population{population | chromosomes: chromosomes, strongest: strongest, max_fitness: max_fitness}
         {:ok, pop}
       end
 
@@ -141,12 +170,14 @@ defmodule Genex.Evolution do
       def transition(population, opts \\ []) do
         generation = population.generation + 1
         size = length(population.chromosomes)
+        chromosomes = do_update_ages(population.chromosomes)
 
         HallOfFame.add(population)
 
         pop = %Population{
           population
-          | size: size,
+          | chromosomes: chromosomes,
+            size: size,
             generation: generation,
             selected: nil,
             children: nil,
@@ -154,6 +185,19 @@ defmodule Genex.Evolution do
         }
 
         {:ok, pop}
+      end
+
+      @spec termination(Population.t(), Keyword.t()) :: Population.t()
+      def termination(population, opts \\ []) do
+        chromosomes =
+          population.chromosomes
+          |> Enum.sort_by(& &1.fitness, &>=/2)
+
+        strongest = hd(chromosomes)
+
+        max_fitness = strongest.fitness
+
+        %Population{population | chromosomes: chromosomes, strongest: strongest, max_fitness: max_fitness}
       end
 
       defp do_selection(population, strategy, rate) do
@@ -172,7 +216,7 @@ defmodule Genex.Evolution do
           if is_function(f) do
             apply(f, [chromosomes, n])
           else
-            apply(Genex.Tools.Selection, f, [chromosomes, n] ++ args)
+            apply(Selection, f, [chromosomes, n] ++ args)
           end
 
         pop = %Population{population | selected: selected}
@@ -202,7 +246,7 @@ defmodule Genex.Evolution do
                 if is_function(strategy) do
                   apply(strategy, [p1, p2])
                 else
-                  apply(Genex.Tools.Crossover, f, [p1, p2] ++ args)
+                  apply(Crossover, f, [p1, p2] ++ args)
                 end
 
               new_his =
@@ -241,7 +285,7 @@ defmodule Genex.Evolution do
                   if is_function(f) do
                     apply(f, [c] ++ args)
                   else
-                    apply(Genex.Tools.Mutation, f, [c] ++ args)
+                    apply(Mutation, f, [c] ++ args)
                   end
 
                 new_his = Genealogy.update(his, c, mutant)
@@ -277,18 +321,27 @@ defmodule Genex.Evolution do
           if is_function(f) do
             apply(f, [chromosomes, n] ++ args)
           else
-            apply(Genex.Tools.Reinsertion, f, [chromosomes, n] ++ args)
+            apply(Reinsertion, f, [chromosomes, n] ++ args)
           end
 
         survivors
       end
 
-      defoverridable transition: 2,
+      defp do_update_ages(chromosomes) do
+        chromosomes
+        |> Enum.map(fn c -> %Chromosome{c | age: c.age+1} end)
+      end
+
+      defp do_gene_repair, do: :ok
+
+      defoverridable init: 2,
+                     transition: 2,
                      evaluation: 3,
                      crossover: 2,
                      mutation: 2,
                      selection: 2,
-                     evolve: 4
+                     evolve: 4,
+                     termination: 2
     end
   end
 end

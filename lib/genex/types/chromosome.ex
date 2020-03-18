@@ -18,8 +18,9 @@ defmodule Genex.Types.Chromosome do
   @enforce_keys [:genes]
   defstruct [:genes, fitness: 0, size: 0, age: 0]
 
-  # TODO: More robust visualization
   defimpl String.Chars, for: __MODULE__ do
-    def to_string(chromosome), do: "#{inspect(chromosome.genes)}"
+    def to_string(chromosome) do
+      "#Chromosome<age: #{chromosome.age}, fitness: #{chromosome.fitness}>"
+    end
   end
 end

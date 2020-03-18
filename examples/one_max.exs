@@ -1,7 +1,7 @@
 defmodule OneMax do
   use Genex
 
-  def genotype, do: Genotypes.binary(size: 10)
+  def genotype, do: Genotypes.binary(10)
 
   def fitness_function(chromosome), do: Enum.sum(chromosome.genes)
 

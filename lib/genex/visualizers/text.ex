@@ -10,11 +10,11 @@ defmodule Genex.Visualizers.Text do
   """
   def init do
     title = "Genetic Algorithm"
-    header = ["Generation", "Size", "Max Fitness", "Strongest"]
+    header = ["Generation", "Population", "Strongest"]
 
     rows = [
-      [0, 0, 0, ""],
-      [0, 0, 0, ""]
+      [0000, 0000, "#Chromosome<age: 0, fitness: 0>"],
+      [0000, 0000, "#Chromosome<age: 0, fitness: 0>"]
     ]
 
     IO.write(TableRex.quick_render!(rows, header, title))
@@ -25,10 +25,10 @@ defmodule Genex.Visualizers.Text do
   """
   def display(population) do
     title = "Genetic Algorithm"
-    header = ["Generation", "Size", "Max Fitness", "Strongest"]
+    header = ["Generation", "Population", "Strongest"]
 
     rows = [
-      [population.generation, population.size, population.max_fitness, population.strongest]
+      [population.generation, population.size, population.strongest]
     ]
 
     IO.ANSI.cursor_up(7)
@@ -40,4 +40,6 @@ defmodule Genex.Visualizers.Text do
   Receive input.
   """
   def input(prompt), do: IO.gets(prompt)
+
+  def success(), do: :ok
 end

@@ -21,12 +21,11 @@ defmodule NQueens do
           0
         end
       end
-    row_clashes + Enum.sum(diag_clashes)
+    -1 * (row_clashes + Enum.sum(diag_clashes))
   end
 
   # Terminate when there are no clashes
   def terminate?(p), do: p.max_fitness == 0
 end
 
-[minimize?: true, crossover_type: :davis_order]
-|> NQueens.run()
+NQueens.run(crossover_type: :davis_order)
