@@ -1,7 +1,6 @@
 defmodule Genex.Evolution do
   alias Genex.Tools.Crossover
   alias Genex.Tools.Mutation
-  alias Genex.Tools.Reinsertion
   alias Genex.Tools.Selection
   alias Genex.Support.Genealogy
   alias Genex.Support.HallOfFame
@@ -66,7 +65,7 @@ defmodule Genex.Evolution do
       @spec init(Population.t(), Keyword.t()) :: {:ok, Population.t()}
       def init(population, opts \\ []) do
         visualizer = Keyword.get(opts, :visualizer, Genex.Visualizers.Text)
-        visualizer.init()
+        visualizer.init(opts)
         history = Genealogy.init()
         HallOfFame.init()
         {:ok, %Population{population | history: history}}
@@ -89,7 +88,7 @@ defmodule Genex.Evolution do
                {:ok, population} <- variation(population, opts),
                {:ok, population} <- reinsertion(population, opts),
                {:ok, population} <- transition(population, opts) do
-            visualizer.display(population)
+            visualizer.display(population, opts)
             evolve(population, terminate?, fitness_function, opts)
           else
             err -> raise err
@@ -115,20 +114,32 @@ defmodule Genex.Evolution do
       def selection(population, opts \\ []) do
         strategy = Keyword.get(opts, :selection_type, :natural)
         rate = Keyword.get(opts, :selection_rate, 0.8)
-
-        case strategy do
-          [_] -> do_selection(population, strategy, rate)
-          _ -> do_selection(population, [strategy], rate)
+        if is_function(strategy) do
+          do_selection(population, strategy, rate)
+        else
+          case strategy do
+            {_}          -> do_selection(population, strategy, rate)
+            {_, _}       -> do_selection(population, strategy, rate)
+            {_, _, _}    -> do_selection(population, strategy, rate)
+            {_, _, _, _} -> do_selection(population, strategy, rate)
+            _            -> do_selection(population, {strategy}, rate)
+          end
         end
       end
 
       @spec crossover(Population.t(), Keyword.t()) :: {:ok, Population.t()}
       def crossover(population, opts \\ []) do
         strategy = Keyword.get(opts, :crossover_type, :single_point)
-
-        case strategy do
-          [_] -> do_crossover(population, strategy)
-          _ -> do_crossover(population, [strategy])
+        if is_function(strategy) do
+          do_crossover(population, strategy)
+        else
+          case strategy do
+            {_}          -> do_crossover(population, strategy)
+            {_, _}       -> do_crossover(population, strategy)
+            {_, _, _}    -> do_crossover(population, strategy)
+            {_, _, _, _} -> do_crossover(population, strategy)
+            _            -> do_crossover(population, {strategy})
+          end
         end
       end
 
@@ -136,23 +147,31 @@ defmodule Genex.Evolution do
       def mutation(population, opts \\ []) do
         strategy = Keyword.get(opts, :mutation_type, :none)
         rate = Keyword.get(opts, :mutation_rate, 0.05)
-
-        case strategy do
-          [_] -> do_mutation(population, strategy, rate)
-          _ -> do_mutation(population, [strategy], rate)
+        if is_function(strategy) do
+          do_mutation(population, strategy, rate)
+        else
+          case strategy do
+            {_}          -> do_mutation(population, strategy, rate)
+            {_, _}       -> do_mutation(population, strategy, rate)
+            {_, _, _}    -> do_mutation(population, strategy, rate)
+            {_, _, _, _} -> do_mutation(population, strategy, rate)
+            _            -> do_mutation(population, {strategy}, rate)
+          end
         end
       end
 
       @spec reinsertion(Population.t(), Keyword.t()) :: {:ok, Population.t()}
       def reinsertion(population, opts \\ []) do
-        strategy = Keyword.get(opts, :survival_type, :elitist)
         selection_rate = Keyword.get(opts, :selection_rate, 0.8)
         survival_rate = Keyword.get(opts, :survival_rate, Float.round(1.0 - selection_rate, 1))
-
+        strategy = Keyword.get(opts, :survival_type, :natural)
         survivors =
           case strategy do
-            [_] -> do_survivor_selection(population, strategy, survival_rate)
-            _ -> do_survivor_selection(population, [strategy], survival_rate)
+            {_}          -> do_survivor_selection(population, strategy, survival_rate)
+            {_, _}       -> do_survivor_selection(population, strategy, survival_rate)
+            {_, _, _}    -> do_survivor_selection(population, strategy, survival_rate)
+            {_, _, _, _} -> do_survivor_selection(population, strategy, survival_rate)
+            _            -> do_survivor_selection(population, {strategy}, survival_rate)
           end
 
         new_chromosomes = population.children ++ survivors
@@ -210,12 +229,11 @@ defmodule Genex.Evolution do
             floor(rate * population.size)
           end
 
-        [f | args] = strategy
-
         selected =
-          if is_function(f) do
-            apply(f, [chromosomes, n])
+          if is_function(strategy) do
+            strategy.(chromosomes, n)
           else
+            [f | args] = Tuple.to_list(strategy)
             apply(Selection, f, [chromosomes, n] ++ args)
           end
 
@@ -223,11 +241,9 @@ defmodule Genex.Evolution do
         {:ok, pop}
       end
 
-      defp do_crossover(population, [:none | _]), do: {:ok, population}
-
+      defp do_crossover(population, {:none}), do: {:ok, population}
       defp do_crossover(population, strategy) do
         parents = population.selected
-        [f | args] = strategy
 
         starting_children =
           case population.children do
@@ -244,8 +260,9 @@ defmodule Genex.Evolution do
             fn {p1, p2}, {chd, his} ->
               {c1, c2} =
                 if is_function(strategy) do
-                  apply(strategy, [p1, p2])
+                  strategy.(p1, p2)
                 else
+                  [f | args] = Tuple.to_list(strategy)
                   apply(Crossover, f, [p1, p2] ++ args)
                 end
 
@@ -262,7 +279,7 @@ defmodule Genex.Evolution do
         {:ok, pop}
       end
 
-      defp do_mutation(population, [:none | _], rate), do: {:ok, population}
+      defp do_mutation(population, {:none}, rate), do: {:ok, population}
 
       defp do_mutation(population, strategy, rate) do
         u = if is_function(rate), do: rate.(population), else: rate
@@ -273,8 +290,6 @@ defmodule Genex.Evolution do
             _ -> population.selected
           end
 
-        [f | args] = strategy
-
         {mutants, new_his} =
           mutate
           |> Enum.reduce(
@@ -282,9 +297,10 @@ defmodule Genex.Evolution do
             fn c, {mut, his} ->
               if :rand.uniform() < u do
                 mutant =
-                  if is_function(f) do
-                    apply(f, [c] ++ args)
+                  if is_function(strategy) do
+                    strategy.(c)
                   else
+                    [f | args] = Tuple.to_list(strategy)
                     apply(Mutation, f, [c] ++ args)
                   end
 
@@ -315,13 +331,12 @@ defmodule Genex.Evolution do
             floor(rate * length(chromosomes))
           end
 
-        [f | args] = strategy
-
         survivors =
-          if is_function(f) do
-            apply(f, [chromosomes, n] ++ args)
+          if is_function(strategy) do
+            strategy.(chromosomes, n)
           else
-            apply(Reinsertion, f, [chromosomes, n] ++ args)
+            [f | args] = Tuple.to_list(strategy)
+            apply(Selection, f, [chromosomes, n] ++ args)
           end
 
         survivors

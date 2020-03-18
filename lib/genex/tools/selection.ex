@@ -152,4 +152,12 @@ defmodule Genex.Tools.Selection do
       )
     end)
   end
+
+  def boltzmann, do: :ok
+  def rank, do: :ok
+  def double_tournament, do: :ok
+  def tournament_dcd, do: :ok
+  def lexicase, do: :ok
+  def epsilon_lexicase, do: :ok
+  def automatic_epsilon_lexicase, do: :ok
 end

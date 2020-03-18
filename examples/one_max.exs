@@ -1,11 +1,12 @@
 defmodule OneMax do
   use Genex
 
-  def genotype, do: Genotypes.binary(10)
+  def genotype, do: Genotype.binary(100)
 
   def fitness_function(chromosome), do: Enum.sum(chromosome.genes)
 
-  def terminate?(population), do: population.max_fitness == 10
+  def terminate?(population), do: population.max_fitness == 100
 end
 
-OneMax.run()
+soln = OneMax.run(title: "One Max", mutation_type: :scramble)
+IO.inspect(soln.strongest.genes)

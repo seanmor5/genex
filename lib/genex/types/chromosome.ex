@@ -1,6 +1,5 @@
 defmodule Genex.Types.Chromosome do
   alias __MODULE__, as: Chromosome
-  alias Statistics.Distributions
 
   @moduledoc """
   A collection of genes.
@@ -17,10 +16,4 @@ defmodule Genex.Types.Chromosome do
 
   @enforce_keys [:genes]
   defstruct [:genes, fitness: 0, size: 0, age: 0]
-
-  defimpl String.Chars, for: __MODULE__ do
-    def to_string(chromosome) do
-      "#Chromosome<age: #{chromosome.age}, fitness: #{chromosome.fitness}>"
-    end
-  end
 end

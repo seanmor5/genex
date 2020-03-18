@@ -198,7 +198,7 @@ defmodule Genex.Tools.Crossover do
   end
 
   @doc """
-  Performs Davis Order crossover of a random slice.
+  Performs Order One (Davis Order) crossover of a random slice.
 
   **Note**: This algorithm only works if your encoding is a permutation.
 
@@ -208,8 +208,8 @@ defmodule Genex.Tools.Crossover do
     - `p1`: Parent one.
     - `p2`: Parent two.
   """
-  @spec davis_order(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
-  def davis_order(p1, p2) do
+  @spec order_one(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
+  def order_one(p1, p2) do
     lim = Enum.count(p1.genes) - 1
     # Get random range
     {i1, i2} =
@@ -233,4 +233,13 @@ defmodule Genex.Tools.Crossover do
     {c1, c2} = {head1 ++ slice1 ++ tail1, head2 ++ slice2 ++ tail2}
     {%Chromosome{genes: c1, size: p1.size}, %Chromosome{genes: c2, size: p2.size}}
   end
+
+  def multi_point, do: :ok
+  def partialy_matched, do: :ok
+  def uniform_partialy_matched, do: :ok
+  def simulted_binary_bounded, do: :ok
+  def cycle, do: :ok
+  def order_multi, do: :ok
+  def collision, do: :ok
+  def cut_on_worst, do: :ok
 end

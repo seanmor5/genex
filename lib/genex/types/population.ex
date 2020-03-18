@@ -17,6 +17,7 @@ defmodule Genex.Types.Population do
           selected: Enum.t() | nil,
           children: Enum.t() | nil,
           size: integer(),
+          momentum: number(),
           strongest: Chromosome.t(),
           history: :digraph.graph(),
           statistics: Keyword.t()
@@ -31,6 +32,7 @@ defmodule Genex.Types.Population do
     selected: nil,
     children: nil,
     size: 0,
+    momentum: 0,
     strongest: nil,
     history: nil,
     statistics: []

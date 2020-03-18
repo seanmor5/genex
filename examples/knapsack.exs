@@ -3,7 +3,7 @@ defmodule Knapsack do
 
   @bound_breached 0
 
-  def genotype, do: Genotypes.binary(Enum.count(weights()))
+  def genotype, do: Genotype.binary(Enum.count(weights()))
 
   def fitness_function(c) do
     profit =
@@ -40,9 +40,9 @@ defmodule Knapsack do
   # defp weight_limit, do: 15
 end
 
-import Genex.Config
+soln = Knapsack.run(title: "Knapsack",
+                    crossover_type: :two_point,
+                    selection_type: :roulette,
+                    population_size: 50)
 
-[population_size: 50]
-|> use_crossover(:two_point)
-|> use_selection(:roulette)
-|> Knapsack.run()
+IO.inspect(soln.strongest.genes)

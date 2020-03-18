@@ -91,20 +91,7 @@ defmodule Genex.Tools.Mutation do
   def scramble(chromosome, _), do: :ok
 
   @doc """
-  Perform inversion mutation on a random slice.
-
-  This mutation reverses (inverts) a random slice of genes of the Chromosome.
-
-  Returns `%Chromosome{}`.
-
-  # Parameters
-    - `chromosome`- `Chromosome` to mutate.
-  """
-  @spec invert(Chromosome.t()) :: Chromosome.t()
-  def invert(_), do: :ok
-
-  @doc """
-  Performs uniform integer mutation.
+  Performs creep mutation.
 
   This mutation generates a random number between `min` and `max` at every gene in the chromosome.
 
@@ -115,8 +102,8 @@ defmodule Genex.Tools.Mutation do
     - `min`- lower bound
     - `max`- upper bound
   """
-  @spec uniform_integer(Chromosome.t(), integer(), integer()) :: Chromosome.t()
-  def uniform_integer(chromosome, min, max) do
+  @spec creep(Chromosome.t(), integer(), integer()) :: Chromosome.t()
+  def creep(chromosome, min, max) do
     genes =
       chromosome.genes
       |> Enum.map(fn _ ->
@@ -127,7 +114,7 @@ defmodule Genex.Tools.Mutation do
   end
 
   @doc """
-  Performs uniform integer mutation with at random genes.
+  Performs creep mutation with at random genes.
 
   This mutation generates a random number between `min` and `max` at genes with probability `p` in the chromosome.
 
@@ -139,7 +126,7 @@ defmodule Genex.Tools.Mutation do
     - `min`: lower bound
     - `max`: upper bound
   """
-  def uniform_integer(chromosome, p, min, max) do
+  def creep(chromosome, p, min, max) do
     genes =
       chromosome.genes
       |> Enum.map(fn x ->
@@ -216,5 +203,8 @@ defmodule Genex.Tools.Mutation do
     %Chromosome{genes: genes, size: chromosome.size}
   end
 
-  def polynomial_bounded(), do: :ok
+  def polynomial_bounded, do: :ok
+  def swap, do: :ok
+  def invert, do: :ok
+  def invert_center, do: :ok
 end

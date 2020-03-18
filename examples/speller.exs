@@ -1,7 +1,7 @@
 defmodule Speller do
   use Genex
 
-  def encoding, do: Chromosome.alphabetic(size: 5)
+  def genotype, do: Genotype.bitstring(5)
 
   def fitness_function(chromosome) do
     genes = chromosome.genes
@@ -11,4 +11,4 @@ defmodule Speller do
   def terminate?(population), do: population.max_fitness == 1
 end
 
-Speller.run()
+Speller.run(title: "Speller")

@@ -8,13 +8,13 @@ defmodule Genex.Visualizers.Text do
   @doc """
   Display Initial Algorithm Text.
   """
-  def init do
-    title = "Genetic Algorithm"
-    header = ["Generation", "Population", "Strongest"]
+  def init(opts) do
+    title = Keyword.get(opts, :title, "Genetic Algorithm")
+    header = Keyword.get(opts, :columns, ["Generation", "Population", "Strongest"])
 
     rows = [
-      [0000, 0000, "#Chromosome<age: 0, fitness: 0>"],
-      [0000, 0000, "#Chromosome<age: 0, fitness: 0>"]
+      [0, 0, "#Chromosome<age: 0, fitness: 0>"],
+      [0, 0, "#Chromosome<age: 0, fitness: 0>"]
     ]
 
     IO.write(TableRex.quick_render!(rows, header, title))
@@ -23,12 +23,15 @@ defmodule Genex.Visualizers.Text do
   @doc """
   Display a summary of the population.
   """
-  def display(population) do
-    title = "Genetic Algorithm"
-    header = ["Generation", "Population", "Strongest"]
+  def display(population, opts) do
+    title = Keyword.get(opts, :title, "Genetic Algorithm")
+    header = Keyword.get(opts, :columns, ["Generation", "Population", "Strongest"])
+
+    generation = Integer.to_string(population.generation) |> String.pad_leading(5, "0")
+    size = Integer.to_string(population.size)
 
     rows = [
-      [population.generation, population.size, population.strongest]
+      [generation, size, population.strongest]
     ]
 
     IO.ANSI.cursor_up(7)
@@ -39,7 +42,5 @@ defmodule Genex.Visualizers.Text do
   @doc """
   Receive input.
   """
-  def input(prompt), do: IO.gets(prompt)
-
-  def success(), do: :ok
+  def input(prompt, _), do: IO.gets(prompt)
 end

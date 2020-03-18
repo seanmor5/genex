@@ -32,7 +32,9 @@ defmodule Genex do
       @behaviour Genex
       alias Genex.Types.Chromosome
       alias Genex.Types.Population
-      alias Genex.Tools.Genotypes
+      alias Genex.Tools.Genotype
+      alias Genex.Tools.Evaluation
+      alias Genex.Tools.Benchmarks
 
       @doc """
       Specifies the datatype.

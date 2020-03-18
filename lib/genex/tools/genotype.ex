@@ -1,4 +1,4 @@
-defmodule Genex.Tools.Genotypes do
+defmodule Genex.Tools.Genotype do
   @doc """
   Creates a binary geneset.
 
@@ -33,7 +33,7 @@ defmodule Genex.Tools.Genotypes do
     - `size`: Size of the geneset.
     - `alphabet`: Alphabet to use.
   """
-  def bitstring(size, alphabet) do
+  def bitstring(size, alphabet \\ :downcase) do
     alpha = "abcdefghijklmnopqrstuvwxyz"
     numeric = "1234567890"
 
@@ -45,14 +45,14 @@ defmodule Genex.Tools.Genotypes do
         alphabet == :downcase -> alpha
         alphabet == :all -> alpha <> numeric <> String.upcase(alpha)
       end
+      |> String.split("", trim: true)
 
-    alphabets
-    |> Enum.shuffle()
-    |> Enum.split(size)
-    |> elem(0)
+    1..size
+    |> Enum.reduce([], fn _, acc -> [Enum.random(alphabets) | acc] end)
   end
 
-  def from_file(path, delimiter), do: :ok
+  def from_stream(stream), do: :ok
+  def from_stream(stream, transform), do: :ok
 
   def distribution(size, name, args \\ []), do: :ok
 end
