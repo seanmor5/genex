@@ -240,6 +240,7 @@ defmodule Genex.Evolution do
             {starting_children, population.history},
             fn {p1, p2}, {chd, his} ->
               {c1, c2} = strategy.(p1, p2)
+
               new_his =
                 his
                 |> Genealogy.update(c1, p1, p2)

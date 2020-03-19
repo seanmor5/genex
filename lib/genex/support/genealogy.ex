@@ -21,6 +21,11 @@ defmodule Genex.Support.Genealogy do
     - `genealogy` - Reference to a Genealogy Tree.
     - `chromosome` - Chromosome to add to Genealogy.
   """
+  def update(genealogy, chromosomes) when is_list(chromosomes) do
+    genealogy
+    |> Graph.add_vertices(chromosomes)
+  end
+
   def update(genealogy, chromosome) do
     genealogy
     |> Graph.add_vertex(chromosome)
@@ -58,19 +63,6 @@ defmodule Genex.Support.Genealogy do
     |> Graph.add_vertex(child)
     |> Graph.add_edge(parent_a, child)
     |> Graph.add_edge(parent_b, child)
-  end
-
-  @doc """
-  Add a generation of `Chromosomes` to Genealogy Tree.
-
-  Returns `Graph`.
-
-  # Parameters
-    - `genealogy` - Reference to a Genealogy tree.
-    - `chromosome` - Chromosome to add.
-  """
-  def add_generation(genealogy, chromosomes) do
-    Graph.add_vertices(genealogy, chromosomes)
   end
 
   @doc """

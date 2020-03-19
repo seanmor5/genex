@@ -225,7 +225,7 @@ defmodule Genex.Tools.Mutation do
   @doc false
   def creep(min: min, max: max), do: &creep(&1, min, max)
   def creep(min: min, max: max, radiation: radiation), do: &creep(&1, radiation, min, max)
-  def creep(_), do: raise "Invalid args"
+  def creep(_), do: raise("Invalid args")
 
   @doc false
   def gaussian, do: &gaussian(&1)
