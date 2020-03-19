@@ -8,5 +8,9 @@ defmodule OneMax do
   def terminate?(population), do: population.max_fitness == 100
 end
 
-soln = OneMax.run(title: "One Max", mutation_type: :scramble)
+use Genex.Tools
+
+soln = OneMax.run(title: "One Max",
+                  mutation_type: Mutation.scramble())
+
 IO.inspect(soln.strongest.genes)

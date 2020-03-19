@@ -39,7 +39,7 @@ defmodule Genex do
       @doc """
       Specifies the datatype.
       """
-      def datatype, do: &(&1)
+      def datatype, do: & &1
 
       @doc """
       Seed the population with some chromosomes.

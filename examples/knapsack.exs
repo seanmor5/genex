@@ -40,9 +40,11 @@ defmodule Knapsack do
   # defp weight_limit, do: 15
 end
 
+use Genex.Tools
+
 soln = Knapsack.run(title: "Knapsack",
-                    crossover_type: :two_point,
-                    selection_type: :roulette,
+                    crossover_type: Crossover.two_point(),
+                    selection_type: Selection.roulette(),
                     population_size: 50)
 
 IO.inspect(soln.strongest.genes)

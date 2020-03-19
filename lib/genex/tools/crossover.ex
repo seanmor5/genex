@@ -78,6 +78,9 @@ defmodule Genex.Tools.Crossover do
     {%Chromosome{genes: c1, size: length(c1)}, %Chromosome{genes: c2, size: length(c2)}}
   end
 
+  @doc false
+  def two_point, do: &two_point(&1, &2)
+
   @doc """
   Performs uniform crossover.
 
@@ -136,6 +139,8 @@ defmodule Genex.Tools.Crossover do
 
     {%Chromosome{genes: c1, size: p1.size}, %Chromosome{genes: c2, size: p1.size}}
   end
+
+  @doc false
 
   @doc """
   Performs a simulated binary crossover.
@@ -242,4 +247,54 @@ defmodule Genex.Tools.Crossover do
   def order_multi, do: :ok
   def collision, do: :ok
   def cut_on_worst, do: :ok
+
+  ################ CLOSURES #################
+  @doc false
+  def single_point, do: &single_point(&1, &2)
+
+  @doc false
+  def two_point, do: &two_point(&1, &2)
+
+  @doc false
+  def uniform(rate: rate) when not is_float(rate),
+    do: raise("Invalid arguments provided to uniform crossover. `rate` must be type `float`.")
+
+  def uniform(rate: rate), do: &uniform(&1, &2, rate)
+
+  def uniform(args),
+    do:
+      raise("Invalid arguments provided to uniform crossover. Expected `rate: rate` got #{args}.")
+
+  @doc false
+  def blend(alpha: alpha) when not is_float(alpha),
+    do: raise("Invalid arguments provided to blend crossover. `alpha` must be type `float`.")
+
+  def blend(alpha: alpha), do: &blend(&1, &2, alpha)
+
+  def blend(args),
+    do:
+      raise("Invalid arguments provided to blend crossover. Expected `alpha: alpha` got #{args}.")
+
+  @doc false
+  def simulated_binary(eta: eta) when not is_float(eta),
+    do:
+      raise(
+        "Invalid arguments provided to simulated binary crossover. `eta` must be type `float`."
+      )
+
+  def simulated_binary(eta: eta), do: &simulated_binary(&1, &2, eta)
+
+  def simulated_binary(args),
+    do:
+      raise(
+        "Invalid arguments provided to simulated binary crossover. Expected `alpha: alpha` got #{
+          args
+        }."
+      )
+
+  @doc false
+  def messy_single_point, do: &messy_single_point(&1, &2)
+
+  @doc false
+  def order_one, do: &order_one(&1, &2)
 end

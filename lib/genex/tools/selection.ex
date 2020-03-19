@@ -160,4 +160,15 @@ defmodule Genex.Tools.Selection do
   def lexicase, do: :ok
   def epsilon_lexicase, do: :ok
   def automatic_epsilon_lexicase, do: :ok
+
+  ################ CLOSURES #################
+  def natural, do: &natural(&1, &2)
+
+  def worst, do: &worst(&1, &2)
+
+  def random, do: &random(&1, &2)
+
+  def tournament(tournsize: tournsize), do: &tournament(&1, &2, tournsize)
+
+  def roulette, do: &roulette(&1, &2)
 end

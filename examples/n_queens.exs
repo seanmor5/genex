@@ -28,9 +28,11 @@ defmodule NQueens do
   def terminate?(p), do: p.max_fitness == 0
 end
 
+use Genex.Tools
+
 soln = NQueens.run(title: "N-Queens",
-                   crossover_type: :order_one,
-                   selection_type: {:tournament, 10},
-                   mutation_type: :scramble,
+                   crossover_type: Crossover.order_one(),
+                   selection_type: Selection.tournament(tournsize: 10),
+                   mutation_type: Mutation.scramble(),
                    mutation_rate: 0.1)
 IO.inspect(soln.strongest.genes)
