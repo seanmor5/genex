@@ -8,6 +8,7 @@ defmodule Genex.Support.Checkpoint do
 
   def save(population, path \\ "") do
     {:ok, dtg} = DateTime.now("Etc/UTC")
+
     prefix =
       dtg
       |> DateTime.to_string()
@@ -18,6 +19,7 @@ defmodule Genex.Support.Checkpoint do
       prefix
       |> Kernel.<>(".hall_of_fame")
       |> String.to_charlist()
+
     {:ok, hof_name} = HallOfFame.save()
     {:ok, hof_bin} = File.read(hof_name)
 
@@ -26,9 +28,11 @@ defmodule Genex.Support.Checkpoint do
       prefix
       |> Kernel.<>(".history")
       |> String.to_charlist()
+
     {:ok, dot_bin} =
       population.history
       |> Genealogy.export()
+
     dot_bin = String.to_charlist(dot_bin)
 
     # Serialize Population
@@ -36,13 +40,14 @@ defmodule Genex.Support.Checkpoint do
       prefix
       |> Kernel.<>(".population")
       |> String.to_charlist()
+
     pop_bin = :erlang.term_to_binary(population)
 
     # path
-    path = if path == "", do: File.cwd!, else: path
+    path = if path == "", do: File.cwd!(), else: path
 
     # Save all to zip
     files = [{hof, hof_bin}, {dot, dot_bin}, {pop, pop_bin}]
-    :zip.create(String.to_charlist(prefix <> ".zip"), files, [cwd: String.to_charlist(path)])
+    :zip.create(String.to_charlist(prefix <> ".zip"), files, cwd: String.to_charlist(path))
   end
 end
