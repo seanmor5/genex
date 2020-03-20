@@ -1,5 +1,6 @@
 defmodule Genex.Tools.Evaluation do
-  def interactive, do: :ok
+
+  def interactive(buffer, prompt), do: &buffer.(prompt)
 
   def eval(c), do: c.fitness
 end

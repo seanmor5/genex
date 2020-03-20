@@ -38,9 +38,4 @@ defmodule Genex.Visualizers.Text do
     |> Kernel.<>(TableRex.quick_render!(rows, header, title))
     |> IO.write()
   end
-
-  @doc """
-  Receive input.
-  """
-  def input(prompt, _), do: IO.gets(prompt)
 end

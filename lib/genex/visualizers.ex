@@ -10,8 +10,6 @@ defmodule Genex.Visualizers do
 
   @callback display(population :: Population.t(), opt :: options) :: any
 
-  @callback input(String.t(), opt :: options) :: any
-
   defmacro __using__(_) do
     quote do
       @behaviour Genex.Visualizers
