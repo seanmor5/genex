@@ -13,4 +13,4 @@ use Genex.Tools
 soln = OneMax.run(title: "One Max",
                   mutation_type: Mutation.scramble())
 
-Genex.Support.Checkpoint.save(soln)
+IO.inspect(soln.strongest.genes)

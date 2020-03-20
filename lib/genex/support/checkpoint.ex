@@ -6,7 +6,7 @@ defmodule Genex.Support.Checkpoint do
   Utilities for saving and loading from checkpoints.
   """
 
-  def save(population, path \\ "") do
+  def export(population, path \\ "") do
     {:ok, dtg} = DateTime.now("Etc/UTC")
 
     prefix =

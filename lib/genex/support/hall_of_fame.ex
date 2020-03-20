@@ -9,7 +9,7 @@ defmodule Genex.Support.HallOfFame do
     :ets.insert(:hall_of_fame, {population.generation, population.strongest})
   end
 
-  def save(path \\ "") do
+  def export(path \\ "") do
     {:ok, dtg} = DateTime.now("Etc/UTC")
 
     name =
