@@ -189,6 +189,8 @@ defmodule Genex.Evolution do
 
         max_fitness = strongest.fitness
 
+        HallOfFame.add(population)
+
         %Population{
           population
           | chromosomes: chromosomes,
