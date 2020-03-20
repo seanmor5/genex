@@ -13,28 +13,18 @@ defmodule Genex.Support.Genealogy do
   def init, do: Graph.new(type: :directed)
 
   @doc """
-  Updates a Genealogy Tree with several vertices.
+  Updates a Genealogy Tree with several vertices or one vertex.
 
   Returns `Graph`.
 
   # Parameters
     - `genealogy`: Reference to the Genealogy Tree.
-    - `chromosomes`: `List` of `Chromosomes`.
+    - `chromosomes`: `List` of `%Chromosome{}` or `%Chromosome{}`.
   """
   def update(genealogy, chromosomes) when is_list(chromosomes) do
     genealogy
     |> Graph.add_vertices(chromosomes)
   end
-
-  @doc """
-  Updates a Genealogy Tree with just a vertex.
-
-  Returns `Graph`.
-
-  # Parameters
-    - `genealogy`: Reference to a Genealogy Tree.
-    - `chromosome`: Chromosome to add to Genealogy.
-  """
   def update(genealogy, chromosome) do
     genealogy
     |> Graph.add_vertex(chromosome)
@@ -47,8 +37,8 @@ defmodule Genex.Support.Genealogy do
 
     # Parameters
       - `genealogy`: Reference to a Genealogy Tree.
-      - `child`: Chromosome to add.
-      - `parent`: Child's parent.
+      - `child`: Child `%Chromosome{}`.
+      - `parent`: Parent `%Chromosome{}`.
   """
   def update(genealogy, child, parent) do
     genealogy
@@ -63,9 +53,9 @@ defmodule Genex.Support.Genealogy do
 
   # Parameters
     - `genealogy`: Reference to a Genealogy Tree.
-    - `child`: Chromosome to add.
-    - `parent_a`: Child's parent.
-    - `parent_b`: Child's parent.
+    - `child`: Child `%Chromosome{}`.
+    - `parent_a`: Parent A `%Chromosome{}`.
+    - `parent_b`: Parent B `%Chromosome{}`.
   """
   def update(genealogy, child, parent_a, parent_b) do
     genealogy
@@ -76,6 +66,12 @@ defmodule Genex.Support.Genealogy do
 
   @doc """
   Exports the genealogy tree.
+
+  Returns `{:ok, String}`.
+
+  # Parameters
+
+    - `genealogy`: Reference to a Genealogy Tree.
   """
   def export(genealogy) do
     genealogy

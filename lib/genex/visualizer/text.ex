@@ -1,5 +1,5 @@
 defmodule Genex.Visualizers.Text do
-  use Genex.Visualizers
+  use Genex.Visualizer
 
   @moduledoc """
   Text visualizations of the Algorithm.

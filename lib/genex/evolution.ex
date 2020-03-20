@@ -59,7 +59,7 @@ defmodule Genex.Evolution do
 
       @spec init(Population.t(), Keyword.t()) :: {:ok, Population.t()}
       def init(population, opts \\ []) do
-        visualizer = Keyword.get(opts, :visualizer, Genex.Visualizers.Text)
+        visualizer = Keyword.get(opts, :visualizer, Genex.Visualizer.Text)
         visualizer.init(opts)
         history = Genealogy.init()
         HallOfFame.init()
@@ -73,7 +73,7 @@ defmodule Genex.Evolution do
               Keyword.t()
             ) :: Population.t()
       def evolve(population, terminate?, fitness_function, opts \\ []) do
-        visualizer = Keyword.get(opts, :visualizer, Genex.Visualizers.Text)
+        visualizer = Keyword.get(opts, :visualizer, Genex.Visualizer.Text)
         # Check if the population meets termination criteria
         if terminate?.(population) do
           {:ok, population}

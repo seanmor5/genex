@@ -1,6 +1,5 @@
 defmodule Genex.Support.Checkpoint do
-  alias Genex.Support.Genealogy
-  alias Genex.Support.HallOfFame
+  alias Genex.Support.{Genealogy, HallOfFame}
 
   @moduledoc """
   Utilities for saving and loading from checkpoints.

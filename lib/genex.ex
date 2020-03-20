@@ -1,6 +1,5 @@
 defmodule Genex do
-  alias Genex.Types.Chromosome
-  alias Genex.Types.Population
+  alias Genex.Types.{Chromosome, Population}
 
   @moduledoc """
   Genex makes it easy to write Evolutionary Algorithms in Elixir.
@@ -44,9 +43,7 @@ defmodule Genex do
       @behaviour Genex
       alias Genex.Types.Chromosome
       alias Genex.Types.Population
-      alias Genex.Tools.Genotype
-      alias Genex.Tools.Evaluation
-      alias Genex.Tools.Benchmarks
+      alias Genex.Tools.{Benchmarks, Evaluation, Genotype}
 
       @doc """
       Specifies the datatype.
@@ -114,6 +111,7 @@ defmodule Genex do
         end
       end
 
+      def eval(c), do: c.fitness
       @doc """
       Profile your genetic algorithm.
 

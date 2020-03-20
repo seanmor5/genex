@@ -1,8 +1,8 @@
-defmodule Genex.Visualizers do
+defmodule Genex.Visualizer do
   @moduledoc """
   Visualizer behaviour.
   """
-  alias Genex.Types.{Population, Chromosome}
+  alias Genex.Types.{Chromosome, Population}
 
   @type options :: any
 
@@ -12,7 +12,7 @@ defmodule Genex.Visualizers do
 
   defmacro __using__(_) do
     quote do
-      @behaviour Genex.Visualizers
+      @behaviour Genex.Visualizer
       alias Genex.Types.{Population, Chromosome}
 
       defimpl String.Chars, for: Chromosome do
