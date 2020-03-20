@@ -34,6 +34,9 @@ defmodule Genex.Tools.Crossover do
     {%Chromosome{genes: c1, size: length(c1)}, %Chromosome{genes: c2, size: length(c2)}}
   end
 
+  @doc false
+  def single_point, do: &single_point(&1, &2)
+
   @doc """
   Performs two-point crossover at a random point.
 
@@ -110,6 +113,16 @@ defmodule Genex.Tools.Crossover do
     {%Chromosome{genes: c1, size: p1.size}, %Chromosome{genes: c2, size: p1.size}}
   end
 
+  @doc false
+  def uniform(rate: rate) when not is_float(rate),
+    do: raise("Invalid arguments provided to uniform crossover. `rate` must be type `float`.")
+
+  def uniform(rate: rate), do: &uniform(&1, &2, rate)
+
+  def uniform(args),
+    do:
+      raise("Invalid arguments provided to uniform crossover. Expected `rate: rate` got #{args}.")
+
   @doc """
   Performs a blend crossover.
 
@@ -141,6 +154,14 @@ defmodule Genex.Tools.Crossover do
   end
 
   @doc false
+  def blend(alpha: alpha) when not is_float(alpha),
+    do: raise("Invalid arguments provided to blend crossover. `alpha` must be type `float`.")
+
+  def blend(alpha: alpha), do: &blend(&1, &2, alpha)
+
+  def blend(args),
+    do:
+      raise("Invalid arguments provided to blend crossover. Expected `alpha: alpha` got #{args}.")
 
   @doc """
   Performs a simulated binary crossover.
@@ -180,6 +201,23 @@ defmodule Genex.Tools.Crossover do
     {%Chromosome{genes: c1, size: p1.size}, %Chromosome{genes: c2, size: p1.size}}
   end
 
+  @doc false
+  def simulated_binary(eta: eta) when not is_float(eta),
+    do:
+      raise(
+        "Invalid arguments provided to simulated binary crossover. `eta` must be type `float`."
+      )
+
+  def simulated_binary(eta: eta), do: &simulated_binary(&1, &2, eta)
+
+  def simulated_binary(args),
+    do:
+      raise(
+        "Invalid arguments provided to simulated binary crossover. Expected `alpha: alpha` got #{
+          args
+        }."
+      )
+
   @doc """
   Performs a messy single point crossover at random points.
 
@@ -201,6 +239,10 @@ defmodule Genex.Tools.Crossover do
     {c1, c2} = {g1 ++ g4, g3 ++ g2}
     {%Chromosome{genes: c1, size: length(c1)}, %Chromosome{genes: c2, size: length(c2)}}
   end
+
+  @doc false
+  def messy_single_point, do: &messy_single_point(&1, &2)
+
 
   @doc """
   Performs Order One (Davis Order) crossover of a random slice.
@@ -238,8 +280,45 @@ defmodule Genex.Tools.Crossover do
     {c1, c2} = {head1 ++ slice1 ++ tail1, head2 ++ slice2 ++ tail2}
     {%Chromosome{genes: c1, size: p1.size}, %Chromosome{genes: c2, size: p2.size}}
   end
+  @doc false
+  def order_one, do: &order_one(&1, &2)
 
-  def multi_point, do: :ok
+  def multi_point(p1, p2, 0), do: {p1, p2}
+  def multi_point(p1, p2, 1), do: single_point(p1, p2)
+  def multi_point(p1, p2, 2), do: two_point(p1, p2)
+  def multi_point(p1, p2, n) do
+    lim = Enum.count(p1.genes)
+    cx_points = for _ <- 1..n, do: :rand.uniform(lim-1)
+    cx_points = MapSet.to_list(MapSet.new(cx_points)) # no duplicates and sort
+    {_, c1, c2} =
+      [0 | cx_points]
+      |> Enum.chunk_every(2, 1, [lim])
+      |> Enum.map(& List.to_tuple(&1))
+      |> Enum.map(
+          fn {lo, hi} ->
+            {
+              Enum.slice(p1.genes, lo, hi-lo),
+              Enum.slice(p2.genes, lo, hi-lo)
+            }
+          end
+        )
+      |> Enum.reduce({1, [], []},
+          fn {h1, h2}, {n, c1, c2} ->
+            if rem(n, 2) == 0 do
+              {n+1, c1 ++ h2, c2 ++ h1}
+            else
+              {n+1, c1 ++ h1, c2 ++ h2}
+            end
+          end
+        )
+    {
+      %Chromosome{genes: c1, size: Enum.count(c1)},
+      %Chromosome{genes: c2, size: Enum.count(c2)}
+    }
+  end
+  def multi_point(cx_points: cx_points), do: &multi_point(&1, &2, cx_points)
+  def multi_point(_), do: raise "Invalid arguments provided to multi point crossover."
+
   def partialy_matched, do: :ok
   def uniform_partialy_matched, do: :ok
   def simulted_binary_bounded, do: :ok
@@ -247,54 +326,4 @@ defmodule Genex.Tools.Crossover do
   def order_multi, do: :ok
   def collision, do: :ok
   def cut_on_worst, do: :ok
-
-  ################ CLOSURES #################
-  @doc false
-  def single_point, do: &single_point(&1, &2)
-
-  @doc false
-  def two_point, do: &two_point(&1, &2)
-
-  @doc false
-  def uniform(rate: rate) when not is_float(rate),
-    do: raise("Invalid arguments provided to uniform crossover. `rate` must be type `float`.")
-
-  def uniform(rate: rate), do: &uniform(&1, &2, rate)
-
-  def uniform(args),
-    do:
-      raise("Invalid arguments provided to uniform crossover. Expected `rate: rate` got #{args}.")
-
-  @doc false
-  def blend(alpha: alpha) when not is_float(alpha),
-    do: raise("Invalid arguments provided to blend crossover. `alpha` must be type `float`.")
-
-  def blend(alpha: alpha), do: &blend(&1, &2, alpha)
-
-  def blend(args),
-    do:
-      raise("Invalid arguments provided to blend crossover. Expected `alpha: alpha` got #{args}.")
-
-  @doc false
-  def simulated_binary(eta: eta) when not is_float(eta),
-    do:
-      raise(
-        "Invalid arguments provided to simulated binary crossover. `eta` must be type `float`."
-      )
-
-  def simulated_binary(eta: eta), do: &simulated_binary(&1, &2, eta)
-
-  def simulated_binary(args),
-    do:
-      raise(
-        "Invalid arguments provided to simulated binary crossover. Expected `alpha: alpha` got #{
-          args
-        }."
-      )
-
-  @doc false
-  def messy_single_point, do: &messy_single_point(&1, &2)
-
-  @doc false
-  def order_one, do: &order_one(&1, &2)
 end

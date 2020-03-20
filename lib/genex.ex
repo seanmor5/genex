@@ -2,6 +2,18 @@ defmodule Genex do
   alias Genex.Types.Chromosome
   alias Genex.Types.Population
 
+  @moduledoc """
+  Genex makes it easy to write Evolutionary Algorithms in Elixir.
+
+  The process of creating an algorithm in Genex can be thought of in three phases:
+
+    1) Problem Definition
+    2) Evolution Definition
+    3) Algorithm Execution
+
+  The `Genex` module contains the behaviour necessary to encode a problem the "Genex Way." This module implements "Phase 1" of the three phase process instituted in Genex.
+  """
+
   @doc """
   Generates a random gene set.
   """
@@ -78,16 +90,14 @@ defmodule Genex do
 
       # Options
 
-        - `:crossover_type`: `Function` or one of: `:single_point`, `:two_point`, `:davis_order`, `:uniform`, `:blend`, `:simulated_binary`, `:messy_single_point`.
-        - `:mutation_type`: `Function` or one of: `:bit_flip`, `:scramble`, `:invert`, `:uniform_integer`, `:gaussian`, `:polynomial_bounded`.
-        - `:selection_type`: `Function` or one of `:natural`, `:random`, `:worst`, `:tournament`, `:roulette`, `:stochastic`.
-        - `:evolution_type`: `Module` or one of `:simple`, `:mu_plus_lambda`, `:mu_comma_lambda`, `:coevolution`.
+        - `:crossover_type`: `Function`.
+        - `:mutation_type`: `Function`.
+        - `:selection_type`: `Function`.
+        - `:evolution_type`: `Module`.
+        - `:survival_type`: `Function`.
         - `:crossover_rate`: `Function` or `Float` between 0 and 1.
         - `:mutation_rate`: `Function` or `Float` between 0 and 1.
-        - `:radiation`: `Function` or `Float` between 0 and 1.
         - `:population_size`: `Integer`.
-        - `:minimize?`: `true` or `false`.
-        - `:hall_of_fame`: Reference to ETS Table.
       """
       @spec run(Keyword.t()) :: Population.t()
       def run(opts \\ []) do
@@ -119,6 +129,4 @@ defmodule Genex do
       defoverridable seed: 1, profile: 1
     end
   end
-
-  defguard valid_rate?(rate) when is_float(rate) and rate >= 0.0 and rate <= 1.0
 end

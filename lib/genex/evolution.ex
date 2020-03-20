@@ -8,15 +8,7 @@ defmodule Genex.Evolution do
   @moduledoc """
   Evolution behaviour definition for Evolutionary algorithms.
 
-  There are 5 basic phases in the evolutionary algorithms we define with Genex:
-
-  1. Evaluation (Competition)
-  2. Selection (Parent Selection)
-  3. Variation (Mutation, Crossover, Migration)
-  4. Reinsertion (Survivor Selection)
-  5. Transition
-
-  Each step performs a transformation on the population struct and returns with `{:ok, Population}` or with an error and a reason.
+  Evolutions begin with `init` after the population has been created. The purpose of `init` is to define metrics, initiate a geneaology tree, and create a hall of fame. `init` is like the "constructor" of the evolution.
   """
 
   @doc """
