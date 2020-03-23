@@ -21,8 +21,10 @@ defmodule NQueens do
           0
         end
       end
-    -1 * (row_clashes + Enum.sum(diag_clashes))
+    row_clashes + Enum.sum(diag_clashes)
   end
+
+  def weights, do: -1
 
   # Terminate when there are no clashes
   def terminate?(p), do: p.max_fitness == 0

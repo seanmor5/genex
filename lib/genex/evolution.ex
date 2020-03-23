@@ -19,7 +19,6 @@ defmodule Genex.Evolution do
   """
   @callback evaluation(
               population :: Population.t(),
-              fitness_fn :: (Chromosome.t() -> number()),
               opts :: Keyword.t()
             ) :: {:ok, Population.t()}
 
@@ -67,10 +66,9 @@ defmodule Genex.Evolution do
       @spec evolve(
               Population.t(),
               (Population.t() -> boolean()),
-              (Chromosome.t() -> number()),
               Keyword.t()
             ) :: Population.t()
-      def evolve(population, terminate?, fitness_function, opts \\ []) do
+      def evolve(population, terminate?, opts \\ []) do
         visualizer = Keyword.get(opts, :visualizer, Genex.Visualizer.Text)
         # Check if the population meets termination criteria
         if terminate?.(population) do
@@ -80,21 +78,26 @@ defmodule Genex.Evolution do
                {:ok, population} <- variation(population, opts),
                {:ok, population} <- reinsertion(population, opts),
                {:ok, population} <- transition(population, opts),
-               {:ok, population} <- evaluation(population, fitness_function, opts) do
+               {:ok, population} <- evaluation(population, opts) do
             visualizer.display(population, opts)
-            evolve(population, terminate?, fitness_function, opts)
+            evolve(population, terminate?, opts)
           else
             err -> raise err
           end
         end
       end
 
-      @spec evaluation(Population.t(), (Chromosome.t() -> number()), Keyword.t()) ::
+      @spec evaluation(Population.t(), Keyword.t()) ::
               {:ok, Population.t()}
-      def evaluation(population, func, opts \\ []) do
+      def evaluation(population, opts \\ []) do
         chromosomes =
           population.chromosomes
-          |> Enum.map(fn c -> %Chromosome{c | fitness: func.(c)} end)
+          |> Enum.map(
+              fn c ->
+                fitness = c.weights * c.f.(c)
+                %Chromosome{c | fitness: fitness}
+              end
+            )
           |> Enum.sort_by(& &1.fitness, &>=/2)
 
         strongest = hd(chromosomes)
@@ -311,11 +314,11 @@ defmodule Genex.Evolution do
 
       defoverridable init: 2,
                      transition: 2,
-                     evaluation: 3,
+                     evaluation: 2,
                      crossover: 2,
                      mutation: 2,
                      selection: 2,
-                     evolve: 4,
+                     evolve: 3,
                      termination: 2
     end
   end

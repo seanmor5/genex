@@ -31,7 +31,12 @@ defmodule Genex do
   @doc """
   Evaluates a chromosome.
   """
-  @callback fitness_function(chromosome :: Chromosome.t()) :: number()
+  @callback fitness_function(chromosome :: Chromosome.t()) :: number() | Enum.t()
+
+  @doc """
+  Weights associated with each objective.
+  """
+  @callback weights :: number() | Enum.t()
 
   @doc """
   Tests the population for some termination criteria.
@@ -50,6 +55,8 @@ defmodule Genex do
       """
       def datatype, do: & &1
 
+      def weights, do: 1
+
       @doc """
       Seed the population with some chromosomes.
 
@@ -66,7 +73,7 @@ defmodule Genex do
         chromosomes =
           for n <- 1..size do
             g = datatype().(genotype())
-            c = %Chromosome{genes: g, size: Enum.count(g)}
+            c = %Chromosome{genes: g, size: Enum.count(g), weights: weights(), f: &fitness_function/1}
             c
           end
 
@@ -102,9 +109,9 @@ defmodule Genex do
 
         with {:ok, population} <- seed(opts),
              {:ok, population} <- evolution.init(population, opts),
-             {:ok, population} <- evolution.evaluation(population, &fitness_function/1, opts),
+             {:ok, population} <- evolution.evaluation(population, opts),
              {:ok, population} <-
-               evolution.evolve(population, &terminate?/1, &fitness_function/1, opts) do
+               evolution.evolve(population, &terminate?/1, opts) do
           evolution.termination(population, opts)
         else
           err -> raise err
@@ -125,7 +132,7 @@ defmodule Genex do
 
       defp valid_opts?(opts \\ []), do: :ok
 
-      defoverridable seed: 1, profile: 1
+      defoverridable seed: 1, profile: 1, weights: 0, datatype: 0
     end
   end
 end
