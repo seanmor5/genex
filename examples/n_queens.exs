@@ -31,6 +31,7 @@ end
 use Genex.Tools
 
 soln = NQueens.run(title: "N-Queens",
+                   population_size: 20,
                    crossover_type: Crossover.order_one(),
                    selection_type: Selection.tournament(tournsize: 10),
                    mutation_type: Mutation.scramble(),

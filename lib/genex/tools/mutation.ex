@@ -10,6 +10,29 @@ defmodule Genex.Tools.Mutation do
   Future versions of Genex will provide the ability to define the "aggressiveness" of mutations. As of this version of Genex, mutations effect the ENTIRE chromosome.
   """
 
+  ################ CLOSURES #################
+
+  @doc false
+  def bit_flip, do: &bit_flip(&1)
+
+  @doc false
+  def bit_flip(radiation: radiation), do: &bit_flip(&1, radiation)
+
+  @doc false
+  def scramble, do: &scramble(&1)
+
+  @doc false
+  def scramble(radiation: radiation), do: &scramble(&1, radiation)
+
+  @doc false
+  def creep(min: min, max: max), do: &creep(&1, min, max)
+  def creep(min: min, max: max, radiation: radiation), do: &creep(&1, radiation, min, max)
+  def creep(_), do: raise("Invalid args")
+
+  @doc false
+  def gaussian, do: &gaussian(&1)
+  def gaussian(radiation: radiation), do: &gaussian(&1, radiation)
+
   @doc """
   Perform a bit-flip mutation.
 
@@ -207,27 +230,4 @@ defmodule Genex.Tools.Mutation do
   def swap, do: :ok
   def invert, do: :ok
   def invert_center, do: :ok
-
-  ################ CLOSURES #################
-
-  @doc false
-  def bit_flip, do: &bit_flip(&1)
-
-  @doc false
-  def bit_flip(radiation: radiation), do: &bit_flip(&1, radiation)
-
-  @doc false
-  def scramble, do: &scramble(&1)
-
-  @doc false
-  def scramble(radiation: radiation), do: &scramble(&1, radiation)
-
-  @doc false
-  def creep(min: min, max: max), do: &creep(&1, min, max)
-  def creep(min: min, max: max, radiation: radiation), do: &creep(&1, radiation, min, max)
-  def creep(_), do: raise("Invalid args")
-
-  @doc false
-  def gaussian, do: &gaussian(&1)
-  def gaussian(radiation: radiation), do: &gaussian(&1, radiation)
 end

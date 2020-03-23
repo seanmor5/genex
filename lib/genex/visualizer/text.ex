@@ -1,4 +1,4 @@
-defmodule Genex.Visualizers.Text do
+defmodule Genex.Visualizer.Text do
   use Genex.Visualizer
 
   @moduledoc """
