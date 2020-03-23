@@ -441,5 +441,47 @@ defmodule Genex.Tools.Crossover do
   def cycle, do: :ok
   def order_multi, do: :ok
   def collision, do: :ok
-  def cut_on_worst, do: :ok
+
+  def modified(repair_fn: repair_fn), do: &modified(&1, &2, repair_fn)
+
+  def modified(p1, p2, repair) do
+    lim = p1.size
+    point = :rand.uniform(lim)
+    {g1, g2} = Enum.split(p1.genes, point)
+    {g3, g4} = Enum.split(p2.genes, point)
+    {c1, c2} = {g1 ++ g4, g3 ++ g2}
+    {c1, c2} = {repair.(c1), repair.(c2)}
+    {%Chromosome{genes: c1, size: lim}, %Chromosome{genes: c2, size: lim}}
+  end
+
+  # https://arxiv.org/pdf/1801.02827.pdf
+  def cut_on_worst(heuristic: heuristic, repair_fn: repair_fn),
+    do: &cut_on_worst(&1, &2, heuristic, repair_fn)
+
+  def cut_on_worst(heuristic: heuristic, repair_fn: repair_fn, direction: direction),
+    do: &cut_on_worst(&1, &2, heuristic, repair_fn, direction)
+
+  def cut_on_worst(p1, p2, heuristic, repair, direction \\ &>=/2) do
+    {p1_i, p1_worst} =
+      p1.genes
+      |> Enum.with_index()
+      |> Enum.sort_by(fn g -> heuristic.(p1, g) end, direction)
+      |> Kernel.hd()
+
+    {p2_i, p2_worst} =
+      p2.genes
+      |> Enum.with_index()
+      |> Enum.sort_by(fn g -> heuristic.(p2, g) end, direction)
+      |> Kernel.hd()
+
+    p1_val = heuristic.(p1, p1_worst)
+    p2_val = heuristic.(p2, p2_worst)
+
+    cut = if p1_val > p2_val, do: p1_i, else: p2_i
+    {g1, g2} = Enum.split(p1.genes, cut)
+    {g3, g4} = Enum.split(p2.genes, cut)
+    {c1, c2} = {g1 ++ g4, g3 ++ g2}
+    {c1, c2} = {repair.(c1), repair.(c2)}
+    {%Chromosome{genes: c1, size: Enum.count(c1)}, %Chromosome{genes: c2, size: Enum.count(c2)}}
+  end
 end
