@@ -1,8 +1,6 @@
 defmodule Genex.Evolution do
-  alias Genex.Tools.Crossover
-  alias Genex.Tools.Selection
-  alias Genex.Support.Genealogy
-  alias Genex.Support.HallOfFame
+  alias Genex.Tools.{Crossover, Selection}
+  alias Genex.Support.{Genealogy, HallOfFame}
   alias Genex.Types.Population
 
   @moduledoc """

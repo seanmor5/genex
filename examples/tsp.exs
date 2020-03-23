@@ -1,7 +1,7 @@
 defmodule TSP do
   use Genex
 
-  def genotype, do: Genotype.permutation(0..7)
+  def genotype, do: Genotype.permutation(0..14)
 
   def fitness_function(chromosome) do
     start = Enum.at(locations(), 0)
@@ -20,7 +20,9 @@ defmodule TSP do
     :math.sqrt(x + y)
   end
 
-  defp locations, do: [{0, 0}, {1, 2}, {3, 2}, {4, 5}, {1, 4}, {2, 2}, {6, 8}, {3, 5}]
+  defp locations, do:
+    [{0, 0}, {1, 2}, {3, 2}, {4, 5}, {1, 4}, {2, 2}, {6, 8}, {3, 5},
+    {10, 5}, {13, 6}, {9, 7}, {7, 2}, {13, 1}, {4, 4}, {8, 7}]
 
   def terminate?(population), do: population.generation == 1000
 end
@@ -29,9 +31,7 @@ use Genex.Tools
 
 soln = TSP.run([title: "Traveling Salesman Problem",
                 population_size: 50,
-                crossover_type: Crossover.order_one(),
-                mutation_type: Mutation.scramble(),
-                crossover_rate: 0.75,
-                mutation_rate: 0.1])
+                crossover_type: Crossover.partialy_matched(),
+                crossover_rate: 0.9])
 
 IO.inspect soln.strongest.genes

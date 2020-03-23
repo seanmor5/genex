@@ -94,15 +94,15 @@ defmodule Genex.Tools.Crossover do
   # Parameters
     - `p1`: Parent one.
     - `p2`: Parent two.
-    - `rate`: `Float` between 0 and 1 representing rates to swap genes.
+    - `probability`: `Float` between 0 and 1 representing rates to swap genes.
   """
   @spec uniform(Chromosome.t(), Chromosome.t(), float()) :: {Chromosome.t(), Chromosome.t()}
-  def uniform(p1, p2, rate) do
+  def uniform(p1, p2, probability) do
     {c1, c2} =
       p1.genes
       |> Enum.zip(p2.genes)
       |> Enum.map(fn {x, y} ->
-        if :rand.uniform() < rate do
+        if :rand.uniform() < probability do
           {x, y}
         else
           {y, x}
@@ -114,10 +114,10 @@ defmodule Genex.Tools.Crossover do
   end
 
   @doc false
-  def uniform(rate: rate) when not is_float(rate),
-    do: raise("Invalid arguments provided to uniform crossover. `rate` must be type `float`.")
+  def uniform(probability: probability) when not is_float(probability),
+    do: raise("Invalid arguments provided to uniform crossover. `probability` must be type `float`.")
 
-  def uniform(rate: rate), do: &uniform(&1, &2, rate)
+  def uniform(probability: probability), do: &uniform(&1, &2, probability)
 
   def uniform(args),
     do:
@@ -323,8 +323,107 @@ defmodule Genex.Tools.Crossover do
   def multi_point(cx_points: cx_points), do: &multi_point(&1, &2, cx_points)
   def multi_point(_), do: raise("Invalid arguments provided to multi point crossover.")
 
-  def partialy_matched, do: :ok
-  def uniform_partialy_matched, do: :ok
+  def partialy_matched, do: &partialy_matched(&1, &2)
+  def partialy_matched(p1, p2) do
+    ind1 = Enum.to_list(p1.genes)
+    ind2 = Enum.to_list(p2.genes)
+
+    lim = p1.size - 1
+
+    c1 = for i <- 0..lim, do: Enum.find_index(ind1, fn x -> x == i end)
+    c2 = for i <- 0..lim, do: Enum.find_index(ind2, fn x -> x == i end)
+
+    cxpoint1 = :rand.uniform(lim)
+    cxpoint2 = :rand.uniform(lim-1)
+
+    {cxpoint1, cxpoint2} = if cxpoint2 >= cxpoint1, do: {cxpoint1, cxpoint1+1}, else: {cxpoint2, cxpoint1}
+
+    {ind1, ind2, _, _} =
+      cxpoint1..cxpoint2
+      |> Enum.reduce({ind1, ind2, c1, c2},
+          fn i, {acc1, acc2, acc3, acc4} ->
+            temp1 = Enum.at(acc1, i)
+            temp2 = Enum.at(acc2, i)
+
+            acc1 =
+              acc1
+              |> List.update_at(i, fn _ -> temp2 end)
+              |> List.update_at(Enum.at(acc3, temp2), fn _ -> temp1 end)
+
+            acc2 =
+              acc2
+              |> List.update_at(i, fn _ -> temp1 end)
+              |> List.update_at(Enum.at(acc4, temp1), fn _ -> temp2 end)
+
+            acc3 =
+              acc3
+              |> List.update_at(temp1, fn _ -> Enum.at(acc3, temp2) end)
+              |> List.update_at(temp2, fn _ -> Enum.at(acc3, temp1) end)
+
+            acc4 =
+              acc4
+              |> List.update_at(temp1, fn _ -> Enum.at(acc4, temp2) end)
+              |> List.update_at(temp2, fn _ -> Enum.at(acc4, temp1) end)
+
+            {acc1, acc2, acc3, acc4}
+          end
+        )
+
+    {%Chromosome{genes: ind1, size: Enum.count(ind1)}, %Chromosome{genes: ind2, size: Enum.count(ind2)}}
+  end
+
+  def uniform_partialy_matched(probability: probability), do: &uniform_partialy_matched(&1, &2, probability)
+  def uniform_partialy_matched(p1, p2, probability) do
+    ind1 = Enum.to_list(p1.genes)
+    ind2 = Enum.to_list(p2.genes)
+
+    lim = p1.size - 1
+
+    c1 = for i <- 0..lim, do: Enum.find_index(ind1, fn x -> x == i end)
+    c2 = for i <- 0..lim, do: Enum.find_index(ind2, fn x -> x == i end)
+
+    cxpoint1 = :rand.uniform(lim)
+    cxpoint2 = :rand.uniform(lim-1)
+
+    {cxpoint1, cxpoint2} = if cxpoint2 >= cxpoint1, do: {cxpoint1, cxpoint1+1}, else: {cxpoint2, cxpoint1}
+
+    {ind1, ind2, _, _} =
+      cxpoint1..cxpoint2
+      |> Enum.reduce({ind1, ind2, c1, c2},
+          fn i, {acc1, acc2, acc3, acc4} ->
+            if :rand.uniform() < probability do
+              temp1 = Enum.at(acc1, i)
+              temp2 = Enum.at(acc2, i)
+
+              acc1 =
+                acc1
+                |> List.update_at(i, fn _ -> temp2 end)
+                |> List.update_at(Enum.at(acc3, temp2), fn _ -> temp1 end)
+
+              acc2 =
+                acc2
+                |> List.update_at(i, fn _ -> temp1 end)
+                |> List.update_at(Enum.at(acc4, temp1), fn _ -> temp2 end)
+
+              acc3 =
+                acc3
+                |> List.update_at(temp1, fn _ -> Enum.at(acc3, temp2) end)
+                |> List.update_at(temp2, fn _ -> Enum.at(acc3, temp1) end)
+
+              acc4 =
+                acc4
+                |> List.update_at(temp1, fn _ -> Enum.at(acc4, temp2) end)
+                |> List.update_at(temp2, fn _ -> Enum.at(acc4, temp1) end)
+
+              {acc1, acc2, acc3, acc4}
+            else
+              {acc1, acc2, acc3, acc4}
+            end
+          end
+        )
+    {%Chromosome{genes: ind1, size: Enum.count(ind1)}, %Chromosome{genes: ind2, size: Enum.count(ind2)}}
+  end
+
   def simulted_binary_bounded, do: :ok
   def cycle, do: :ok
   def order_multi, do: :ok
