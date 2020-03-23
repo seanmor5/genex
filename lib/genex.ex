@@ -112,6 +112,7 @@ defmodule Genex do
       end
 
       def eval(c), do: c.fitness
+
       @doc """
       Profile your genetic algorithm.
 

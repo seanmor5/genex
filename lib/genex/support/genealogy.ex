@@ -25,6 +25,7 @@ defmodule Genex.Support.Genealogy do
     genealogy
     |> Graph.add_vertices(chromosomes)
   end
+
   def update(genealogy, chromosome) do
     genealogy
     |> Graph.add_vertex(chromosome)

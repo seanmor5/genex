@@ -115,7 +115,10 @@ defmodule Genex.Tools.Crossover do
 
   @doc false
   def uniform(probability: probability) when not is_float(probability),
-    do: raise("Invalid arguments provided to uniform crossover. `probability` must be type `float`.")
+    do:
+      raise(
+        "Invalid arguments provided to uniform crossover. `probability` must be type `float`."
+      )
 
   def uniform(probability: probability), do: &uniform(&1, &2, probability)
 
@@ -324,6 +327,7 @@ defmodule Genex.Tools.Crossover do
   def multi_point(_), do: raise("Invalid arguments provided to multi point crossover.")
 
   def partialy_matched, do: &partialy_matched(&1, &2)
+
   def partialy_matched(p1, p2) do
     ind1 = Enum.to_list(p1.genes)
     ind2 = Enum.to_list(p2.genes)
@@ -334,14 +338,71 @@ defmodule Genex.Tools.Crossover do
     c2 = for i <- 0..lim, do: Enum.find_index(ind2, fn x -> x == i end)
 
     cxpoint1 = :rand.uniform(lim)
-    cxpoint2 = :rand.uniform(lim-1)
+    cxpoint2 = :rand.uniform(lim - 1)
 
-    {cxpoint1, cxpoint2} = if cxpoint2 >= cxpoint1, do: {cxpoint1, cxpoint1+1}, else: {cxpoint2, cxpoint1}
+    {cxpoint1, cxpoint2} =
+      if cxpoint2 >= cxpoint1, do: {cxpoint1, cxpoint1 + 1}, else: {cxpoint2, cxpoint1}
 
     {ind1, ind2, _, _} =
       cxpoint1..cxpoint2
-      |> Enum.reduce({ind1, ind2, c1, c2},
-          fn i, {acc1, acc2, acc3, acc4} ->
+      |> Enum.reduce(
+        {ind1, ind2, c1, c2},
+        fn i, {acc1, acc2, acc3, acc4} ->
+          temp1 = Enum.at(acc1, i)
+          temp2 = Enum.at(acc2, i)
+
+          acc1 =
+            acc1
+            |> List.update_at(i, fn _ -> temp2 end)
+            |> List.update_at(Enum.at(acc3, temp2), fn _ -> temp1 end)
+
+          acc2 =
+            acc2
+            |> List.update_at(i, fn _ -> temp1 end)
+            |> List.update_at(Enum.at(acc4, temp1), fn _ -> temp2 end)
+
+          acc3 =
+            acc3
+            |> List.update_at(temp1, fn _ -> Enum.at(acc3, temp2) end)
+            |> List.update_at(temp2, fn _ -> Enum.at(acc3, temp1) end)
+
+          acc4 =
+            acc4
+            |> List.update_at(temp1, fn _ -> Enum.at(acc4, temp2) end)
+            |> List.update_at(temp2, fn _ -> Enum.at(acc4, temp1) end)
+
+          {acc1, acc2, acc3, acc4}
+        end
+      )
+
+    {%Chromosome{genes: ind1, size: Enum.count(ind1)},
+     %Chromosome{genes: ind2, size: Enum.count(ind2)}}
+  end
+
+  def uniform_partialy_matched(probability: probability),
+    do: &uniform_partialy_matched(&1, &2, probability)
+
+  def uniform_partialy_matched(p1, p2, probability) do
+    ind1 = Enum.to_list(p1.genes)
+    ind2 = Enum.to_list(p2.genes)
+
+    lim = p1.size - 1
+
+    c1 = for i <- 0..lim, do: Enum.find_index(ind1, fn x -> x == i end)
+    c2 = for i <- 0..lim, do: Enum.find_index(ind2, fn x -> x == i end)
+
+    cxpoint1 = :rand.uniform(lim)
+    cxpoint2 = :rand.uniform(lim - 1)
+
+    {cxpoint1, cxpoint2} =
+      if cxpoint2 >= cxpoint1, do: {cxpoint1, cxpoint1 + 1}, else: {cxpoint2, cxpoint1}
+
+    {ind1, ind2, _, _} =
+      cxpoint1..cxpoint2
+      |> Enum.reduce(
+        {ind1, ind2, c1, c2},
+        fn i, {acc1, acc2, acc3, acc4} ->
+          if :rand.uniform() < probability do
             temp1 = Enum.at(acc1, i)
             temp2 = Enum.at(acc2, i)
 
@@ -366,62 +427,14 @@ defmodule Genex.Tools.Crossover do
               |> List.update_at(temp2, fn _ -> Enum.at(acc4, temp1) end)
 
             {acc1, acc2, acc3, acc4}
+          else
+            {acc1, acc2, acc3, acc4}
           end
-        )
+        end
+      )
 
-    {%Chromosome{genes: ind1, size: Enum.count(ind1)}, %Chromosome{genes: ind2, size: Enum.count(ind2)}}
-  end
-
-  def uniform_partialy_matched(probability: probability), do: &uniform_partialy_matched(&1, &2, probability)
-  def uniform_partialy_matched(p1, p2, probability) do
-    ind1 = Enum.to_list(p1.genes)
-    ind2 = Enum.to_list(p2.genes)
-
-    lim = p1.size - 1
-
-    c1 = for i <- 0..lim, do: Enum.find_index(ind1, fn x -> x == i end)
-    c2 = for i <- 0..lim, do: Enum.find_index(ind2, fn x -> x == i end)
-
-    cxpoint1 = :rand.uniform(lim)
-    cxpoint2 = :rand.uniform(lim-1)
-
-    {cxpoint1, cxpoint2} = if cxpoint2 >= cxpoint1, do: {cxpoint1, cxpoint1+1}, else: {cxpoint2, cxpoint1}
-
-    {ind1, ind2, _, _} =
-      cxpoint1..cxpoint2
-      |> Enum.reduce({ind1, ind2, c1, c2},
-          fn i, {acc1, acc2, acc3, acc4} ->
-            if :rand.uniform() < probability do
-              temp1 = Enum.at(acc1, i)
-              temp2 = Enum.at(acc2, i)
-
-              acc1 =
-                acc1
-                |> List.update_at(i, fn _ -> temp2 end)
-                |> List.update_at(Enum.at(acc3, temp2), fn _ -> temp1 end)
-
-              acc2 =
-                acc2
-                |> List.update_at(i, fn _ -> temp1 end)
-                |> List.update_at(Enum.at(acc4, temp1), fn _ -> temp2 end)
-
-              acc3 =
-                acc3
-                |> List.update_at(temp1, fn _ -> Enum.at(acc3, temp2) end)
-                |> List.update_at(temp2, fn _ -> Enum.at(acc3, temp1) end)
-
-              acc4 =
-                acc4
-                |> List.update_at(temp1, fn _ -> Enum.at(acc4, temp2) end)
-                |> List.update_at(temp2, fn _ -> Enum.at(acc4, temp1) end)
-
-              {acc1, acc2, acc3, acc4}
-            else
-              {acc1, acc2, acc3, acc4}
-            end
-          end
-        )
-    {%Chromosome{genes: ind1, size: Enum.count(ind1)}, %Chromosome{genes: ind2, size: Enum.count(ind2)}}
+    {%Chromosome{genes: ind1, size: Enum.count(ind1)},
+     %Chromosome{genes: ind2, size: Enum.count(ind2)}}
   end
 
   def simulted_binary_bounded, do: :ok
