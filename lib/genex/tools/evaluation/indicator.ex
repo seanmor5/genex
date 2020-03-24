@@ -1,6 +1,17 @@
 defmodule Genex.Tools.Evaluation.Indicator do
+  @moduledoc """
+  Convenience functions for Multi-Objective Optimization.
+
+  Most of these functions aren't tested yet.
+  """
+
+  @doc false
   def hypervolume, do: :ok
+
+  @doc false
   def additive_epsilon, do: :ok
+
+  @doc false
   def multiplicative_epsilon, do: :ok
 
   @doc """

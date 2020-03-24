@@ -1,4 +1,5 @@
 defmodule Genex.Tools.Genotype do
+  alias Statistics.Distributions
   @doc """
   Creates a binary geneset.
 
@@ -51,8 +52,28 @@ defmodule Genex.Tools.Genotype do
     |> Enum.reduce([], fn _, acc -> [Enum.random(alphabets) | acc] end)
   end
 
-  def from_stream(stream), do: :ok
-  def from_stream(stream, transform), do: :ok
+  @doc """
+  Creates a geneset from given distribution.
 
-  def distribution(size, name, args \\ []), do: :ok
+  Returns `Enum.t()`.
+
+  # Parameters
+
+    - `size`: Size of the geneset.
+    - `name`: Distribution name.
+    - `args`: Optional arguments to provide to distribution.
+  """
+  def distribution(size, name \\ :normal, args \\ []) do
+    case name do
+      :beta -> for _ <- 1..size, do: apply(Distributions, :beta, args)
+      :binomial -> for _ <- 1..size, do: apply(Distributions, :binomial, args)
+      :chisq -> for _ <- 1..size, do: apply(Distributions, :chisq, args)
+      :exponential -> for _ <- 1..size, do: apply(Distributions, :exponential, args)
+      :f -> for _ <- 1..size, do: apply(Distributions, :f, args)
+      :hypergeometric -> for _ <- 1..size, do: apply(Distributions, :hypergeometric, args)
+      :normal -> for _ <- 1..size, do: apply(Distributions, :normal, args)
+      :poisson -> for _ <- 1..size, do: apply(Distributions, :poisson, args)
+      :t -> for _ <- 1..size, do: apply(Distributions, :t, args)
+    end
+  end
 end
