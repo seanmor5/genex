@@ -1,5 +1,6 @@
 defmodule Genex.Support.Genealogy do
   alias Graph.Serializers.DOT
+
   @moduledoc """
   Implementation of a genealogy tree.
 

@@ -53,8 +53,7 @@ defmodule Genex.MixProject do
   end
 
   defp extras do
-    [
-    ]
+    []
   end
 
   defp groups_for_extras do

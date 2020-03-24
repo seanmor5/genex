@@ -32,8 +32,20 @@ defmodule Genex.Tools.Crossover do
     {g3, g4} = Enum.split(p2.genes, point)
     {c1, c2} = {g1 ++ g4, g3 ++ g2}
 
-    {%Chromosome{genes: c1, size: length(c1), weights: p1.weights, f: p1.f, collection: p1.collection},
-     %Chromosome{genes: c2, size: length(c2), weights: p2.weights, f: p2.f, collection: p2.collection}}
+    {%Chromosome{
+       genes: c1,
+       size: length(c1),
+       weights: p1.weights,
+       f: p1.f,
+       collection: p1.collection
+     },
+     %Chromosome{
+       genes: c2,
+       size: length(c2),
+       weights: p2.weights,
+       f: p2.f,
+       collection: p2.collection
+     }}
   end
 
   @doc false
@@ -80,8 +92,20 @@ defmodule Genex.Tools.Crossover do
       slice2 ++ slice3 ++ rem4
     }
 
-    {%Chromosome{genes: c1, size: length(c1), weights: p1.weights, f: p1.f, collection: p1.collection},
-     %Chromosome{genes: c2, size: length(c2), weights: p2.weights, f: p2.f, collection: p2.collection}}
+    {%Chromosome{
+       genes: c1,
+       size: length(c1),
+       weights: p1.weights,
+       f: p1.f,
+       collection: p1.collection
+     },
+     %Chromosome{
+       genes: c2,
+       size: length(c2),
+       weights: p2.weights,
+       f: p2.f,
+       collection: p2.collection
+     }}
   end
 
   @doc false
@@ -113,8 +137,20 @@ defmodule Genex.Tools.Crossover do
       end)
       |> Enum.unzip()
 
-    {%Chromosome{genes: c1, size: p1.size, weights: p1.weights, f: p1.f, collection: p1.collection},
-     %Chromosome{genes: c2, size: p1.size, weights: p2.weights, f: p2.f, collection: p2.collection}}
+    {%Chromosome{
+       genes: c1,
+       size: p1.size,
+       weights: p1.weights,
+       f: p1.f,
+       collection: p1.collection
+     },
+     %Chromosome{
+       genes: c2,
+       size: p1.size,
+       weights: p2.weights,
+       f: p2.f,
+       collection: p2.collection
+     }}
   end
 
   @doc false
@@ -157,8 +193,20 @@ defmodule Genex.Tools.Crossover do
       end)
       |> Enum.unzip()
 
-    {%Chromosome{genes: c1, size: p1.size, weights: p1.weights, f: p1.f, collection: p1.collection},
-     %Chromosome{genes: c2, size: p1.size, weights: p2.weights, f: p2.f, collection: p2.collection}}
+    {%Chromosome{
+       genes: c1,
+       size: p1.size,
+       weights: p1.weights,
+       f: p1.f,
+       collection: p1.collection
+     },
+     %Chromosome{
+       genes: c2,
+       size: p1.size,
+       weights: p2.weights,
+       f: p2.f,
+       collection: p2.collection
+     }}
   end
 
   @doc false
@@ -206,8 +254,20 @@ defmodule Genex.Tools.Crossover do
       end)
       |> Enum.unzip()
 
-    {%Chromosome{genes: c1, size: p1.size, weights: p1.weights, f: p1.f, collection: p1.collection},
-     %Chromosome{genes: c2, size: p1.size, weights: p2.weights, f: p2.f, collection: p2.collection}}
+    {%Chromosome{
+       genes: c1,
+       size: p1.size,
+       weights: p1.weights,
+       f: p1.f,
+       collection: p1.collection
+     },
+     %Chromosome{
+       genes: c2,
+       size: p1.size,
+       weights: p2.weights,
+       f: p2.f,
+       collection: p2.collection
+     }}
   end
 
   @doc false
@@ -247,8 +307,20 @@ defmodule Genex.Tools.Crossover do
     {g3, g4} = Enum.split(p2.genes, point2)
     {c1, c2} = {g1 ++ g4, g3 ++ g2}
 
-    {%Chromosome{genes: c1, size: length(c1), weights: p1.weights, f: p1.f, collection: p1.collection},
-     %Chromosome{genes: c2, size: length(c2), weights: p2.weights, f: p2.f, collection: p2.collection}}
+    {%Chromosome{
+       genes: c1,
+       size: length(c1),
+       weights: p1.weights,
+       f: p1.f,
+       collection: p1.collection
+     },
+     %Chromosome{
+       genes: c2,
+       size: length(c2),
+       weights: p2.weights,
+       f: p2.f,
+       collection: p2.collection
+     }}
   end
 
   @doc false
@@ -289,8 +361,20 @@ defmodule Genex.Tools.Crossover do
     # Make and return
     {c1, c2} = {head1 ++ slice1 ++ tail1, head2 ++ slice2 ++ tail2}
 
-    {%Chromosome{genes: c1, size: p1.size, weights: p1.weights, f: p1.f, collection: p1.collection},
-     %Chromosome{genes: c2, size: p2.size, weights: p2.weights, f: p2.f, collection: p2.collection}}
+    {%Chromosome{
+       genes: c1,
+       size: p1.size,
+       weights: p1.weights,
+       f: p1.f,
+       collection: p1.collection
+     },
+     %Chromosome{
+       genes: c2,
+       size: p2.size,
+       weights: p2.weights,
+       f: p2.f,
+       collection: p2.collection
+     }}
   end
 
   @doc false
@@ -340,8 +424,20 @@ defmodule Genex.Tools.Crossover do
       )
 
     {
-      %Chromosome{genes: c1, size: Enum.count(c1), weights: p1.weights, f: p1.f, collection: p1.collection},
-      %Chromosome{genes: c2, size: Enum.count(c2), weights: p2.weights, f: p2.f, collection: p2.collection}
+      %Chromosome{
+        genes: c1,
+        size: Enum.count(c1),
+        weights: p1.weights,
+        f: p1.f,
+        collection: p1.collection
+      },
+      %Chromosome{
+        genes: c2,
+        size: Enum.count(c2),
+        weights: p2.weights,
+        f: p2.f,
+        collection: p2.collection
+      }
     }
   end
 
@@ -406,8 +502,20 @@ defmodule Genex.Tools.Crossover do
         end
       )
 
-    {%Chromosome{genes: ind1, size: Enum.count(ind1), weights: p1.weights, f: p1.f, collection: p1.collection},
-     %Chromosome{genes: ind2, size: Enum.count(ind2), weights: p2.weights, f: p2.f, collection: p2.collection}}
+    {%Chromosome{
+       genes: ind1,
+       size: Enum.count(ind1),
+       weights: p1.weights,
+       f: p1.f,
+       collection: p1.collection
+     },
+     %Chromosome{
+       genes: ind2,
+       size: Enum.count(ind2),
+       weights: p2.weights,
+       f: p2.f,
+       collection: p2.collection
+     }}
   end
 
   @doc false
@@ -476,8 +584,20 @@ defmodule Genex.Tools.Crossover do
         end
       )
 
-    {%Chromosome{genes: ind1, size: Enum.count(ind1), weights: p1.weights, f: p1.f, collection: p1.collection},
-     %Chromosome{genes: ind2, size: Enum.count(ind2), weights: p2.weights, f: p2.f, collection: p2.collection}}
+    {%Chromosome{
+       genes: ind1,
+       size: Enum.count(ind1),
+       weights: p1.weights,
+       f: p1.f,
+       collection: p1.collection
+     },
+     %Chromosome{
+       genes: ind2,
+       size: Enum.count(ind2),
+       weights: p2.weights,
+       f: p2.f,
+       collection: p2.collection
+     }}
   end
 
   @doc false
@@ -553,8 +673,20 @@ defmodule Genex.Tools.Crossover do
     {c1, c2} = {g1 ++ g4, g3 ++ g2}
     {c1, c2} = {repair.(c1), repair.(c2)}
 
-    {%Chromosome{genes: c1, size: Enum.count(c1), weights: p1.weights, f: p1.f, collection: p1.collection},
-     %Chromosome{genes: c2, size: Enum.count(c2), weights: p2.weights, f: p2.f, collection: p2.collection}}
+    {%Chromosome{
+       genes: c1,
+       size: Enum.count(c1),
+       weights: p1.weights,
+       f: p1.f,
+       collection: p1.collection
+     },
+     %Chromosome{
+       genes: c2,
+       size: Enum.count(c2),
+       weights: p2.weights,
+       f: p2.f,
+       collection: p2.collection
+     }}
   end
 
   @doc false

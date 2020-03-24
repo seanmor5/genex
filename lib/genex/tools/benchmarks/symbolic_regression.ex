@@ -16,15 +16,13 @@ defmodule Genex.Tools.Benchmarks.SymbolicRegression do
     - `y`: `number`.
   """
   def kotanchek(x, y) do
-    1 - x
+    (1 - x)
     |> :math.pow(2)
     |> :math.exp()
     |> Kernel./(
-        3.2
-        |> Kernel.+(
-            :math.pow(y - 2.5, 2)
-          )
-      )
+      3.2
+      |> Kernel.+(:math.pow(y - 2.5, 2))
+    )
   end
 
   @doc """
@@ -43,11 +41,11 @@ defmodule Genex.Tools.Benchmarks.SymbolicRegression do
     |> Kernel.*(:math.cos(x))
     |> Kernel.*(:math.sin(x))
     |> Kernel.*(
-        x
-        |> :math.cos()
-        |> Kernel.*(:math.pow(:math.sin(x), 2))
-        |> Kernel.-(1)
-      )
+      x
+      |> :math.cos()
+      |> Kernel.*(:math.pow(:math.sin(x), 2))
+      |> Kernel.-(1)
+    )
   end
 
   @doc """
@@ -67,11 +65,11 @@ defmodule Genex.Tools.Benchmarks.SymbolicRegression do
     |> Kernel.*(:math.cos(x))
     |> Kernel.*(:math.sin(x))
     |> Kernel.*(
-        x
-        |> :math.cos()
-        |> Kernel.*(:math.pow(:math.sin(x), 2))
-        |> Kernel.-(1)
-      )
+      x
+      |> :math.cos()
+      |> Kernel.*(:math.pow(:math.sin(x), 2))
+      |> Kernel.-(1)
+    )
     |> Kernel.*(y - 5)
   end
 
@@ -87,13 +85,13 @@ defmodule Genex.Tools.Benchmarks.SymbolicRegression do
   def unwrapped_ball(xs) do
     10
     |> Kernel./(
-        5
-        |> Kernel.+(
-            xs
-            |> Enum.map(& (:math.pow(&1 - 3, 2)))
-            |> Enum.sum()
-          )
+      5
+      |> Kernel.+(
+        xs
+        |> Enum.map(&:math.pow(&1 - 3, 2))
+        |> Enum.sum()
       )
+    )
   end
 
   @doc """
@@ -112,10 +110,10 @@ defmodule Genex.Tools.Benchmarks.SymbolicRegression do
     |> Kernel.*(x - 1)
     |> Kernel.*(z - 1)
     |> Kernel./(
-        y
-        |> :math.pow(2)
-        |> Kernel.*(x - 10)
-      )
+      y
+      |> :math.pow(2)
+      |> Kernel.*(x - 10)
+    )
   end
 
   @doc """
@@ -129,15 +127,15 @@ defmodule Genex.Tools.Benchmarks.SymbolicRegression do
     - `y`: `number`.
   """
   def rational_polynomial2(x, y) do
-    x - 3
+    (x - 3)
     |> :math.pow(4)
     |> Kernel.+(:math.pow(y - 3), 3)
     |> Kernel.-(y - 3)
     |> Kernel./(
-        y - 2
-        |> :math.pow(4)
-        |> Kernel.+(10)
-      )
+      (y - 2)
+      |> :math.pow(4)
+      |> Kernel.+(10)
+    )
   end
 
   @doc """
@@ -167,15 +165,15 @@ defmodule Genex.Tools.Benchmarks.SymbolicRegression do
     - `y`: `number`
   """
   def ripple(x, y) do
-    x - 3
+    (x - 3)
     |> Kernel.*(y - 3)
     |> Kernel.+(
-        2
-        |> Kernel.*(
-            x - 4
-            |> Kernel.*(y - 4)
-            |> :math.sin()
-          )
+      2
+      |> Kernel.*(
+        (x - 4)
+        |> Kernel.*(y - 4)
+        |> :math.sin()
       )
+    )
   end
 end

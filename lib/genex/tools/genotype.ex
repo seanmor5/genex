@@ -1,5 +1,6 @@
 defmodule Genex.Tools.Genotype do
   alias Statistics.Distributions
+
   @doc """
   Creates a binary geneset.
 

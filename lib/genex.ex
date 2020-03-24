@@ -125,11 +125,20 @@ defmodule Genex do
       defp seed(opts \\ []) do
         size = Keyword.get(opts, :population_size, 100)
         fun = &genotype/0
+
         chromosomes =
           fun
           |> Stream.repeatedly()
           |> Stream.map(fn g -> collection().(g) end)
-          |> Stream.map(fn g -> %Chromosome{genes: g, size: Enum.count(g), weights: weights(), f: &fitness_function/1, collection: &collection/0} end)
+          |> Stream.map(fn g ->
+            %Chromosome{
+              genes: g,
+              size: Enum.count(g),
+              weights: weights(),
+              f: &fitness_function/1,
+              collection: &collection/0
+            }
+          end)
           |> Enum.take(size)
 
         pop = %Population{chromosomes: chromosomes, size: Enum.count(chromosomes)}

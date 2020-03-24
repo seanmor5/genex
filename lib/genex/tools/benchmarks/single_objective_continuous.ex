@@ -18,13 +18,13 @@ defmodule Genex.Tools.Benchmarks.SingleObjectiveContinuous do
     x0
     |> :math.pow(2)
     |> Kernel.*(
-        1000000
-        |> Kernel.*(
-            xi
-            |> Enum.map(& :math.pow(&1, 2))
-            |> Enum.sum()
-          )
+      1_000_000
+      |> Kernel.*(
+        xi
+        |> Enum.map(&:math.pow(&1, 2))
+        |> Enum.sum()
       )
+    )
   end
 
   @doc """
@@ -49,7 +49,7 @@ defmodule Genex.Tools.Benchmarks.SingleObjectiveContinuous do
   """
   def sphere(xs) do
     xs
-    |> Enum.map(& :math.pow(&1, 2))
+    |> Enum.map(&:math.pow(&1, 2))
   end
 
   @doc """
@@ -74,27 +74,29 @@ defmodule Genex.Tools.Benchmarks.SingleObjectiveContinuous do
   """
   def ackley(xs) do
     n = Enum.count(xs)
+
     g_x =
       -0.2
       |> Kernel.*(
-          :math.sqrt(
-            1
-            |> Kernel./(n)
-            |> Kernel.*(
-                xs
-                |> Enum.map(& :math.pow(&1, 2))
-                |> Enum.sum()
-              )
+        :math.sqrt(
+          1
+          |> Kernel./(n)
+          |> Kernel.*(
+            xs
+            |> Enum.map(&:math.pow(&1, 2))
+            |> Enum.sum()
           )
         )
+      )
+
     h_x =
       1
       |> Kernel./(n)
       |> Kernel.*(
-          xs
-          |> Enum.map(& :math.cos(2*:math.pi()*&1))
-          |> Enum.sum()
-        )
+        xs
+        |> Enum.map(&:math.cos(2 * :math.pi() * &1))
+        |> Enum.sum()
+      )
 
     20
     |> Kernel.-(20 * :math.exp(g_x))
@@ -114,19 +116,19 @@ defmodule Genex.Tools.Benchmarks.SingleObjectiveContinuous do
   def bohachevsky(xs) do
     [x0 | [x1 | xi]] = xs
     xs = [{x0, x1} | Enum.chunk_every(xi, 2, 1, [])]
+
     xs
-    |> Enum.map(
-        fn {xi, xiplus1} ->
-          xi
-          |> :math.pow(2)
-          |> Kernel.+(2*:math.pow(xiplus1, 2))
-          |> Kernel.-(0.3*:math.cos(3*:math.pi()*xi))
-          |> Kernel.-(0.4*:math.cos(4*:math.pi()*xiplus1))
-          |> Kernel.+(0.7)
-        end
-      )
+    |> Enum.map(fn {xi, xiplus1} ->
+      xi
+      |> :math.pow(2)
+      |> Kernel.+(2 * :math.pow(xiplus1, 2))
+      |> Kernel.-(0.3 * :math.cos(3 * :math.pi() * xi))
+      |> Kernel.-(0.4 * :math.cos(4 * :math.pi() * xiplus1))
+      |> Kernel.+(0.7)
+    end)
     |> Enum.sum()
   end
+
   @doc """
   Griewank objective function.
 
@@ -137,19 +139,22 @@ defmodule Genex.Tools.Benchmarks.SingleObjectiveContinuous do
     - `xs`: `Enum`.
   """
   def griewank(xs) do
-    sum = Enum.sum(Enum.map(xs, & :math.pow(&1, 2)))
+    sum = Enum.sum(Enum.map(xs, &:math.pow(&1, 2)))
+
     product =
       xs
       |> Enum.with_index()
-      |> Enum.reduce(1,
-          fn {i, xi}, acc ->
-            xi
-            |> Kernel./(:math.sqrt(i))
-            |> :math.cos()
-            |> Kernel.*(acc)
-          end
-        )
-    1 / 4000
+      |> Enum.reduce(
+        1,
+        fn {i, xi}, acc ->
+          xi
+          |> Kernel./(:math.sqrt(i))
+          |> :math.cos()
+          |> Kernel.*(acc)
+        end
+      )
+
+    (1 / 4000)
     |> Kernel.*(sum)
     |> Kernel.-(product)
     |> Kernel.+(1)
@@ -172,21 +177,23 @@ defmodule Genex.Tools.Benchmarks.SingleObjectiveContinuous do
       |> :math.sin()
       |> :math.pow(2)
       |> Kernel.+(
-          y
-          |> Kernel.+(x / 8)
-          |> :math.sin()
-          |> :math.pow(2)
-        )
+        y
+        |> Kernel.+(x / 8)
+        |> :math.sin()
+        |> :math.pow(2)
+      )
+
     denom =
       x
       |> Kernel.-(8.6998)
       |> Kernel.+(
-          y
-          |> Kernel.-(6.7665)
-          |> :math.pow(2)
-        )
+        y
+        |> Kernel.-(6.7665)
+        |> :math.pow(2)
+      )
       |> :math.sqrt()
       |> Kernel.+(1)
+
     num / denom
   end
 
@@ -207,11 +214,11 @@ defmodule Genex.Tools.Benchmarks.SingleObjectiveContinuous do
     |> Kernel.-(11)
     |> :math.pow(2)
     |> Kernel.+(
-        x
-        |> Kernel.+(:math.pow(y, 2))
-        |> Kernel.-(7)
-        |> :math.pow(2)
-      )
+      x
+      |> Kernel.+(:math.pow(y, 2))
+      |> Kernel.-(7)
+      |> :math.pow(2)
+    )
   end
 
   @doc """
@@ -225,13 +232,14 @@ defmodule Genex.Tools.Benchmarks.SingleObjectiveContinuous do
   """
   def rastrigin(xs) do
     n = Enum.count(xs)
+
     10
     |> Kernel.*(n)
     |> Kernel.+(
-        xs
-        |> Enum.map(& :math.pow(&1, 2) - 10 * :math.cos(2*:math.pi()*&1))
-        |> Enum.sum()
-      )
+      xs
+      |> Enum.map(&(:math.pow(&1, 2) - 10 * :math.cos(2 * :math.pi() * &1)))
+      |> Enum.sum()
+    )
   end
 
   @doc """
@@ -246,17 +254,16 @@ defmodule Genex.Tools.Benchmarks.SingleObjectiveContinuous do
   def rosenbrock(xs) do
     [x0 | [x1 | xi]] = xs
     xs = [{x0, x1} | Enum.chunk_every(xi, 2, 1, [])]
+
     xs
-    |> Enum.map(
-        fn {xi, xiplus1} ->
-          1 - xi
-          |> :math.pow(2)
-          |> Kernel.+(
-              100
-              |> Kernel.*(:math.pow(xiplus1 - :math.pow(xi, 2), 2))
-            )
-        end
+    |> Enum.map(fn {xi, xiplus1} ->
+      (1 - xi)
+      |> :math.pow(2)
+      |> Kernel.+(
+        100
+        |> Kernel.*(:math.pow(xiplus1 - :math.pow(xi, 2), 2))
       )
+    end)
     |> Enum.sum()
   end
 

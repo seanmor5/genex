@@ -28,7 +28,13 @@ defmodule Genex.Tools.Mutation do
         1 ^^^ x
       end)
 
-    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
+    %Chromosome{
+      genes: genes,
+      size: chromosome.size,
+      weights: chromosome.weights,
+      f: chromosome.f,
+      collection: chromosome.collection
+    }
   end
 
   @doc false
@@ -57,7 +63,13 @@ defmodule Genex.Tools.Mutation do
         end
       end)
 
-    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
+    %Chromosome{
+      genes: genes,
+      size: chromosome.size,
+      weights: chromosome.weights,
+      f: chromosome.f,
+      collection: chromosome.collection
+    }
   end
 
   @doc false
@@ -82,7 +94,13 @@ defmodule Genex.Tools.Mutation do
       chromosome.genes
       |> Enum.shuffle()
 
-    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
+    %Chromosome{
+      genes: genes,
+      size: chromosome.size,
+      weights: chromosome.weights,
+      f: chromosome.f,
+      collection: chromosome.collection
+    }
   end
 
   @doc false
@@ -121,7 +139,13 @@ defmodule Genex.Tools.Mutation do
         Enum.random(min..max)
       end)
 
-    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
+    %Chromosome{
+      genes: genes,
+      size: chromosome.size,
+      weights: chromosome.weights,
+      f: chromosome.f,
+      collection: chromosome.collection
+    }
   end
 
   @doc """
@@ -148,7 +172,13 @@ defmodule Genex.Tools.Mutation do
         end
       end)
 
-    %Chromosome{genes: genes, size: length(genes), weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
+    %Chromosome{
+      genes: genes,
+      size: length(genes),
+      weights: chromosome.weights,
+      f: chromosome.f,
+      collection: chromosome.collection
+    }
   end
 
   @doc false
@@ -181,7 +211,13 @@ defmodule Genex.Tools.Mutation do
         :rand.normal(mu, sigma)
       end)
 
-    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
+    %Chromosome{
+      genes: genes,
+      size: chromosome.size,
+      weights: chromosome.weights,
+      f: chromosome.f,
+      collection: chromosome.collection
+    }
   end
 
   @doc false
@@ -218,7 +254,13 @@ defmodule Genex.Tools.Mutation do
         end
       end)
 
-    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
+    %Chromosome{
+      genes: genes,
+      size: chromosome.size,
+      weights: chromosome.weights,
+      f: chromosome.f,
+      collection: chromosome.collection
+    }
   end
 
   @doc false

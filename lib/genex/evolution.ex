@@ -161,6 +161,7 @@ defmodule Genex.Evolution do
       def transition(population, opts \\ []) do
         generation = population.generation + 1
         size = length(population.chromosomes)
+
         chromosomes =
           population.chromosomes
           |> do_update_ages()

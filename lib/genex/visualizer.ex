@@ -1,5 +1,6 @@
 defmodule Genex.Visualizer do
   alias Genex.Types.{Chromosome, Population}
+
   @moduledoc """
   Behaviour for implementing visualizations.
 
