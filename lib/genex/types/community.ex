@@ -1,6 +1,6 @@
 defmodule Genex.Types.Community do
   alias Genex.Types.{Chromosome, Population}
-
+  @moduledoc false
   @type t :: %__MODULE__{
           populations: Enum.t(Population.t()),
           generation: integer(),

@@ -1,4 +1,5 @@
 defmodule Genex.Tools.Benchmarks.MultiObjectiveContinuous do
+  @moduledoc false
   def fonseca, do: :ok
   def kursawe, do: :ok
   def schaffer_mo, do: :ok

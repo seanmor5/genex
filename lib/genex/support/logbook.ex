@@ -1,5 +1,3 @@
 defmodule Genex.Support.Logbook do
-  @moduledoc """
-  Logbook.
-  """
+  @moduledoc false
 end

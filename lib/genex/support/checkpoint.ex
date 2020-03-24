@@ -1,8 +1,12 @@
 defmodule Genex.Support.Checkpoint do
   alias Genex.Support.{Genealogy, HallOfFame}
-
+  alias Genex.Types.Population
   @moduledoc """
   Utilities for saving and loading from checkpoints.
+
+  Checkpoints are useful if you want to start and stop an evolution from a previous evolution with different parameters.
+
+  These functions haven't been tested. Documentation/Testing coming soon.
   """
 
   def export(population, path \\ "") do
@@ -48,5 +52,19 @@ defmodule Genex.Support.Checkpoint do
     # Save all to zip
     files = [{hof, hof_bin}, {dot, dot_bin}, {pop, pop_bin}]
     :zip.create(String.to_charlist(prefix <> ".zip"), files, cwd: String.to_charlist(path))
+  end
+
+  @doc """
+  Loads a checkpoint from `path`.
+
+  Returns `%Population{}`.
+
+  # Parameters
+
+    - `path`: `Path` to checkpoint zipfile.
+  """
+  @spec load(path :: Path.t()) :: Population.t()
+  def load(path) do
+    :ok
   end
 end

@@ -59,7 +59,7 @@ defmodule Genex.Evolution do
         visualizer = Keyword.get(opts, :visualizer, Genex.Visualizer.Text)
         visualizer.init(opts)
         genealogy = Genealogy.new()
-        HallOfFame.init()
+        HallOfFame.new()
         {:ok, %Population{population | genealogy: genealogy}}
       end
 
@@ -161,7 +161,10 @@ defmodule Genex.Evolution do
       def transition(population, opts \\ []) do
         generation = population.generation + 1
         size = length(population.chromosomes)
-        chromosomes = do_update_ages(population.chromosomes)
+        chromosomes =
+          population.chromosomes
+          |> do_update_ages()
+          |> do_repair_chromosomes()
 
         HallOfFame.add(population)
 
@@ -308,7 +311,10 @@ defmodule Genex.Evolution do
         |> Enum.map(fn c -> %Chromosome{c | age: c.age + 1} end)
       end
 
-      defp do_gene_repair, do: :ok
+      defp do_repair_chromosomes(chromosomes) do
+        chromosomes
+        |> Enum.map(fn c -> %Chromosome{c | genes: c.collection.().(c.genes)} end)
+      end
 
       defoverridable init: 2,
                      transition: 2,

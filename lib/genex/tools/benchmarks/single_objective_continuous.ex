@@ -36,7 +36,7 @@ defmodule Genex.Tools.Benchmarks.SingleObjectiveContinuous do
 
     - `xs`: `Enum`.
   """
-  def plane([x0 | xi]) do: xi
+  def plane([x0 | _]), do: x0
 
   @doc """
   Sphere objective function.
@@ -113,7 +113,7 @@ defmodule Genex.Tools.Benchmarks.SingleObjectiveContinuous do
   """
   def bohachevsky(xs) do
     [x0 | [x1 | xi]] = xs
-    xs = [{x0, x1} | Enum.chunk_every()]
+    xs = [{x0, x1} | Enum.chunk_every(xi, 2, 1, [])]
     xs
     |> Enum.map(
         fn {xi, xiplus1} ->
@@ -137,7 +137,7 @@ defmodule Genex.Tools.Benchmarks.SingleObjectiveContinuous do
     - `xs`: `Enum`.
   """
   def griewank(xs) do
-    sum = Enum.sum(Enum.map(& :math.pow(&1, 2)))
+    sum = Enum.sum(Enum.map(xs, & :math.pow(&1, 2)))
     product =
       xs
       |> Enum.with_index()
@@ -155,12 +155,111 @@ defmodule Genex.Tools.Benchmarks.SingleObjectiveContinuous do
     |> Kernel.+(1)
   end
 
-  def h1, do: :ok
-  def himmelblau, do: :ok
-  def rastrigin, do: :ok
-  def rastrigin_scaled, do: :ok
-  def rastrigin_skew, do: :ok
-  def rosenbrock, do: :ok
+  @doc """
+  h1 objective function.
+
+  Returns ```math```.
+
+  # Parameters
+
+    - `x`: `number`.
+    - `y`: `number`.
+  """
+  def h1(x, y) do
+    num =
+      x
+      |> Kernel.-(y / 8)
+      |> :math.sin()
+      |> :math.pow(2)
+      |> Kernel.+(
+          y
+          |> Kernel.+(x / 8)
+          |> :math.sin()
+          |> :math.pow(2)
+        )
+    denom =
+      x
+      |> Kernel.-(8.6998)
+      |> Kernel.+(
+          y
+          |> Kernel.-(6.7665)
+          |> :math.pow(2)
+        )
+      |> :math.sqrt()
+      |> Kernel.+(1)
+    num / denom
+  end
+
+  @doc """
+  Himmelblau objective function.
+
+  Returns ```math```.
+
+  # Paramters
+
+    - `x`: `number`.
+    - `y`: `number`.
+  """
+  def himmelblau(x, y) do
+    x
+    |> :math.pow(2)
+    |> Kernel.+(y)
+    |> Kernel.-(11)
+    |> :math.pow(2)
+    |> Kernel.+(
+        x
+        |> Kernel.+(:math.pow(y, 2))
+        |> Kernel.-(7)
+        |> :math.pow(2)
+      )
+  end
+
+  @doc """
+  Rastrigin objective function.
+
+  Returns ```math```.
+
+  # Parameters
+
+    - `xs`: `Enum`.
+  """
+  def rastrigin(xs) do
+    n = Enum.count(xs)
+    10
+    |> Kernel.*(n)
+    |> Kernel.+(
+        xs
+        |> Enum.map(& :math.pow(&1, 2) - 10 * :math.cos(2*:math.pi()*&1))
+        |> Enum.sum()
+      )
+  end
+
+  @doc """
+  Rosebrock objective function.
+
+  Returns ```math```.
+
+  # Parameters
+
+    - `xs`: `Enum`.
+  """
+  def rosenbrock(xs) do
+    [x0 | [x1 | xi]] = xs
+    xs = [{x0, x1} | Enum.chunk_every(xi, 2, 1, [])]
+    xs
+    |> Enum.map(
+        fn {xi, xiplus1} ->
+          1 - xi
+          |> :math.pow(2)
+          |> Kernel.+(
+              100
+              |> Kernel.*(:math.pow(xiplus1 - :math.pow(xi, 2), 2))
+            )
+        end
+      )
+    |> Enum.sum()
+  end
+
   def schaffer, do: :ok
   def schwefel, do: :ok
   def shekel, do: :ok

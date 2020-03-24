@@ -124,23 +124,15 @@ defmodule Genex do
       @spec seed(Keyword.t()) :: {:ok, Enum.t(Chromosome.t())}
       defp seed(opts \\ []) do
         size = Keyword.get(opts, :population_size, 100)
-
+        fun = &genotype/0
         chromosomes =
-          for n <- 1..size do
-            g = collection().(genotype())
+          fun
+          |> Stream.repeatedly()
+          |> Stream.map(fn g -> collection().(g) end)
+          |> Stream.map(fn g -> %Chromosome{genes: g, size: Enum.count(g), weights: weights(), f: &fitness_function/1, collection: &collection/0} end)
+          |> Enum.take(size)
 
-            c = %Chromosome{
-              genes: g,
-              size: Enum.count(g),
-              weights: weights(),
-              f: &fitness_function/1,
-              collection: &collection/0
-            }
-
-            c
-          end
-
-        pop = %Population{chromosomes: chromosomes, size: length(chromosomes)}
+        pop = %Population{chromosomes: chromosomes, size: Enum.count(chromosomes)}
         {:ok, pop}
       end
 

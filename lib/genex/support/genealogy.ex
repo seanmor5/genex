@@ -1,4 +1,5 @@
 defmodule Genex.Support.Genealogy do
+  alias Graph.Serializers.DOT
   @moduledoc """
   Implementation of a genealogy tree.
 
@@ -80,6 +81,6 @@ defmodule Genex.Support.Genealogy do
   """
   def export(genealogy) do
     genealogy
-    |> Graph.Serializers.DOT.serialize()
+    |> DOT.serialize()
   end
 end

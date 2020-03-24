@@ -16,7 +16,7 @@ use Genex.Tools
 soln = Speller.run(title: "Speller",
                    mutation_type: Mutation.scramble(),
                    mutation_rate: 0.1,
-                   crossover_type: Crossover.uniform(rate: 0.5),
+                   crossover_type: Crossover.uniform(probability: 0.5),
                    selection_type: Selection.roulette())
 
 IO.inspect(List.to_string(soln.strongest.genes))
