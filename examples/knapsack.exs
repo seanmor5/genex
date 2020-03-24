@@ -1,12 +1,9 @@
 defmodule Knapsack do
-  use Genex,
-    crossover_type: :two_point,
-    parent_selection: :roulette,
-    mutation_type: :bit_flip
+  use Genex
 
   @bound_breached 0
 
-  def encoding, do: Chromosome.binary(size: Enum.count(weights()))
+  def genotype, do: Genotype.binary(Enum.count(weights()))
 
   def fitness_function(c) do
     profit =
@@ -43,9 +40,11 @@ defmodule Knapsack do
   # defp weight_limit, do: 15
 end
 
-import Genex.Config
+use Genex.Tools
 
-[population_size: 50]
-|> use_crossover(:two_point)
-|> use_selection(:roulette)
-|> Knapsack.run()
+soln = Knapsack.run(title: "Knapsack",
+                    crossover_type: Crossover.two_point(),
+                    selection_type: Selection.roulette(),
+                    population_size: 50)
+
+IO.inspect(soln.strongest.genes)

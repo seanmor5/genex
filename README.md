@@ -4,13 +4,13 @@
 
 [![Build Status](https://travis-ci.org/seanmor5/genex.svg?branch=master)](https://travis-ci.org/seanmor5/genex)
 [![Coverage Status](https://coveralls.io/repos/github/seanmor5/genex/badge.svg?branch=master)](https://coveralls.io/github/seanmor5/genex?branch=master)
-[![Hex Version](https://img.shields.io/hexpm/v/genex)](https://hex.pm/packages/genex/0.1.4)
+[![Hex Version](https://img.shields.io/hexpm/v/genex)](https://hex.pm/packages/genex/1.0.0-beta)
 
 This library is inspired by Python's [DEAP](https://github.com/deap/deap).
 
 ## Documentation
 
-Documentation is available at [https://hexdocs.pm/genex/introduction-overview.html](https://hexdocs.pm/genex/introduction-overview.html)
+Documentation is available at [https://hexdocs.pm/genex/index.html](https://hexdocs.pm/genex/introduction-overview.html)
 
 ## Installation
 
@@ -19,22 +19,20 @@ The package can be installed by adding `genex` to your list of dependencies in `
 ```elixir
 def deps do
   [
-    {:genex, "~> 0.2.1"}
+    {:genex, "~> 1.0.0-beta"}
   ]
 end
 ```
 
 ## Usage
 
-Genex requires an implementation module with 3 functions: `encoding/0`, `fitness_function/1`, and `terminate?/1`.
+Genex requires an implementation module with 3 functions: `genotype/0`, `fitness_function/1`, and `terminate?/1`.
 
 ```elixir
 defmodule OneMax do
   use Genex
 
-  def encoding do
-    for _ <- 1..10, do: Enum.random(0..1)
-  end
+  def genotype, do: Genotype.binary(10)
 
   def fitness_function(chromosome), do: Enum.sum(chromosome.genes)
 
@@ -53,18 +51,24 @@ Then:
 
 Genex strives to be as simple and customizable as possible. Along with the ability to customize EVERY step of your Genetic algorithm, Genex comes with the following features:
 
-- 6 Selection Operators
-- 7 Crossover Operators
-- 6 Mutation Operators
-- Customizable Population Statistics
-- Customizable Benchmarking of Algorithms
+- 6 Selection Operators (14 anticipated)
+- 12 Crossover Operators (17 anticipated)
+- 4 Mutation Operators (9 anticipated)
+- Fully Customizable Evolutions
+- Multi-Objective Optimization
+- Penalty Functions
+- Genotype Generation Helpers
+- Benchmarking of Common Problems
 - Exportable Genealogy Tree
-- Flexible Encoding of Chromosomes
-- Simple Text Visualizations
+- Exportable Hall of Fame
+- Flexible Encoding of Chromosomes (any `Enum`)
+- Extendable Visualizations
+
+To request a feature, please open an issue.
 
 ## Examples
 
-There are currently 3 basic examples available in the `examples` directory. To run them, clone the repo and run:
+There are currently 5 basic examples available in the `examples` directory. To run them, clone the repo and run:
 
 ```
 mix run examples/[example].exs
@@ -75,25 +79,18 @@ The current examples are:
 - `one_max.exs`
 - `knapsack.exs`
 - `speller.exs`
-- `linear_regression.exs`
+- `tsp.exs`
 - `n_queens.exs`
+- `knapsack.exs`
 
-## Benchmarks
+## Genex in Practice
 
-To run benchmarks, clone this repo. In the `genex` directory run:
+These projects use Genex in practice:
 
-```
-mix run bench/benchmarks.exs
-```
+- [seanmor5/covid](http://github.com/seanmor5/covid)
 
-You can also run the individual benchmarks available in the `bench/` directory. This will take some time!
+To feature yours, please submit a pull request.
 
 ## Contributing
 
 If you have any problems with Genex, please open an issue! If you have a fix for an issue, submit a pull request.
-
-## Roadmap
-
-The next phase of this library will involve extensive performance improvements. Most of the algorithms involve processing very large lists. This is an ideal job for a NIF.
-
-If anybody has any experience writing NIFs or writing algorithms for processing large lists, [email me](mailto:smoriarity.5@gmail.com) to get involved!

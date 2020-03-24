@@ -6,7 +6,7 @@ To install Genex, add an entry to your `mix.exs`:
 def deps do
     [
         # ...
-        {:genex, "~> 0.1.0"}
+        {:genex, "~> 1.0"}
     ]
 ```
 

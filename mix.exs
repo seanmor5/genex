@@ -1,7 +1,7 @@
 defmodule Genex.MixProject do
   use Mix.Project
 
-  @version "0.2.1"
+  @version "1.0.0-beta"
   @url "https://www.github.com/seanmor5/genex"
   @maintainers ["Sean Moriarity"]
 
@@ -53,59 +53,63 @@ defmodule Genex.MixProject do
   end
 
   defp extras do
-    [
-      "guides/introduction/overview.md": [
-        filename: "introduction-overview"
-      ],
-      "guides/introduction/installation.md": [
-        filename: "introduction-installation"
-      ],
-      "guides/introduction/configuration.md": [
-        filename: "introduction-configuration"
-      ],
-      "guides/introduction/customization.md": [
-        filename: "introduction-customization"
-      ],
-      "guides/tutorials/getting-started.md": [
-        filename: "tutorials-getting-started"
-      ],
-      "guides/support/statistics.md": [
-        filename: "support-statistics"
-      ],
-      "guides/support/benchmarking.md": [
-        filename: "support-benchmarking"
-      ],
-      "guides/support/genealogy.md": [
-        filename: "support-genealogy"
-      ],
-      "guides/operators/crossover.md": [
-        filename: "operators-crossover"
-      ]
-    ]
+    []
   end
 
   defp groups_for_extras do
     [
       Introduction: Path.wildcard("guides/introduction/*.md"),
+      Operators: Path.wildcard("guides/operators/*.md"),
+      Evolutions: Path.wildcard("guides/evolutions/*.md"),
       Support: Path.wildcard("guides/support/*.md"),
-      Tutorials: Path.wildcard("guides/tutorials/*.md"),
-      Operators: Path.wildcard("guides/operators/*.md")
+      Tutorials: Path.wildcard("guides/tutorials/*.md")
     ]
   end
 
   defp groups_for_modules do
     [
-      Operators: [
-        Genex.Operators.Crossover,
-        Genex.Operators.Mutation,
-        Genex.Operators.Selection
+      "Genetic Operators": [
+        Genex.Tools.Crossover,
+        Genex.Tools.Migration,
+        Genex.Tools.Mutation,
+        Genex.Tools.Selection
+      ],
+      "Solution Representations": [
+        Genex.Tools.Datatype,
+        Genex.Tools.Genotype
+      ],
+      Evolutions: [
+        Genex.Evolution,
+        Genex.Evolution.Coevolution,
+        Genex.Evolution.GenerateUpdate,
+        Genex.Evolution.MuCommaLambda,
+        Genex.Evolution.MuPlusLambda,
+        Genex.Evolution.Simple
+      ],
+      Benchmarks: [
+        Genex.Tools.Benchmarks.Binary,
+        Genex.Tools.Benchmarks.MultiObjectiveContinuous,
+        Genex.Tools.Benchmarks.SingleObjectiveContinuous,
+        Genex.Tools.Benchmarks.SymbolicRegression
+      ],
+      "Evaluation Tools": [
+        Genex.Tools.Evaluation,
+        Genex.Tools.Evaluation.Indicator,
+        Genex.Tools.Evaluation.Penalty
       ],
       Support: [
-        Genex.Support.Genealogy
+        Genex.Support.Checkpoint,
+        Genex.Support.Genealogy,
+        Genex.Support.HallOfFame,
+        Genex.Support.Logbook
       ],
       Structures: [
-        Genex.Population,
-        Genex.Chromosome
+        Genex.Types.Chromosome,
+        Genex.Types.Community,
+        Genex.Types.Population
+      ],
+      Visualizations: [
+        Genex.Visualizer
       ]
     ]
   end
@@ -117,12 +121,13 @@ defmodule Genex.MixProject do
       {:excoveralls, "~> 0.10", only: :test},
       {:table_rex, "~> 2.0.0"},
       {:benchee, "~> 1.0"},
-      {:libgraph, "~> 0.13.0"}
+      {:libgraph, "~> 0.13.0"},
+      {:statistics, "~> 0.6.2"}
     ]
   end
 
   defp description do
-    "Genex makes it easy to write Genetic Algorithms in Elixir."
+    "Genex makes it easy to write Evolutionary Algorithms in Elixir."
   end
 
   defp package do

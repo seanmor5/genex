@@ -21,7 +21,22 @@
 - Fixed Population Sorting Bug
 - Added `minimize` flag for minimiIng fitness
 
-# v0.3.0
-- Fixed mutation and crossover rate bug
-- Added encoding generators
-- Configuration now done using Genex.Config library
+# v1.0
+- Restructuring from `Operators` to `Tools`.
+- Addition of `cut_on_worst` crossover.
+- Addition of `modified` crossover.
+- Addition of `partialy_matched` crossover.
+- Addition of `uniform_partialy_matched` crossover.
+- Reworking of Configuration Process.
+- Change `encode/0` to `genotype/0`.
+- Addition of `collection/0` to `Chromosome`.
+- Addition of `f` to `Chromosome`.
+- Addition of `Genex.Evolution` for customizable evolutions.
+- Creation of `Visualizer` behaviour for customizable visualizations.
+- Addition of `interactive/3` for interactive GAs.
+- Addition of penalty functions in Evaluation helper.
+- Addition of indicators in Evaluation helper.
+- Addition of GP benchmark functions.
+- Addition of SOC benchmark functions.
+- Addition of Hall of Fame for best tracking.
+- Addition of Checkpointing to save and load evolutions.
