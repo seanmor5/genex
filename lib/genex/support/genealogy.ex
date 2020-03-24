@@ -2,15 +2,19 @@ defmodule Genex.Support.Genealogy do
   @moduledoc """
   Implementation of a genealogy tree.
 
-  We use the Genealogy tree to model the history of the population from it's initialization to the end of the algorithm. The tree itself is an erlang digraph. An edge emanates from parent and is incident on child.
+  We use the Genealogy tree to model the history of the population from it's initialization to the end of the algorithm. The tree itself is a directed `Graph` implemented using [libgraph](ttps://www.github.com/x/libgraph). Genealogy is tracked in a population struct, so you can access the genealogy anytime through the current population. Any function in the libgraph library will work on a genealogy
+
+  An edge emanates from parent and is incident on child. Mutants are considered new chromosomes, so their lineage starts with a single parent.
+
+  To produce visualizations of the Genealogy of an evolution, you'll have to export the tree to a DOT file and use a third-party visualization tool.
   """
 
   @doc """
-  Initializes a new Genealogy Tree.
+  Creates a new Genealogy Tree.
 
   Returns `Graph`.
   """
-  def init, do: Graph.new(type: :directed)
+  def new, do: Graph.new(type: :directed)
 
   @doc """
   Updates a Genealogy Tree with several vertices or one vertex.

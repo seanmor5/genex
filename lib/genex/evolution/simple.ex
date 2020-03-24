@@ -5,7 +5,7 @@ defmodule Genex.Evolution.Simple do
   Models the most basic form of evolution.
   """
 
-  @spec variation(Population.t(), Keyword.t()) :: {:ok, Population.t()} | {:error, any()}
+  @impl true
   def variation(population, opts \\ []) do
     with {:ok, population} <- crossover(population, opts),
          {:ok, population} <- mutation(population, opts) do

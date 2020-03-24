@@ -54,50 +54,6 @@ defmodule Genex.MixProject do
 
   defp extras do
     [
-      # Intro
-      "guides/introduction/overview.md": [
-        filename: "introduction-overview"
-      ],
-      "guides/introduction/installation.md": [
-        filename: "introduction-installation"
-      ],
-      "guides/introduction/configuration.md": [
-        filename: "introduction-configuration"
-      ],
-      "guides/introduction/customization.md": [
-        filename: "introduction-customization"
-      ],
-      # Tutorials
-      "guides/tutorials/getting-started.md": [
-        filename: "tutorials-getting-started"
-      ],
-      # Support
-      "guides/support/statistics.md": [
-        filename: "support-statistics"
-      ],
-      "guides/support/benchmarking.md": [
-        filename: "support-benchmarking"
-      ],
-      "guides/support/genealogy.md": [
-        filename: "support-genealogy"
-      ],
-      # Operators
-      "guides/operators/crossover.md": [
-        filename: "operators-crossover"
-      ],
-      # Evolutions
-      "guides/evolutions/simple.md": [
-        filename: "evolutions-simple"
-      ],
-      "guides/evolutions/mu_plus_lambda.md": [
-        filename: "evolutions-mu-plus-lambda"
-      ],
-      "guides/evolutions/mu_comma_lambda.md": [
-        filename: "evolutions-mu-comma-lambda"
-      ],
-      "guides/evolutions/coevolution.md": [
-        filename: "evolutions-coevolution"
-      ]
     ]
   end
 
@@ -113,17 +69,48 @@ defmodule Genex.MixProject do
 
   defp groups_for_modules do
     [
-      Operators: [
-        Genex.Operators.Crossover,
-        Genex.Operators.Mutation,
-        Genex.Operators.Selection
+      "Genetic Operators": [
+        Genex.Tools.Crossover,
+        Genex.Tools.Migration,
+        Genex.Tools.Mutation,
+        Genex.Tools.Selection
+      ],
+      "Solution Representations": [
+        Genex.Tools.Datatype,
+        Genex.Tools.Genotype
+      ],
+      Evolutions: [
+        Genex.Evolution,
+        Genex.Evolution.Coevolution,
+        Genex.Evolution.GenerateUpdate,
+        Genex.Evolution.MuCommaLambda,
+        Genex.Evolution.MuPlusLambda,
+        Genex.Evolution.Simple
+      ],
+      Benchmarks: [
+        Genex.Tools.Benchmarks.Binary,
+        Genex.Tools.Benchmarks.MultiObjectiveContinuous,
+        Genex.Tools.Benchmarks.SingleObjectiveContinuous,
+        Genex.Tools.Benchmarks.SymbolicRegression
+      ],
+      "Evaluation Tools": [
+        Genex.Tools.Evaluation,
+        Genex.Tools.Evaluation.Indicator,
+        Genex.Tools.Evaluation.Penalty
       ],
       Support: [
-        Genex.Support.Genealogy
+        Genex.Support.Checkpoint,
+        Genex.Support.Genealogy,
+        Genex.Support.HallOfFame,
+        Genex.Support.Logbook
       ],
       Structures: [
-        Genex.Population,
-        Genex.Chromosome
+        Genex.Types.Chromosome,
+        Genex.Types.Community,
+        Genex.Types.Population
+      ],
+      Visualizations: [
+        Genex.Visualizer
       ]
     ]
   end
@@ -142,7 +129,7 @@ defmodule Genex.MixProject do
   end
 
   defp description do
-    "Genex makes it easy to write Genetic Algorithms in Elixir."
+    "Genex makes it easy to write Evolutionary Algorithms in Elixir."
   end
 
   defp package do

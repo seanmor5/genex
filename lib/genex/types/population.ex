@@ -19,7 +19,7 @@ defmodule Genex.Types.Population do
           size: integer(),
           momentum: number(),
           strongest: Chromosome.t(),
-          history: :digraph.graph(),
+          genealogy: :digraph.graph(),
           statistics: Keyword.t()
         }
 
@@ -34,7 +34,7 @@ defmodule Genex.Types.Population do
     size: 0,
     momentum: 0,
     strongest: nil,
-    history: nil,
+    genealogy: nil,
     statistics: []
   ]
 end

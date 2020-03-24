@@ -6,7 +6,7 @@ defmodule Genex.Evolution do
   @moduledoc """
   Evolution behaviour definition for Evolutionary algorithms.
 
-  Evolutions begin with `init` after the population has been created. The purpose of `init` is to define metrics, initiate a geneaology tree, and create a hall of fame. `init` is like the "constructor" of the evolution.
+  Evolutions begin with `init` after the population has been created. The purpose of `init` is to define metrics, initiate a genealogy tree, and create a hall of fame. `init` is like the "constructor" of the evolution.
   """
 
   @doc """
@@ -58,9 +58,9 @@ defmodule Genex.Evolution do
       def init(population, opts \\ []) do
         visualizer = Keyword.get(opts, :visualizer, Genex.Visualizer.Text)
         visualizer.init(opts)
-        history = Genealogy.init()
+        genealogy = Genealogy.new()
         HallOfFame.init()
-        {:ok, %Population{population | history: history}}
+        {:ok, %Population{population | genealogy: genealogy}}
       end
 
       @spec evolve(
@@ -225,12 +225,12 @@ defmodule Genex.Evolution do
             chd -> chd
           end
 
-        {children, history} =
+        {children, genealogy} =
           parents
           |> Enum.chunk_every(2, 2, :discard)
           |> Enum.map(fn f -> List.to_tuple(f) end)
           |> Enum.reduce(
-            {starting_children, population.history},
+            {starting_children, population.genealogy},
             fn {p1, p2}, {chd, his} ->
               {c1, c2} = strategy.(p1, p2)
 
@@ -243,7 +243,7 @@ defmodule Genex.Evolution do
             end
           )
 
-        pop = %Population{population | children: children, history: history, selected: nil}
+        pop = %Population{population | children: children, genealogy: genealogy, selected: nil}
         {:ok, pop}
       end
 
@@ -261,7 +261,7 @@ defmodule Genex.Evolution do
         {mutants, new_his} =
           mutate
           |> Enum.reduce(
-            {[], population.history},
+            {[], population.genealogy},
             fn c, {mut, his} ->
               if :rand.uniform() < u do
                 mutant = strategy.(c)
@@ -275,8 +275,8 @@ defmodule Genex.Evolution do
 
         pop =
           case population.selected do
-            nil -> %Population{population | chromosomes: mutants, history: new_his}
-            _ -> %Population{population | children: mutants, selected: nil, history: new_his}
+            nil -> %Population{population | chromosomes: mutants, genealogy: new_his}
+            _ -> %Population{population | children: mutants, selected: nil, genealogy: new_his}
           end
 
         {:ok, pop}

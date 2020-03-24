@@ -1,13 +1,8 @@
 defmodule Genex.Visualizer.Text do
   use Genex.Visualizer
+  @moduledoc false
 
-  @moduledoc """
-  Text visualizations of the Algorithm.
-  """
-
-  @doc """
-  Display Initial Algorithm Text.
-  """
+  @impl true
   def init(opts) do
     title = Keyword.get(opts, :title, "Genetic Algorithm")
     header = Keyword.get(opts, :columns, ["Generation", "Population", "Strongest"])
@@ -20,9 +15,7 @@ defmodule Genex.Visualizer.Text do
     IO.write(TableRex.quick_render!(rows, header, title))
   end
 
-  @doc """
-  Display a summary of the population.
-  """
+  @impl true
   def display(population, opts) do
     title = Keyword.get(opts, :title, "Genetic Algorithm")
     header = Keyword.get(opts, :columns, ["Generation", "Population", "Strongest"])

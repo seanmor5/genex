@@ -10,29 +10,6 @@ defmodule Genex.Tools.Mutation do
   Future versions of Genex will provide the ability to define the "aggressiveness" of mutations. As of this version of Genex, mutations effect the ENTIRE chromosome.
   """
 
-  ################ CLOSURES #################
-
-  @doc false
-  def bit_flip, do: &bit_flip(&1)
-
-  @doc false
-  def bit_flip(radiation: radiation), do: &bit_flip(&1, radiation)
-
-  @doc false
-  def scramble, do: &scramble(&1)
-
-  @doc false
-  def scramble(radiation: radiation), do: &scramble(&1, radiation)
-
-  @doc false
-  def creep(min: min, max: max), do: &creep(&1, min, max)
-  def creep(min: min, max: max, radiation: radiation), do: &creep(&1, radiation, min, max)
-  def creep(_), do: raise("Invalid args")
-
-  @doc false
-  def gaussian, do: &gaussian(&1)
-  def gaussian(radiation: radiation), do: &gaussian(&1, radiation)
-
   @doc """
   Perform a bit-flip mutation.
 
@@ -51,8 +28,11 @@ defmodule Genex.Tools.Mutation do
         1 ^^^ x
       end)
 
-    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f}
+    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
   end
+
+  @doc false
+  def bit_flip, do: &bit_flip(&1)
 
   @doc """
   Perform a bit-flip mutation.
@@ -77,8 +57,14 @@ defmodule Genex.Tools.Mutation do
         end
       end)
 
-    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f}
+    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
   end
+
+  @doc false
+  def bit_flip(probability: probability), do: &bit_flip(&1, probability)
+
+  @doc false
+  def scramble(radiation: radiation), do: &scramble(&1, radiation)
 
   @doc """
   Perform a scramble mutation.
@@ -96,8 +82,11 @@ defmodule Genex.Tools.Mutation do
       chromosome.genes
       |> Enum.shuffle()
 
-    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f}
+    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
   end
+
+  @doc false
+  def scramble, do: &scramble(&1)
 
   @doc """
   Perform a scramble mutation on a random slice of size `n`.
@@ -120,9 +109,9 @@ defmodule Genex.Tools.Mutation do
   Returns `Chromosome`.
 
   # Parameters
-    - `chromosome`- `Chromosome` to mutate.
-    - `min`- lower bound
-    - `max`- upper bound
+    - `chromosome`: `Chromosome` to mutate.
+    - `min`: lower bound
+    - `max`: upper bound
   """
   @spec creep(Chromosome.t(), integer(), integer()) :: Chromosome.t()
   def creep(chromosome, min, max) do
@@ -132,7 +121,7 @@ defmodule Genex.Tools.Mutation do
         Enum.random(min..max)
       end)
 
-    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f}
+    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
   end
 
   @doc """
@@ -159,8 +148,12 @@ defmodule Genex.Tools.Mutation do
         end
       end)
 
-    %Chromosome{genes: genes, size: length(genes), weights: chromosome.weights, f: chromosome.f}
+    %Chromosome{genes: genes, size: length(genes), weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
   end
+
+  @doc false
+  def creep(min: min, max: max), do: &creep(&1, min, max)
+  def creep(min: min, max: max, radiation: radiation), do: &creep(&1, radiation, min, max)
 
   @doc """
   Performs a gaussian mutation.
@@ -170,7 +163,7 @@ defmodule Genex.Tools.Mutation do
   Returns `Chromosome`.
 
   # Parameters
-    - `chromosome`- `Chromosome` to mutate.
+    - `chromosome`: `Chromosome` to mutate.
   """
   @spec gaussian(Chromosome.t()) :: Chromosome.t()
   def gaussian(chromosome) do
@@ -188,8 +181,11 @@ defmodule Genex.Tools.Mutation do
         :rand.normal(mu, sigma)
       end)
 
-    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f}
+    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
   end
+
+  @doc false
+  def gaussian, do: &gaussian(&1)
 
   @doc """
   Performs a gaussian mutation at random genes.
@@ -222,8 +218,11 @@ defmodule Genex.Tools.Mutation do
         end
       end)
 
-    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f}
+    %Chromosome{genes: genes, size: chromosome.size, weights: chromosome.weights, f: chromosome.f, collection: chromosome.collection}
   end
+
+  @doc false
+  def gaussian(radiation: radiation), do: &gaussian(&1, radiation)
 
   def polynomial_bounded, do: :ok
   def swap, do: :ok

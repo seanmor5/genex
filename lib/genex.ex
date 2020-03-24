@@ -38,6 +38,22 @@ defmodule Genex do
 
   Genex injects a special function called `run/1` into your problem definition. `run/1` takes a number of optional configuration options you can use to change how your algorithm is executed (*see configuration guide*). To properly run your algorithm, open up `iex` and call `MyProblem.run()` or declare your module in `.exs` file and run `mix run path/to/my_problem.exs`.
 
+  ## Configuring Algorithms
+
+  Genex supports the following configuration options:
+
+    - `:title`: `String` title of your algorithm. Defaults to `"Genetic Algorithm"`.
+    - `:population_size`: `Integer` size of your initial population.
+    - `:selection_type`: `Function` selection strategy. Defaults to `Genex.Selection.natural()`.
+    - `:crossover_type`: `Function` crossover strategy. Defualts to `Genex.Crossover.single_point()`.
+    - `:mutation_type`: `Function` mutation strategy. Defaults to `:none`.
+    - `:survival_selection_type`: `Function` survival selection strategy. Defaults to `Genex.Selection.natural()`.
+    - `:selection_rate`: `Float` between `0` and `1` or `Function`. Defaults to `0.8`.
+    - `:mutation_rate`: `Float` between `0` and `1` or `Function`. Defaults to `0.05`.
+    - `:survival_rate`: `Float` between `0` and `1` or `Function`. Defaults to `1 - selection_rate`.
+
+  All of these options are passed to `run/1` as a `Keyword` list. See *Configuring Genex* for more.
+
   ## Additional Utilities
 
   The problem definition contains a few additional utilities that you might find useful to use. To find out more, see *Additional Utilities*.
@@ -53,15 +69,15 @@ defmodule Genex do
   @callback genotype :: Enum.t()
 
   @doc """
-  Function used to store the genes of a chromosome.
+  Function used to specify how genes are stored in the chromosome.
 
-  Genex supports any datatype that implements `Enumerable`. After each generation, the algorithm "repairs" broke chromosomes by calling `datatype` on each chromosome in the population. This is because many of the functions in `Enum` explicitly return a `List`.
+  Genex supports any structure that implements `Enumerable`. After each generation, the algorithm "repairs" broke chromosomes by calling `collection` on each chromosome in the population. This is because many of the functions in `Enum` explicitly return a `List`.
 
   This should be a reference to a function that accepts an `Enum` and returns an `Enum`. Most data structures come with a utility function for creating new versions from other types. An example is `MapSet.new/1`. Elixir's `MapSet.new/1` accepts an `Enum` and returns a new `MapSet`.
 
   The default version of this function returns a function that returns itself. In other words, the default version of this function simply returns the current representation of the chromosome. Because of how some of the functions in `Enum` work, this will always be a `List`.
   """
-  @callback datatype :: (Enum.t() -> Enum.t())
+  @callback collection :: (Enum.t() -> Enum.t())
 
   @doc """
   Evaluates a chromosome.
@@ -99,35 +115,26 @@ defmodule Genex do
       alias Genex.Types.Population
       alias Genex.Tools.{Benchmarks, Evaluation, Genotype}
 
-      @doc """
-      Specifies the datatype.
-      """
-      def datatype, do: & &1
+      def collection, do: & &1
 
       def weights, do: 1
 
-      @doc """
-      Seed the population with some chromosomes.
+      def eval(c), do: c.fitness
 
-      Returns `Enum.t(%Chromosomes{})`.
-
-      # Parameters
-
-        - `opts`: Keyword list of options.
-      """
       @spec seed(Keyword.t()) :: {:ok, Enum.t(Chromosome.t())}
       defp seed(opts \\ []) do
         size = Keyword.get(opts, :population_size, 100)
 
         chromosomes =
           for n <- 1..size do
-            g = datatype().(genotype())
+            g = collection().(genotype())
 
             c = %Chromosome{
               genes: g,
               size: Enum.count(g),
               weights: weights(),
-              f: &fitness_function/1
+              f: &fitness_function/1,
+              collection: &collection/0
             }
 
             c
@@ -137,28 +144,6 @@ defmodule Genex do
         {:ok, pop}
       end
 
-      @doc """
-      Run the genetic algorithm.
-
-      This function combines all previous steps and executes the Genetic Algorithm until completion. It will return the solution population which contains relevant information for analysis of your algorithms performance.
-
-      Returns `%Population{...}`.
-
-      # Parameters
-
-        - `opts`: Configuration options.
-
-      # Options
-
-        - `:crossover_type`: `Function`.
-        - `:mutation_type`: `Function`.
-        - `:selection_type`: `Function`.
-        - `:evolution_type`: `Module`.
-        - `:survival_type`: `Function`.
-        - `:crossover_rate`: `Function` or `Float` between 0 and 1.
-        - `:mutation_rate`: `Function` or `Float` between 0 and 1.
-        - `:population_size`: `Integer`.
-      """
       @spec run(Keyword.t()) :: Population.t()
       def run(opts \\ []) do
         evolution = Keyword.get(opts, :evolution, Genex.Evolution.Simple)
@@ -174,21 +159,12 @@ defmodule Genex do
         end
       end
 
-      def eval(c), do: c.fitness
-
-      @doc """
-      Profile your genetic algorithm.
-
-      This function will profile your genetic algorithm.
-
-      Returns `:ok`.
-      """
       @spec profile :: :ok
       def profile(opts \\ []), do: :ok
 
       defp valid_opts?(opts \\ []), do: :ok
 
-      defoverridable profile: 1, weights: 0, datatype: 0
+      defoverridable profile: 1, weights: 0, collection: 0
     end
   end
 end
