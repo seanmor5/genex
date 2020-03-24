@@ -487,11 +487,6 @@ defmodule Genex.Tools.Crossover do
   def uniform_partialy_matched(probability: probability),
     do: &uniform_partialy_matched(&1, &2, probability)
 
-  def simulted_binary_bounded, do: :ok
-  def cycle, do: :ok
-  def order_multi, do: :ok
-  def collision, do: :ok
-
   @doc """
   Performs modified crossover of `p1` and `p2`.
 
@@ -565,4 +560,16 @@ defmodule Genex.Tools.Crossover do
   @doc false
   def cut_on_worst(heuristic: heuristic, repair: repair),
     do: &cut_on_worst(&1, &2, heuristic, repair)
+
+  @doc false
+  def simulated_binary_bounded, do: :ok
+
+  @doc false
+  def cycle, do: :ok
+
+  @doc false
+  def order_multi, do: :ok
+
+  @doc false
+  def collision, do: :ok
 end

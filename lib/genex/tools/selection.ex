@@ -24,6 +24,9 @@ defmodule Genex.Tools.Selection do
     |> Enum.take(n)
   end
 
+  @doc false
+  def natural, do: &natural(&1, &2)
+
   @doc """
   Worst selection of some number of chromosomes.
 
@@ -42,6 +45,9 @@ defmodule Genex.Tools.Selection do
     |> Enum.take(n)
   end
 
+  @doc false
+  def worst, do: &worst(&1, &2)
+
   @doc """
   Random selection of some number of chromosomes.
 
@@ -58,6 +64,9 @@ defmodule Genex.Tools.Selection do
     chromosomes
     |> Enum.take_random(n)
   end
+
+  @doc false
+  def random, do: &random(&1, &2)
 
   @doc """
   Tournament selection of some number of chromosomes.
@@ -80,6 +89,9 @@ defmodule Genex.Tools.Selection do
       |> Enum.max_by(& &1.fitness)
     end)
   end
+
+  @doc false
+  def tournament(tournsize: tournsize), do: &tournament(&1, &2, tournsize)
 
   @doc """
   Roulette selection of some number of chromosomes.
@@ -115,6 +127,9 @@ defmodule Genex.Tools.Selection do
       )
     end)
   end
+
+  @doc false
+  def roulette, do: &roulette(&1, &2)
 
   @doc """
   Stochastic Universal Sampling of chromosomes.
@@ -153,22 +168,27 @@ defmodule Genex.Tools.Selection do
     end)
   end
 
+  @doc false
+  def stochastic_universal_sampling, do: stochastic_universal_sampling(&1, &2)
+
+  @doc false
   def boltzmann, do: :ok
+
+  @doc false
   def rank, do: :ok
+
+  @doc false
   def double_tournament, do: :ok
+
+  @doc false
   def tournament_dcd, do: :ok
+
+  @doc false
   def lexicase, do: :ok
+
+  @doc false
   def epsilon_lexicase, do: :ok
+
+  @doc false
   def automatic_epsilon_lexicase, do: :ok
-
-  ################ CLOSURES #################
-  def natural, do: &natural(&1, &2)
-
-  def worst, do: &worst(&1, &2)
-
-  def random, do: &random(&1, &2)
-
-  def tournament(tournsize: tournsize), do: &tournament(&1, &2, tournsize)
-
-  def roulette, do: &roulette(&1, &2)
 end
