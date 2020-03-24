@@ -92,12 +92,10 @@ defmodule Genex.Evolution do
       def evaluation(population, opts \\ []) do
         chromosomes =
           population.chromosomes
-          |> Enum.map(
-              fn c ->
-                fitness = c.weights * c.f.(c)
-                %Chromosome{c | fitness: fitness}
-              end
-            )
+          |> Enum.map(fn c ->
+            fitness = c.weights * c.f.(c)
+            %Chromosome{c | fitness: fitness}
+          end)
           |> Enum.sort_by(& &1.fitness, &>=/2)
 
         strongest = hd(chromosomes)

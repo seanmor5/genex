@@ -8,7 +8,7 @@ defmodule Genex.Tools.Crossover do
 
   The probability of crossover or `crossover_rate` as it is called in our case, determines the number of parents selected to breed for the next generation. See more on this in the `Selection` documentation.
 
-  Crossover operators are generic. As with any optimization problem, no single method will be perfect. Genex offers a variety of crossover operators to experiment with; however, you may find that you need to write your own to fit your specific use case. You can do this by overriding the `crossover` method.
+  Crossover operators are generic. As with any optimization problem, no single method will be perfect. Genex offers a variety of crossover operators to experiment with; however, you may find that you need to write your own to fit your specific use case. You can do this by writing your own method and referencing it in the `:crossover_type` option.
 
   Each time a crossover takes place, 2 new children are created. These children then populate the `children` field of the `Population` struct before they are merged into the new population.
   """
@@ -31,7 +31,9 @@ defmodule Genex.Tools.Crossover do
     {g1, g2} = Enum.split(p1.genes, point)
     {g3, g4} = Enum.split(p2.genes, point)
     {c1, c2} = {g1 ++ g4, g3 ++ g2}
-    {%Chromosome{genes: c1, size: length(c1), weights: p1.weights, f: p1.f}, %Chromosome{genes: c2, size: length(c2), weights: p2.weights, f: p2.f}}
+
+    {%Chromosome{genes: c1, size: length(c1), weights: p1.weights, f: p1.f},
+     %Chromosome{genes: c2, size: length(c2), weights: p2.weights, f: p2.f}}
   end
 
   @doc false
@@ -78,7 +80,8 @@ defmodule Genex.Tools.Crossover do
       slice2 ++ slice3 ++ rem4
     }
 
-    {%Chromosome{genes: c1, size: length(c1), weights: p1.weights, f: p1.f}, %Chromosome{genes: c2, size: length(c2), weights: p2.weights, f: p2.f}}
+    {%Chromosome{genes: c1, size: length(c1), weights: p1.weights, f: p1.f},
+     %Chromosome{genes: c2, size: length(c2), weights: p2.weights, f: p2.f}}
   end
 
   @doc false
@@ -110,7 +113,8 @@ defmodule Genex.Tools.Crossover do
       end)
       |> Enum.unzip()
 
-    {%Chromosome{genes: c1, size: p1.size, weights: p1.weights, f: p1.f}, %Chromosome{genes: c2, size: p1.size, weights: p2.weights, f: p2.f}}
+    {%Chromosome{genes: c1, size: p1.size, weights: p1.weights, f: p1.f},
+     %Chromosome{genes: c2, size: p1.size, weights: p2.weights, f: p2.f}}
   end
 
   @doc false
@@ -153,7 +157,8 @@ defmodule Genex.Tools.Crossover do
       end)
       |> Enum.unzip()
 
-    {%Chromosome{genes: c1, size: p1.size, weights: p1.weights, f: p1.f}, %Chromosome{genes: c2, size: p1.size, weights: p2.weights, f: p2.f}}
+    {%Chromosome{genes: c1, size: p1.size, weights: p1.weights, f: p1.f},
+     %Chromosome{genes: c2, size: p1.size, weights: p2.weights, f: p2.f}}
   end
 
   @doc false
@@ -201,7 +206,8 @@ defmodule Genex.Tools.Crossover do
       end)
       |> Enum.unzip()
 
-    {%Chromosome{genes: c1, size: p1.size, weights: p1.weights, f: p1.f}, %Chromosome{genes: c2, size: p1.size, weights: p2.weights, f: p2.f}}
+    {%Chromosome{genes: c1, size: p1.size, weights: p1.weights, f: p1.f},
+     %Chromosome{genes: c2, size: p1.size, weights: p2.weights, f: p2.f}}
   end
 
   @doc false
@@ -240,7 +246,9 @@ defmodule Genex.Tools.Crossover do
     {g1, g2} = Enum.split(p1.genes, point1)
     {g3, g4} = Enum.split(p2.genes, point2)
     {c1, c2} = {g1 ++ g4, g3 ++ g2}
-    {%Chromosome{genes: c1, size: length(c1), weights: p1.weights, f: p1.f}, %Chromosome{genes: c2, size: length(c2), weights: p2.weights, f: p2.f}}
+
+    {%Chromosome{genes: c1, size: length(c1), weights: p1.weights, f: p1.f},
+     %Chromosome{genes: c2, size: length(c2), weights: p2.weights, f: p2.f}}
   end
 
   @doc false
@@ -280,12 +288,26 @@ defmodule Genex.Tools.Crossover do
 
     # Make and return
     {c1, c2} = {head1 ++ slice1 ++ tail1, head2 ++ slice2 ++ tail2}
-    {%Chromosome{genes: c1, size: p1.size, weights: p1.weights, f: p1.f}, %Chromosome{genes: c2, size: p2.size, weights: p2.weights, f: p2.f}}
+
+    {%Chromosome{genes: c1, size: p1.size, weights: p1.weights, f: p1.f},
+     %Chromosome{genes: c2, size: p2.size, weights: p2.weights, f: p2.f}}
   end
 
   @doc false
   def order_one, do: &order_one(&1, &2)
 
+  @doc """
+  Performs multi-point crossover of `p1` and `p2`.
+
+  Returns `{%Chromosome{}, %Chromosome{}}`.
+
+  # Parameters
+    - `p1`: Parent one.
+    - `p2`: Parent two.
+    - `n`: Number of crossover points.
+  """
+  @spec multi_point(Chromosome.t(), Chromosome.t(), non_neg_integer()) ::
+          {Chromosome.t(), Chromosome.t()}
   def multi_point(p1, p2, 0), do: {p1, p2}
   def multi_point(p1, p2, 1), do: single_point(p1, p2)
   def multi_point(p1, p2, 2), do: two_point(p1, p2)
@@ -323,11 +345,20 @@ defmodule Genex.Tools.Crossover do
     }
   end
 
+  @doc false
   def multi_point(cx_points: cx_points), do: &multi_point(&1, &2, cx_points)
   def multi_point(_), do: raise("Invalid arguments provided to multi point crossover.")
 
-  def partialy_matched, do: &partialy_matched(&1, &2)
+  @doc """
+  Performs a partialy matched crossover of `p1` and `p2`.
 
+  Returns `{%Chromosome{}, %Chromosome{}}`.
+
+  # Parameters
+    - `p1`: Parent one.
+    - `p2`: Parent two.
+  """
+  @spec partialy_matched(Chromosome.t(), Chromosome.t()) :: {Chromosome.t(), Chromosome.t()}
   def partialy_matched(p1, p2) do
     ind1 = Enum.to_list(p1.genes)
     ind2 = Enum.to_list(p2.genes)
@@ -379,9 +410,21 @@ defmodule Genex.Tools.Crossover do
      %Chromosome{genes: ind2, size: Enum.count(ind2), weights: p2.weights, f: p2.f}}
   end
 
-  def uniform_partialy_matched(probability: probability),
-    do: &uniform_partialy_matched(&1, &2, probability)
+  @doc false
+  def partialy_matched, do: &partialy_matched(&1, &2)
 
+  @doc """
+  Performs a uniform partialy matched crossover of `p1` and `p2`.
+
+  Returns `{%Chromosome{}, %Chromosome{}}`.
+
+  # Parameters
+    - `p1`: Parent one.
+    - `p2`: Parent two.
+    - `probability`: Probability of swap during PMX.
+  """
+  @spec uniform_partialy_matched(Chromosome.t(), Chromosome.t(), float()) ::
+          {Chromosome.t(), Chromosome.t()}
   def uniform_partialy_matched(p1, p2, probability) do
     ind1 = Enum.to_list(p1.genes)
     ind2 = Enum.to_list(p2.genes)
@@ -437,13 +480,30 @@ defmodule Genex.Tools.Crossover do
      %Chromosome{genes: ind2, size: Enum.count(ind2), weights: p2.weights, f: p2.f}}
   end
 
+  @doc false
+  def uniform_partialy_matched, do: &uniform_partialy_matched(&1, &2, 0.75)
+
+  @doc false
+  def uniform_partialy_matched(probability: probability),
+    do: &uniform_partialy_matched(&1, &2, probability)
+
   def simulted_binary_bounded, do: :ok
   def cycle, do: :ok
   def order_multi, do: :ok
   def collision, do: :ok
 
-  def modified(repair_fn: repair_fn), do: &modified(&1, &2, repair_fn)
+  @doc """
+  Performs modified crossover of `p1` and `p2`.
 
+  Returns `{%Chromosome{}, %Chromosome{}}`.
+
+  # Parameters
+    - `p1`: Parent one.
+    - `p2`: Parent two.
+    - `repair`: `Function` specifying how to repair chromosome.
+  """
+  @spec modified(Chromosome.t(), Chromosome.t(), (Chromosome.t() -> Chromosome.t())) ::
+          {Chromosome.t(), Chromosome.t()}
   def modified(p1, p2, repair) do
     lim = p1.size
     point = :rand.uniform(lim)
@@ -451,27 +511,42 @@ defmodule Genex.Tools.Crossover do
     {g3, g4} = Enum.split(p2.genes, point)
     {c1, c2} = {g1 ++ g4, g3 ++ g2}
     {c1, c2} = {repair.(c1), repair.(c2)}
-    {%Chromosome{genes: c1, size: lim, weights: p1.weights, f: p1.f}, %Chromosome{genes: c2, size: lim, weights: p2.weights, f: p2.f}}
+
+    {%Chromosome{genes: c1, size: lim, weights: p1.weights, f: p1.f},
+     %Chromosome{genes: c2, size: lim, weights: p2.weights, f: p2.f}}
   end
 
-  # https://arxiv.org/pdf/1801.02827.pdf
-  def cut_on_worst(heuristic: heuristic, repair_fn: repair_fn),
-    do: &cut_on_worst(&1, &2, heuristic, repair_fn)
+  @doc false
+  def modified(repair: repair), do: &modified(&1, &2, repair)
 
-  def cut_on_worst(heuristic: heuristic, repair_fn: repair_fn, direction: direction),
-    do: &cut_on_worst(&1, &2, heuristic, repair_fn, direction)
+  @doc """
+  Performs cut-on-worst crossover of `p1` and `p2`.
 
-  def cut_on_worst(p1, p2, heuristic, repair, direction \\ &>=/2) do
+  Returns `{%Chromosome{}, %Chromosome{}}`.
+
+  # Parameters
+    - `p1`: Parent one.
+    - `p2`: Parent two.
+    - `heuristic`: `Function` with arity 2 to measure "badness" of a gene.
+    - `repair`: `Function` specifying how to repair chromosome.
+  """
+  @spec cut_on_worst(
+          Chromosome.t(),
+          Chromosome.t(),
+          (Chromosome.t(), any() -> number()),
+          (Chromosome.t() -> Chromosome.t())
+        ) :: {Chromosome.t(), Chromosome.t()}
+  def cut_on_worst(p1, p2, heuristic, repair) do
     {p1_i, p1_worst} =
       p1.genes
       |> Enum.with_index()
-      |> Enum.sort_by(fn g -> heuristic.(p1, g) end, direction)
+      |> Enum.sort_by(fn g -> heuristic.(p1, g) end, &>=/2)
       |> Kernel.hd()
 
     {p2_i, p2_worst} =
       p2.genes
       |> Enum.with_index()
-      |> Enum.sort_by(fn g -> heuristic.(p2, g) end, direction)
+      |> Enum.sort_by(fn g -> heuristic.(p2, g) end, &>=/2)
       |> Kernel.hd()
 
     p1_val = heuristic.(p1, p1_worst)
@@ -482,6 +557,12 @@ defmodule Genex.Tools.Crossover do
     {g3, g4} = Enum.split(p2.genes, cut)
     {c1, c2} = {g1 ++ g4, g3 ++ g2}
     {c1, c2} = {repair.(c1), repair.(c2)}
-    {%Chromosome{genes: c1, size: Enum.count(c1), weights: p1.weights, f: p1.f}, %Chromosome{genes: c2, size: Enum.count(c2), weights: p2.weights, f: p2.f}}
+
+    {%Chromosome{genes: c1, size: Enum.count(c1), weights: p1.weights, f: p1.f},
+     %Chromosome{genes: c2, size: Enum.count(c2), weights: p2.weights, f: p2.f}}
   end
+
+  @doc false
+  def cut_on_worst(heuristic: heuristic, repair: repair),
+    do: &cut_on_worst(&1, &2, heuristic, repair)
 end

@@ -108,7 +108,6 @@ defmodule Genex.Tools.Mutation do
 
   # Parameters
     - `chromosome`: `Chromosome` to mutate.
-    - `
   """
   @spec scramble(Chromosome.t(), integer()) :: Chromosome.t()
   def scramble(chromosome, _), do: :ok

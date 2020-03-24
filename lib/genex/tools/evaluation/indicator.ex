@@ -11,6 +11,7 @@ defmodule Genex.Tools.Evaluation.Indicator do
       c1.genes
       |> Enum.zip(c2.genes)
       |> Enum.map(fn {g1, g2} -> g1 - g2 end)
+
     Enum.any?(objectives, &(&1 > 0)) and not Enum.any?(objectives, &(&1 < 0))
   end
 end
