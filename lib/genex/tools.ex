@@ -3,7 +3,7 @@ defmodule Genex.Tools do
 
   defmacro __using__(_) do
     quote do
-      alias Genex.Tools.{Crossover, Mutation, Migration, Selection}
+      alias Genex.Tools.{Crossover, Migration, Mutation, Selection}
     end
   end
 end

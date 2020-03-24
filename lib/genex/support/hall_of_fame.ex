@@ -42,7 +42,7 @@ defmodule Genex.Support.HallOfFame do
 
     - `path`: Path to save to. Defaults to current directory.
   """
-  def export(path \\ "") do
+  def export() do
     {:ok, dtg} = DateTime.now("Etc/UTC")
 
     name =

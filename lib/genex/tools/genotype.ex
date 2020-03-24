@@ -1,6 +1,12 @@
 defmodule Genex.Tools.Genotype do
   alias Statistics.Distributions
 
+  @moduledoc """
+  Contains functions for generating various Genotypes.
+
+  These are most of the genotypes you will use in basic genetic algorithms.
+  """
+
   @doc """
   Creates a binary geneset.
 
@@ -23,7 +29,7 @@ defmodule Genex.Tools.Genotype do
   """
   def permutation(values) when is_list(values), do: Enum.shuffle(values)
   def permutation(lo..hi), do: Enum.shuffle(lo..hi)
-  def permutation(values), do: raise("Values must be enumerated.")
+  def permutation(_), do: raise("Values must be enumerated.")
 
   @doc """
   Creates a bitstring geneset.

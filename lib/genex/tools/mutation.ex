@@ -10,6 +10,9 @@ defmodule Genex.Tools.Mutation do
   Future versions of Genex will provide the ability to define the "aggressiveness" of mutations. As of this version of Genex, mutations effect the ENTIRE chromosome.
   """
 
+  @doc false
+  def bit_flip(probability: probability), do: &bit_flip(&1, probability)
+
   @doc """
   Perform a bit-flip mutation.
 
@@ -73,9 +76,6 @@ defmodule Genex.Tools.Mutation do
   end
 
   @doc false
-  def bit_flip(probability: probability), do: &bit_flip(&1, probability)
-
-  @doc false
   def scramble(radiation: radiation), do: &scramble(&1, radiation)
 
   @doc """
@@ -117,7 +117,7 @@ defmodule Genex.Tools.Mutation do
     - `chromosome`: `Chromosome` to mutate.
   """
   @spec scramble(Chromosome.t(), integer()) :: Chromosome.t()
-  def scramble(chromosome, _), do: :ok
+  def scramble(_, _), do: :ok
 
   @doc """
   Performs creep mutation.
@@ -184,6 +184,10 @@ defmodule Genex.Tools.Mutation do
   @doc false
   def creep(min: min, max: max), do: &creep(&1, min, max)
   def creep(min: min, max: max, radiation: radiation), do: &creep(&1, radiation, min, max)
+
+
+  @doc false
+  def gaussian(radiation: radiation), do: &gaussian(&1, radiation)
 
   @doc """
   Performs a gaussian mutation.
@@ -262,9 +266,6 @@ defmodule Genex.Tools.Mutation do
       collection: chromosome.collection
     }
   end
-
-  @doc false
-  def gaussian(radiation: radiation), do: &gaussian(&1, radiation)
 
   @doc false
   def polynomial_bounded, do: :ok

@@ -24,7 +24,7 @@ defmodule Genex.Support.Checkpoint do
       |> Kernel.<>(".hall_of_fame")
       |> String.to_charlist()
 
-    {:ok, hof_name} = HallOfFame.save()
+    {:ok, hof_name} = HallOfFame.export()
     {:ok, hof_bin} = File.read(hof_name)
 
     # Save the Geneaology tree to a file
@@ -65,7 +65,7 @@ defmodule Genex.Support.Checkpoint do
     - `path`: `Path` to checkpoint zipfile.
   """
   @spec load(path :: Path.t()) :: Population.t()
-  def load(path) do
+  def load(_) do
     :ok
   end
 end

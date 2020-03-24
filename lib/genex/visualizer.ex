@@ -48,7 +48,7 @@ defmodule Genex.Visualizer do
   defmacro __using__(_) do
     quote do
       @behaviour Genex.Visualizer
-      alias Genex.Types.{Population, Chromosome}
+      alias Genex.Types.{Chromosome, Population}
 
       defimpl String.Chars, for: Chromosome do
         def to_string(chromosome) do

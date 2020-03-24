@@ -169,7 +169,7 @@ defmodule Genex.Tools.Selection do
   end
 
   @doc false
-  def stochastic_universal_sampling, do: stochastic_universal_sampling(&1, &2)
+  def stochastic_universal_sampling, do: &stochastic_universal_sampling(&1, &2)
 
   @doc false
   def boltzmann, do: :ok

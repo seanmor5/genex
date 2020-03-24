@@ -127,9 +127,10 @@ defmodule Genex.Tools.Benchmarks.SymbolicRegression do
     - `y`: `number`.
   """
   def rational_polynomial2(x, y) do
-    (x - 3)
+    x
+    |> Kernel.-(3)
     |> :math.pow(4)
-    |> Kernel.+(:math.pow(y - 3), 3)
+    |> Kernel.+(:math.pow(y - 3, 3))
     |> Kernel.-(y - 3)
     |> Kernel./(
       (y - 2)
