@@ -266,8 +266,18 @@ defmodule Genex.Tools.Mutation do
   @doc false
   def gaussian(radiation: radiation), do: &gaussian(&1, radiation)
 
+  @doc false
   def polynomial_bounded, do: :ok
+
+  @doc false
   def swap, do: :ok
+
+  @doc false
   def invert, do: :ok
+
+  @doc false
   def invert_center, do: :ok
+
+  @doc false
+  def isotropic, do: :ok
 end
