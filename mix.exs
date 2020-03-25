@@ -43,7 +43,6 @@ defmodule Genex.MixProject do
   def docs do
     [
       source_ref: "v#{@version}",
-      main: "introduction-overview",
       extra_section: "guides",
       formatters: ["html", "epub"],
       groups_for_modules: groups_for_modules(),
