@@ -1,7 +1,7 @@
 defmodule Genex.MixProject do
   use Mix.Project
 
-  @version "1.0.0-beta"
+  @version "1.0.1-beta"
   @url "https://www.github.com/seanmor5/genex"
   @maintainers ["Sean Moriarity"]
 

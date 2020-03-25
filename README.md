@@ -10,7 +10,7 @@ This library is inspired by Python's [DEAP](https://github.com/deap/deap).
 
 ## Documentation
 
-Documentation is available at [https://hexdocs.pm/genex/index.html](https://hexdocs.pm/genex/introduction-overview.html)
+Documentation is available at [here](https://hexdocs.pm/genex/1.0.1-beta/api-reference.html).
 
 ## Installation
 
