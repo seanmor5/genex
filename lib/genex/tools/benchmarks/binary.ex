@@ -112,8 +112,8 @@ defmodule Genex.Tools.Benchmarks.Binary do
   end
 
   defp trap(genes) do
-    u = Enum.sum(chromosome.genes)
-    k = Enum.count(chromosome.genes)
+    u = Enum.sum(genes)
+    k = Enum.count(genes)
     if u == k, do: k, else: k - 1 - u
   end
 
