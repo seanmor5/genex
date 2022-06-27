@@ -1,14 +1,22 @@
 defmodule Interactive do
   use Genex
 
-  def encoding, do: Chromosome.binary(size: 10)
+  def genotype, do: Genotype.binary(10)
 
-  def fitness_function(chromosome), do: interactive(chromosome)
+  def fitness_function(chromosome), do: Evaluation.interactive(&read/1, "\nRate this\n", chromosome)
 
   def terminate?(population), do: population.max_fitness >= 10
+
+  defp read(prompt) do
+    prompt
+    |> IO.gets()
+    |> String.trim_trailing()
+    |> String.to_integer()
+  end
 end
 
-import Genex.Config
+solution = Interactive.run(
+  population_size: 5
+)
 
-[population_size: 5]
-|> Interactive.run()
+IO.inspect(solution.strongest.genes)
