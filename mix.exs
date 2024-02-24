@@ -74,7 +74,6 @@ defmodule Genex.MixProject do
         Genex.Tools.Selection
       ],
       "Solution Representations": [
-        Genex.Tools.Datatype,
         Genex.Tools.Genotype
       ],
       Evolutions: [
