@@ -9,7 +9,7 @@ defmodule Genex do
     3. Algorithm Execution
   The `Genex` module contains the behaviour necessary to encode a problem the *Genex Way*. This module implements "Phase 1" of the three phase process used by Genex.
   Genex problems consist of a minimum of 3 and at most 6 functions. These functions:
-    1. Define your solution space (`genotype/0` and `datatype/0`).
+    1. Define your solution space (`genotype/0`).
     2. Define your objective function (`fitness_function/1` and `weights/0`).
     3. Define your termination criteria (`terminate?/1`).
   ## Implementing a Problem
